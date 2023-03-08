@@ -1,2 +1,2 @@
 # actuarial-model
-A pure-Python proof-of-concept liability-only actuarial model.
+A pure-Python proof-of-concept actuarial model, with some basic annuity products.
