@@ -1,14 +1,17 @@
+from abc import ABC
+
 from pandas import read_json
 
 from src.system.data_sources.data_source.file import DataSourceFile
 
 
 class DataSourceJson(
-    DataSourceFile
+    DataSourceFile,
+    ABC
 ):
 
     """
-    Data source object for a JSON file.
+    Abstract data source for a JSON file. Inherit this class to implement a custom JSON file.
     """
 
     def __init__(

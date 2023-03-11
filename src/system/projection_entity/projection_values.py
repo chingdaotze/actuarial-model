@@ -3,20 +3,40 @@ from datetime import date
 
 from pandas import DataFrame
 
+from src.system.data_sources import DataSources
+
 
 class ProjectionValues(
     ABC
 ):
 
     """
-    Abstract object that contains all current and historic values for a particular entity.
+    Abstract container class that holds:
+
+    1. The current state (as class attributes).
+    2. Historic snapshots of class attributes (within a DataFrame). Snapshots are indexed by date and
+       an integer index.
+    3. A reference to external data sources used to set the initial state.
+
+    Inherit this class to implement a custom set of projection values by adding additional attributes.
+    For example, a policy entity might store its account value as an attribute within this container.
     """
 
     def __init__(
-        self
+        self,
+        data_sources: DataSources
     ):
 
-        self.__snapshots: DataFrame = DataFrame()
+        """
+        Constructor method. Initial values can be set by reading from external data sources.
+
+        :param data_sources:
+        """
+
+        self.data_sources: DataSources = data_sources
+        self.__snapshots: DataFrame = DataFrame(
+            index=['t', 'shutter_count']
+        )
 
     @property
     def snapshots(
@@ -24,7 +44,7 @@ class ProjectionValues(
     ) -> DataFrame:
 
         """
-        Read-only property to return internal _snapshots container.
+        Read-only property to access snapshots.
 
         :return:
         """
@@ -37,6 +57,8 @@ class ProjectionValues(
     ) -> None:
 
         """
+        Stores a copy of all attributes (excluding data_sources) and records values within an internal
+        DataFrame.
 
         :param t:
         :return:
@@ -44,12 +66,13 @@ class ProjectionValues(
 
         # TODO: Implement snapshot storage
 
-    def save_snapshots(
+    def write_snapshots(
         self,
         path: str
     ) -> None:
 
         """
+        Writes snapshots to disk as a CSV file.
 
         :param path:
         :return:

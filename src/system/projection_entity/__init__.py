@@ -2,7 +2,7 @@ from abc import (
     ABC,
     abstractmethod
 )
-from datetime import date
+from typing import Type
 
 from dateutil.relativedelta import relativedelta
 
@@ -15,24 +15,45 @@ class ProjectionEntity(
 ):
 
     """
-    Abstract class that represents an entity within a projection. This abstract class must have:
+    Abstract class that represents an entity within a projection (like a person or a policy). A projection
+    entity is the primary building block for projections, and has several defined properties:
 
-    1. A values attribute, which contains all the current and historical values for the entity,
-    2. An inputs attribute, which contains external data sources,
-    3. A roll-forward method, which is a special method called whenever the projection moves forward in time.
+    1. A projection entity contains a values attribute, which stores the current and historic states
+       of a projection entity.
+
+    2. A projection entity declares events as class methods. For example, a person could have a death
+       event. Events typically change and update the values attribute.
+
+    3. A projection entity implements a special roll-forward event, which moves the projection entity
+       forward through time.
+
+    Inherit this class to implement a custom projection entity.
     """
 
     def __init__(
-        self
+        self,
+        data_sources: DataSources,
+        values_type: Type[ProjectionValues]
     ):
 
-        self.data_sources: DataSources
-        self.values: ProjectionValues
+        self.values: values_type = values_type(
+            data_sources=data_sources
+        )
 
     @abstractmethod
     def roll_forward(
         self,
         duration: relativedelta
     ) -> None:
+
+        """
+        Abstract method that pushes the projection entity forward in time. This method should
+        trigger all events that are time-dependent. For example, updating policy counts for any
+        decrements that occur within the interval, or updating account values using the latest
+        market values.
+
+        :param duration:
+        :return:
+        """
 
         ...

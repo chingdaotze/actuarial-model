@@ -1,14 +1,17 @@
+from abc import ABC
+
 from pandas import read_csv
 
 from src.system.data_sources.data_source.file import DataSourceFile
 
 
 class DataSourceCsv(
-    DataSourceFile
+    DataSourceFile,
+    ABC
 ):
 
     """
-    Data source object for a CSV file.
+    Abstract data source for a CSV file. Inherit this class to implement a custom CSV file.
     """
 
     def __init__(

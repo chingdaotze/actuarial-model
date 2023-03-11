@@ -18,7 +18,7 @@ from src.system.constants import DATETIME_FORMAT
 class Logger:
 
     """
-    Singleton logger object.
+    Singleton logger class. Writes messages to disk and prints messages to console.
     """
 
     instance: Self = None
@@ -107,7 +107,7 @@ class Logger:
     ) -> NoReturn:
 
         """
-        Logs an exception in both the console and log file.
+        Logs an exception in both the console and log file, then raises the exception.
 
         :param expr:
         :return:

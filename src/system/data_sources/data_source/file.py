@@ -14,7 +14,8 @@ class DataSourceFile(
 ):
 
     """
-    Abstract data source object for a file on disk. Loads file from disk into cache.
+    Abstract data source object for a file on disk. Loads file from disk into cache. Inherit this
+    class to specify a particular file format.
     """
 
     def __init__(

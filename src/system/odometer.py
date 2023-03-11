@@ -9,6 +9,14 @@ def odometer(
     function: Callable
 ) -> Callable:
 
+    """
+    Decorator that logs the runtime of the decorated function. Each time a function is called, it is
+    given a unique function ID.
+
+    :param function:
+    :return:
+    """
+
     def wrapper(
         *args,
         **kwargs
