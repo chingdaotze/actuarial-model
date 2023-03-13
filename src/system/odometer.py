@@ -11,7 +11,7 @@ def odometer(
 
     """
     Decorator that logs the runtime of the decorated function. Each time a function is called, it is
-    given a unique function ID.
+    given a unique function ID as a GUID.
 
     :param function:
     :return:
