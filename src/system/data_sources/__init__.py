@@ -10,13 +10,13 @@ class DataSources(
 ):
 
     """
-    Abstract container class that holds a collection of data sources. Inherit this class to implement
-    a custom data source collection. Data sources can be added by declaring additional class attributes.
+    Abstract container class that acts as a top-level container for data sources.
+    Data sources can be added by declaring additional class attributes.
     """
 
     def __init__(
         self,
-        projection_parameters: ProjectionParameters
+        projection_parameters: 'ProjectionParameters'
     ):
 
         """

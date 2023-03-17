@@ -1,17 +1,17 @@
 from abc import ABC
 
-from pandas import read_csv
+from pandas import read_json
 
 from src.system.data_sources.data_source.file import DataSourceFile
 
 
-class DataSourceCsv(
+class DataSourceJsonFile(
     DataSourceFile,
     ABC
 ):
 
     """
-    Abstract data source for a CSV file. Inherit this class to implement a custom CSV file.
+    Abstract data source for a JSON file. Inherit this class to implement a custom JSON file.
     """
 
     def __init__(
@@ -22,5 +22,5 @@ class DataSourceCsv(
         DataSourceFile.__init__(
             self=self,
             path=path,
-            dataframe_load_function=read_csv
+            dataframe_load_function=read_json
         )

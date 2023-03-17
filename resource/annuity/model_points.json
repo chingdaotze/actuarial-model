@@ -1,0 +1,172 @@
+[
+	{
+		"id": "a0bd394a-ea54-4de9-823e-75e222102b8d",
+		"product_type": "fa",
+		"product_name": "FutureSecure",
+		"issue_date": "2023-03-16",
+		"gmdb": "LegacyProtector",
+		"gmwb": null,
+		"annuitants": [
+			{
+				"id": "e0aac533-3cb3-4e19-b5bf-90f1a23b5a8c",
+				"gender": "male",
+				"dob": "1968-06-19"
+			}
+		]
+	},
+	{
+		"id": "2e129b7b-f040-48e3-a19b-46bd431b9bad",
+		"product_type": "fa",
+		"product_name": "FutureSecure",
+		"issue_date": "2023-03-16",
+		"gmdb": "LegacyProtector",
+		"gmwb": "ProtectPlus",
+		"annuitants": [
+			{
+				"id": "cee4351f-4017-49a4-9f38-ee8ce4d5ae52",
+				"gender": "male",
+				"dob": "1971-12-06"
+			},
+			{
+				"id": "0a89ab50-364a-495e-8fce-ca2e917f17ce",
+				"gender": "female",
+				"dob": "1973-05-26"
+			}
+		]
+	},
+	{
+		"id": "383e5210-d9e0-4d03-bf3c-3f055d7de968",
+		"product_type": "fa",
+		"product_name": "FutureSecure",
+		"issue_date": "2023-03-16",
+		"gmdb": "LegacyProtector",
+		"gmwb": "IncomeGuard",
+		"annuitants": [
+			{
+				"id": "4c7aed02-a5b5-4bdb-afa9-7148129190e1",
+				"gender": "male",
+				"dob": "1983-04-11"
+			},
+			{
+				"id": "64b8257c-9297-4697-a998-7f0000e5efd4",
+				"gender": "female",
+				"dob": "1982-01-30"
+			}
+		]
+	},
+	{
+		"id": "e0766cbe-5e80-4e61-9297-63c193cc3ae2",
+		"product_type": "fa",
+		"product_name": "GrowthSecure",
+		"issue_date": "2023-03-16",
+		"gmdb": "LegacyProtector",
+		"gmwb": null,
+		"annuitants": [
+			{
+				"id": "2bb09445-65b4-4f10-bb07-55a560a970ca",
+				"gender": "female",
+				"dob": "1951-01-09"
+			}
+		]
+	},
+	{
+		"id": "684ba34a-92d7-4798-ad2d-3a4c0e540b92",
+		"product_type": "fa",
+		"product_name": "GrowthSecure",
+		"issue_date": "2023-03-16",
+		"gmdb": "LegacyProtector",
+		"gmwb": "ProtectPlus",
+		"annuitants": [
+			{
+				"id": "b5ab4fb1-5e5f-45a6-813e-7e87507b708f",
+				"gender": "male",
+				"dob": "1955-07-29"
+			}
+		]
+	},
+	{
+		"id": "9dc9c424-b825-4c2b-b94d-bfeefee753f5",
+		"product_type": "ia",
+		"product_name": "GoldenYears",
+		"issue_date": "2023-03-16",
+		"gmdb": "EstateMax",
+		"gmwb": "DreamSecure",
+		"annuitants": [
+			{
+				"id": "b3e17c8c-0288-4ce6-8f07-6ba2a8c5e391",
+				"gender": "male",
+				"dob": "1958-03-11"
+			},
+			{
+				"id": "7320335b-3aa9-4f1f-9bee-67321e98b7e3",
+				"gender": "female",
+				"dob": "1960-08-14"
+			}
+		]
+	},
+	{
+		"id": "434463ba-6a88-46f2-93b6-68cf61d7963f",
+		"product_type": "ia",
+		"product_name": "GoldenYears",
+		"issue_date": "2023-03-16",
+		"gmdb": "EstateMax",
+		"gmwb": "RetirementSaver",
+		"annuitants": [
+			{
+				"id": "9cdba960-d2fe-44f2-9b67-6031b3c1755c",
+				"gender": "female",
+				"dob": "1971-11-06"
+			}
+		]
+	},
+	{
+		"id": "04b2bb08-3f91-459a-ad71-dc1612f70fbc",
+		"product_type": "ia",
+		"product_name": "GoldenYears",
+		"issue_date": "2023-03-16",
+		"gmdb": "EstateMax",
+		"gmwb": "RetirementSaver",
+		"annuitants": [
+			{
+				"id": "b5001f9b-b635-4d95-8dc0-6214418cfd2b",
+				"gender": "male",
+				"dob": "1983-02-02"
+			}
+		]
+	},
+	{
+		"id": "b1770338-1abc-4c34-8a58-62195e696847",
+		"product_type": "va",
+		"product_name": "ProsperityPlus",
+		"issue_date": "2023-03-16",
+		"gmdb": "EstateMax",
+		"gmwb": null,
+		"annuitants": [
+			{
+				"id": "b80d81fa-b796-4d24-8c9e-e32234e2289b",
+				"gender": "female",
+				"dob": "1988-09-03"
+			}
+		]
+	},
+	{
+		"id": "b6d3b188-11da-48d6-a544-1649afb5997c",
+		"product_type": "va",
+		"product_name": "ProsperityPlus",
+		"issue_date": "2023-03-16",
+		"gmdb": "EstateMax",
+		"gmwb": "DreamSecure",
+		"annuitants": [
+			{
+				"id": "10d75d54-b6ac-405c-8115-b6883174ee8a",
+				"gender": "male",
+				"dob": "1980-06-03"
+			},
+			{
+				"id": "137b8020-ee7f-4500-b71d-a8a721717ae3",
+				"gender": "male",
+				"dob": "1978-10-13"
+			}
+		]
+	}
+]

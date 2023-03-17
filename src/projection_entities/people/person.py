@@ -2,6 +2,8 @@ from dateutil.relativedelta import relativedelta
 
 from src.system.projection_entity import ProjectionEntity
 from src.system.projection_entity.projection_values import ProjectionValues
+from src.data_sources.annuity.base import AnnuityBaseDataSources
+from src.system.enums import Gender
 
 
 class PersonValues(
@@ -22,12 +24,18 @@ class PersonValues(
             years=0,
             months=0,
             days=0
-        )
+        )  # TODO: Initialize from data source
+
+        self.gender: Gender =
 
 
 class Person(
     ProjectionEntity
 ):
+
+    """
+    Projection entity that represents a person.
+    """
 
     def __init__(
         self,
