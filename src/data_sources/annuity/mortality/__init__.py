@@ -18,6 +18,7 @@ class Mortality(
         self,
         path: str
     ):
+
         self.path: str = path
 
         if not isdir(self.path):

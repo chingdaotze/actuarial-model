@@ -10,6 +10,7 @@ from src.system.projection.parameters import ProjectionParameters
 from src.data_sources.economic_scenarios import EconomicScenarios
 from src.data_sources.annuity.model_points import ModelPoints
 from src.data_sources.annuity.mortality import Mortality
+from src.data_sources.annuity.policyholder_behaviors import PolicyholderBehaviors
 
 
 class AnnuityDataSources(
@@ -61,6 +62,14 @@ class AnnuityDataSources(
             path=join(
                 self.path,
                 'mortality'
+            )
+        )
+
+        # Policyholder Behaviors
+        self.policyholder_behaviors: PolicyholderBehaviors = PolicyholderBehaviors(
+            path=join(
+                self.path,
+                'policyholder_behaviors'
             )
         )
 

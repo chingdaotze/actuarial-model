@@ -1,7 +1,7 @@
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
 
 
-class Annuitization(
+class ShockLapse(
     DataSourceCsvFile
 ):
 
@@ -16,13 +16,13 @@ class Annuitization(
         )
 
         self.cache.set_index(
-            keys='attained_age',
+            keys='years_after_surrender_charge',
             inplace=True
         )
 
-    def annuitization_rate(
+    def shock_lapse_multiplier(
         self,
-        attained_age: int
+        years_after_surrender_charge: int
     ) -> float:
 
-        return self.cache['annuitization_rate'][attained_age]
+        return self.cache['multiplier'][years_after_surrender_charge]
