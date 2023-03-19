@@ -1,16 +1,16 @@
-from os.path import (
-    join,
-    isdir
-)
+from os.path import join
 
-from src.system.logger import logger
 from src.system.data_sources import DataSourcesRoot
 from src.system.projection.parameters import ProjectionParameters
+from src.system.logger import logger
+from src.system.data_sources.namespace import DataSourceNamespace
+
 
 from src.data_sources.economic_scenarios import EconomicScenarios
 from src.data_sources.annuity.model_points import ModelPoints
 from src.data_sources.annuity.mortality import Mortality
 from src.data_sources.annuity.policyholder_behaviors import PolicyholderBehaviors
+from src.data_sources.annuity.product import Product
 
 
 class AnnuityDataSources(
@@ -27,19 +27,17 @@ class AnnuityDataSources(
             projection_parameters=projection_parameters
         )
 
-        # Create path to annuity resource package
-        self.path: str = join(
-            self.projection_parameters.resource_dir_path,
-            'annuity'
+        DataSourceNamespace.__init__(
+            self=self,
+            path=join(
+                self.projection_parameters.resource_dir_path,
+                'annuity'
+            )
         )
 
-        if not isdir(self.path):
-
-            logger.raise_expr(
-                expr=NotADirectoryError(
-                    f'Could not locate a valid directory at this location: {self.path} to compile annuity data sources!'
-                )
-            )
+        logger.print(
+            message=f'Compiling annuity data sources from: {self.path} ...'
+        )
 
         # Economic scenarios
         self.economic_scenarios: EconomicScenarios = EconomicScenarios(
@@ -65,7 +63,7 @@ class AnnuityDataSources(
             )
         )
 
-        # Policyholder Behaviors
+        # Policyholder behaviors
         self.policyholder_behaviors: PolicyholderBehaviors = PolicyholderBehaviors(
             path=join(
                 self.path,
@@ -73,4 +71,10 @@ class AnnuityDataSources(
             )
         )
 
-        pass
+        # Product
+        self.product: Product = Product(
+            path=join(
+                self.path,
+                'product'
+            )
+        )

@@ -27,4 +27,9 @@ class DataSourcesRoot(
         :param projection_parameters:
         """
 
+        DataSourceNamespace.__init__(
+            self=self,
+            path=projection_parameters.resource_dir_path
+        )
+
         self.projection_parameters: ProjectionParameters = projection_parameters

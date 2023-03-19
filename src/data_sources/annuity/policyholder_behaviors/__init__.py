@@ -1,9 +1,5 @@
-from os.path import (
-    isdir,
-    join
-)
+from os.path import join
 
-from src.system.logger import logger
 from src.system.data_sources.namespace import DataSourceNamespace
 
 from src.data_sources.annuity.policyholder_behaviors.base_lapse import BaseLapse
@@ -20,15 +16,10 @@ class PolicyholderBehaviors(
         path: str
     ):
 
-        self.path: str = path
-
-        if not isdir(self.path):
-
-            logger.raise_expr(
-                expr=NotADirectoryError(
-                    f'Could not locate a valid directory at this location: {self.path} to compile annuity data sources!'
-                )
-            )
+        DataSourceNamespace.__init__(
+            self=self,
+            path=path
+        )
 
         self.base_lapse: BaseLapse = BaseLapse(
             path=join(

@@ -26,7 +26,7 @@ def odometer(
         function_id = str(uuid4())
 
         logger.print(
-            message=f'{function.__qualname__}: {function_id} starting ...'
+            message=f'Function: {function.__qualname__}, ID: {function_id} starting ...'
         )
 
         function(
@@ -37,7 +37,7 @@ def odometer(
         run_time = datetime.now() - start_time
 
         logger.print(
-            message=f'{function.__qualname__}: {function_id} complete! '
+            message=f'Function: {function.__qualname__}, ID: {function_id} complete! '
                     f'Runtime was {round(run_time.seconds, 2)} seconds.'
         )
 
