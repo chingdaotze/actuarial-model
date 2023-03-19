@@ -10,7 +10,7 @@ class DataSourceCollection(
 ):
 
     """
-    Abstract container class that holds a collection of data sources. This class provides a dictionary-like
+    Abstract container class that holds a dynamic collection of data sources. This class provides a dictionary-like
     storage interface, as well as an iterator across collection elements. This class may be used to represent
     data sources that contain other data sources, such as a model point file which contains multiple model points.
 

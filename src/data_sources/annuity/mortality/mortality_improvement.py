@@ -2,7 +2,7 @@ from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
 from src.system.enums import Gender
 
 
-class BaseMortality(
+class MortalityImprovement(
     DataSourceCsvFile
 ):
 
@@ -21,7 +21,7 @@ class BaseMortality(
             inplace=True
         )
 
-    def base_mortality_rate(
+    def mortality_improvement_rate(
         self,
         gender: Gender,
         attained_age: int

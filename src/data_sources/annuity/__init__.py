@@ -4,15 +4,16 @@ from os.path import (
 )
 
 from src.system.logger import logger
-from src.system.data_sources import DataSources
+from src.system.data_sources import DataSourcesRoot
 from src.system.projection.parameters import ProjectionParameters
 
 from src.data_sources.economic_scenarios import EconomicScenarios
 from src.data_sources.annuity.model_points import ModelPoints
+from src.data_sources.annuity.mortality import Mortality
 
 
 class AnnuityDataSources(
-    DataSources
+    DataSourcesRoot
 ):
 
     def __init__(
@@ -20,7 +21,7 @@ class AnnuityDataSources(
         projection_parameters: ProjectionParameters
     ):
 
-        DataSources.__init__(
+        DataSourcesRoot.__init__(
             self=self,
             projection_parameters=projection_parameters
         )
@@ -52,6 +53,14 @@ class AnnuityDataSources(
             path=join(
                 self.path,
                 'model_points.json'
+            )
+        )
+
+        # Mortality
+        self.mortality: Mortality = Mortality(
+            path=join(
+                self.path,
+                'mortality'
             )
         )
 

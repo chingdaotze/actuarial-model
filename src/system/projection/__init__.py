@@ -5,7 +5,7 @@ from abc import (
 from datetime import date
 
 from src.system.projection.parameters import ProjectionParameters
-from src.system.data_sources import DataSources
+from src.system.data_sources import DataSourcesRoot
 
 
 class Projection(
@@ -31,7 +31,7 @@ class Projection(
 
         self.projection_parameters: ProjectionParameters = projection_parameters
 
-        self.data_sources: DataSources = DataSources(
+        self.data_sources: DataSourcesRoot = DataSourcesRoot(
             projection_parameters=projection_parameters
         )
 
