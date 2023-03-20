@@ -16,6 +16,10 @@ class Person(
     DataSourcePythonDict
 ):
 
+    """
+    Data source that represents a person.
+    """
+
     def __init__(
         self,
         data: Dict
@@ -31,12 +35,25 @@ class Person(
         self
     ) -> str:
 
+        """
+        Unique identifier for a particular individual. This could be a Social Security Number or DNA sequence.
+        For security purposes, this value should probably be salted and hashed.
+
+        :return:
+        """
+
         return self.cache[DEFAULT_COL]['id']
 
     @property
     def gender(
         self
     ) -> Gender:
+
+        """
+        Gender for this particular individual.
+
+        :return:
+        """
 
         return Gender(
             self.cache[DEFAULT_COL]['gender']
@@ -46,6 +63,12 @@ class Person(
     def date_of_birth(
         self
     ) -> date:
+
+        """
+        Date of birth for this particular individual.
+
+        :return:
+        """
 
         return datetime.strptime(
             self.cache[DEFAULT_COL]['dob'],

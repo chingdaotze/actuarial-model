@@ -1,9 +1,10 @@
 from abc import ABC
 from datetime import date
 
-from pandas import DataFrame
-
-from src.system.data_sources import DataSources
+from pandas import (
+    DataFrame,
+    concat
+)
 
 
 class ProjectionValues(
@@ -16,26 +17,26 @@ class ProjectionValues(
     1. The current state (as class attributes).
     2. Historic snapshots of class attributes (within a DataFrame). Snapshots are indexed by date and
        an integer index.
-    3. A reference to external data sources used to set the initial state.
 
     Inherit this class to implement a custom set of projection values by adding additional attributes.
     For example, a policy entity might store its account value as an attribute within this container.
     """
 
     def __init__(
-        self,
-        data_sources: DataSources
+        self
     ):
 
         """
-        Constructor method. Initial values can be set by reading from external data sources.
-
-        :param data_sources:
+        Constructor method. Constructs the internal snapshots data structure.
         """
 
-        self.data_sources: DataSources = data_sources
-        self.__snapshots: DataFrame = DataFrame(
-            index=['t', 'shutter_count']
+        self._snapshots: DataFrame = DataFrame(
+            columns=['index', 't', 'label']
+        )
+
+        self._snapshots.set_index(
+            keys='index',
+            inplace=True
         )
 
     @property
@@ -49,22 +50,47 @@ class ProjectionValues(
         :return:
         """
 
-        return self.__snapshots
+        return self._snapshots
 
     def take_snapshot(
         self,
-        t: date
+        t: date,
+        label: str = ''
     ) -> None:
 
         """
-        Stores a copy of all attributes (excluding data_sources) and records values within an internal
-        DataFrame.
+        Stores a copy of all public attributes and records values within an internal data structure.
 
-        :param t:
         :return:
         """
 
-        # TODO: Implement snapshot storage
+        row = {
+            'index': [self._snapshots.shape[0]],
+            't': [t],
+            'label': [label]
+        }
+
+        for name, value in self.__dict__.items():
+
+            if not name.startswith('_'):
+
+                row[name] = [value]
+
+        row = DataFrame.from_dict(
+            data=row
+        )
+
+        row.set_index(
+            keys='index',
+            inplace=True
+        )
+
+        self._snapshots = concat(
+            objs=[
+                self._snapshots,
+                row
+            ]
+        )
 
     def write_snapshots(
         self,

@@ -5,6 +5,10 @@ class ShockLapse(
     DataSourceCsvFile
 ):
 
+    """
+    Shock lapse table.
+    """
+
     def __init__(
         self,
         path: str
@@ -24,5 +28,12 @@ class ShockLapse(
         self,
         years_after_surrender_charge: int
     ) -> float:
+
+        """
+        Convenience method to access data from the shock lapse table. Returns a shock lapse multiplier.
+
+        :param years_after_surrender_charge:
+        :return:
+        """
 
         return self.cache['multiplier'][years_after_surrender_charge]

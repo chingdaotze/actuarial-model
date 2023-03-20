@@ -5,6 +5,10 @@ class SurrenderCharge(
     DataSourceCsvFile
 ):
 
+    """
+    Surrender charge table.
+    """
+
     def __init__(
         self,
         path: str
@@ -25,5 +29,13 @@ class SurrenderCharge(
         policy_year: int,
         product_name: str
     ) -> float:
+
+        """
+        Convenience method to access data from the surrender charge table. Returns a surrender charge rate.
+
+        :param policy_year:
+        :param product_name:
+        :return:
+        """
 
         return self.cache[product_name][policy_year]

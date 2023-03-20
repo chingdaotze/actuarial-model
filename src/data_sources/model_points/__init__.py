@@ -13,11 +13,22 @@ class ModelPointsBase(
     ABC
 ):
 
+    """
+    Data source collection that holds model points.
+    """
+
     def __init__(
         self,
         path: str,
         model_point_type: Type[ModelPoint]
     ):
+
+        """
+        Constructor that reads data from a JSON file, and generates model points of an arbitrary type.
+
+        :param path:
+        :param model_point_type:
+        """
 
         DataSourceJsonFile.__init__(
             self=self,

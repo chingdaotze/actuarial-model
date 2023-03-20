@@ -9,6 +9,10 @@ class EconomicScenario(
     DataSourcePandasDataFrame
 ):
 
+    """
+    Data source that represents a single economic scenario.
+    """
+
     def __init__(
         self,
         data: DataFrame
@@ -25,14 +29,22 @@ class EconomicScenario(
         )
 
         self.cache.set_index(
-            keys='DATE',
+            keys='t',
             inplace=True
         )
 
     def get_rate(
         self,
         name: str,
-        as_of: date
+        t: date
     ) -> float:
 
-        return self.cache[name][as_of]
+        """
+        Convenience method to access data from the scenario file. Returns a rate from the scenario file.
+
+        :param name:
+        :param t:
+        :return:
+        """
+
+        return self.cache[name][t]

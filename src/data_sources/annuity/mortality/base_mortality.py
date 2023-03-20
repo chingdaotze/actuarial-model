@@ -6,6 +6,10 @@ class BaseMortality(
     DataSourceCsvFile
 ):
 
+    """
+    Base mortality table.
+    """
+
     def __init__(
         self,
         path: str
@@ -26,5 +30,13 @@ class BaseMortality(
         gender: Gender,
         attained_age: int
     ) -> float:
+
+        """
+        Convenience method to access data from the base mortality table. Returns a base mortality rate.
+
+        :param gender:
+        :param attained_age:
+        :return:
+        """
 
         return self.cache[gender][attained_age]

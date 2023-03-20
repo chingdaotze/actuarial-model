@@ -9,10 +9,20 @@ class GmdbRider(
     DataSourceNamespace
 ):
 
+    """
+    Namespace that contains all base GMDB-related data sources and namespaces.
+    """
+
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Constructs additional data sources using files from disk.
+
+        :param path:
+        """
 
         DataSourceNamespace.__init__(
             self=self,

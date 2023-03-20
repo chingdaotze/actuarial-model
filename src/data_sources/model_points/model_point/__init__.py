@@ -19,6 +19,10 @@ class ModelPointBase(
     ABC
 ):
 
+    """
+    Data source that represents a generic, non-product-specific model point.
+    """
+
     def __init__(
         self,
         data: Series
@@ -34,12 +38,25 @@ class ModelPointBase(
         self
     ) -> str:
 
+        """
+        Unique identifier. This could be a Policy Number, counting integer, GUID, or any other unique code.
+
+        :return:
+        """
+
         return self.cache[DEFAULT_COL]['id']
 
     @property
     def product_type(
         self
     ) -> ProductType:
+
+        """
+        Product type enum that denotes what kind of product this model point is. For example, Variable Annuity or
+        Universal Life.
+
+        :return:
+        """
 
         return ProductType(
             self.cache[DEFAULT_COL]['product_type']
@@ -50,12 +67,24 @@ class ModelPointBase(
         self
     ) -> str:
 
+        """
+        Human-readable product name.
+
+        :return:
+        """
+
         return self.cache[DEFAULT_COL]['product_name']
 
     @property
     def issue_date(
         self
     ) -> date:
+
+        """
+        Policy issue date.
+
+        :return:
+        """
 
         return datetime.strptime(
             self.cache[DEFAULT_COL]['issue_date'],

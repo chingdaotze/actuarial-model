@@ -6,6 +6,10 @@ class MortalityImprovement(
     DataSourceCsvFile
 ):
 
+    """
+    Mortality improvement table.
+    """
+
     def __init__(
         self,
         path: str
@@ -26,5 +30,13 @@ class MortalityImprovement(
         gender: Gender,
         attained_age: int
     ) -> float:
+
+        """
+        Convenience method to access data from the mortality improvement table. Returns a mortality improvement rate.
+
+        :param gender:
+        :param attained_age:
+        :return:
+        """
 
         return self.cache[gender][attained_age]

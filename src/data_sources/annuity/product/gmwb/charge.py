@@ -6,6 +6,10 @@ class GmwbCharge(
     DataSourceCsvFile
 ):
 
+    """
+    GMWB charge table.
+    """
+
     def __init__(
         self,
         path: str
@@ -25,5 +29,12 @@ class GmwbCharge(
         self,
         product_name: str
     ) -> float:
+
+        """
+        Convenience method to access data from the GMWB charge table. Returns a GMWB charge rate.
+
+        :param product_name:
+        :return:
+        """
 
         return self.cache[product_name]['charge_rate']

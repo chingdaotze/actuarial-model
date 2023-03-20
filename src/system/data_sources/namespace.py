@@ -20,6 +20,12 @@ class DataSourceNamespace(
         path: str
     ):
 
+        """
+        Constructor method. Checks whether the namespace exists.
+
+        :param path:
+        """
+
         self.path: str = path
 
         if not isdir(self.path):

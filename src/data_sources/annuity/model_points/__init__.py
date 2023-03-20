@@ -6,6 +6,10 @@ class ModelPoints(
     ModelPointsBase
 ):
 
+    """
+    Data source collection that holds annuity model points.
+    """
+
     def __init__(
         self,
         path: str

@@ -10,10 +10,20 @@ class Mortality(
     DataSourceNamespace
 ):
 
+    """
+    Namespace that contains all mortality-related data sources.
+    """
+
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Constructs additional data sources using files from disk.
+
+        :param path:
+        """
 
         DataSourceNamespace.__init__(
             self=self,

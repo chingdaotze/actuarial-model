@@ -6,6 +6,10 @@ class GmdbCharge(
     DataSourceCsvFile
 ):
 
+    """
+    GMDB charge table.
+    """
+
     def __init__(
         self,
         path: str
@@ -25,5 +29,12 @@ class GmdbCharge(
         self,
         rider_name: str
     ) -> float:
+
+        """
+        Convenience method to access data from the GMDB charge table. Returns a GMDB charge rate.
+
+        :param rider_name:
+        :return:
+        """
 
         return self.cache[rider_name]['charge_rate']

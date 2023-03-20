@@ -3,9 +3,11 @@ from abc import (
     abstractmethod
 )
 from datetime import date
+from os.path import join
 
 from src.system.projection.parameters import ProjectionParameters
 from src.system.data_sources import DataSourcesRoot
+from src.system.projection_entity import ProjectionEntity
 
 
 class Projection(
@@ -19,7 +21,8 @@ class Projection(
 
     def __init__(
         self,
-        projection_parameters: ProjectionParameters
+        projection_parameters: ProjectionParameters,
+        data_sources: DataSourcesRoot
     ):
 
         """
@@ -30,12 +33,9 @@ class Projection(
         """
 
         self.projection_parameters: ProjectionParameters = projection_parameters
-
-        self.data_sources: DataSourcesRoot = DataSourcesRoot(
-            projection_parameters=projection_parameters
-        )
-
         self.t: date = self.projection_parameters.start_t
+
+        self.data_sources: DataSourcesRoot = data_sources
 
     @abstractmethod
     def project_time_step(
@@ -77,7 +77,7 @@ class Projection(
         :return:
         """
 
-        while self.t <= self.projection_parameters.end_t:
+        while self.t < self.projection_parameters.end_t:
 
             self.project_time_step()
 
@@ -86,3 +86,29 @@ class Projection(
             if self.halt_projection():
 
                 break
+
+    def write_output(
+        self,
+        output_dir_path: str
+    ) -> None:
+
+        """
+        Convenience method that writes output for projection entity members. Note that this function behaves
+        recursively, and will write output for nested projection entity members as well.
+
+        :param output_dir_path:
+        :return:
+        """
+
+        for attribute_name, attribute in self.__dict__.items():
+
+            if issubclass(type(attribute), ProjectionEntity):
+
+                attribute_output_file_path = join(
+                    output_dir_path,
+                    f'{attribute_name}.csv'
+                )
+
+                attribute.write_snapshots(
+                    output_file_path=attribute_output_file_path
+                )

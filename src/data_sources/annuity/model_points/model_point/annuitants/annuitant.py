@@ -7,6 +7,10 @@ class Annuitant(
     Person
 ):
 
+    """
+    Data source that represents an annuitant.
+    """
+
     def __init__(
         self,
         data: Dict

@@ -5,6 +5,10 @@ class Annuitization(
     DataSourceCsvFile
 ):
 
+    """
+    Annuitization rate table.
+    """
+
     def __init__(
         self,
         path: str
@@ -24,5 +28,12 @@ class Annuitization(
         self,
         attained_age: int
     ) -> float:
+
+        """
+        Convenience method to access data from the annuitization table. Returns an annuitization rate.
+
+        :param attained_age:
+        :return:
+        """
 
         return self.cache['annuitization_rate'][attained_age]

@@ -11,10 +11,20 @@ class PolicyholderBehaviors(
     DataSourceNamespace
 ):
 
+    """
+    Namespace that contains all policyholder behavior-related data sources.
+    """
+
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Constructs additional data sources using files from disk.
+
+        :param path:
+        """
 
         DataSourceNamespace.__init__(
             self=self,

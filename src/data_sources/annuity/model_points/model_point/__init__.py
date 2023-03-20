@@ -12,6 +12,10 @@ class ModelPoint(
     ModelPointBase
 ):
 
+    """
+    Data source that represents an annuity model point.
+    """
+
     def __init__(
         self,
         data: Series
@@ -30,11 +34,26 @@ class ModelPoint(
     def gmdb(
         self
     ) -> Union[str, None]:
+
+        """
+        Guaranteed Minimum Death Benefit (GMDB) human-readable rider name. Returns None if the model point does not
+        have a GMDB rider.
+
+        :return:
+        """
+
         return self.cache[DEFAULT_COL]['gmdb']
 
     @property
     def gmwb(
         self
     ) -> Union[str, None]:
+
+        """
+        Guaranteed Minimum Withdrawal Benefit (GMWB) human-readable rider name. Returns None if the model point
+        does not have a GMWB rider.
+
+        :return:
+        """
 
         return self.cache[DEFAULT_COL]['gmwb']

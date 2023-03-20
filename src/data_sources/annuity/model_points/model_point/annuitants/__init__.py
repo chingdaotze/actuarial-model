@@ -12,10 +12,20 @@ class Annuitants(
     DataSourceCollection
 ):
 
+    """
+    Data source collection that represents one or more annuitants.
+    """
+
     def __init__(
         self,
         data: List[Dict]
     ):
+
+        """
+        Constructor method. Generates annuitant data sources from a list of dictionaries.
+
+        :param data:
+        """
 
         DataSourceCollection.__init__(
             self=self

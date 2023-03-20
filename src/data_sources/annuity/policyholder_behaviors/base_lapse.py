@@ -5,6 +5,10 @@ class BaseLapse(
     DataSourceCsvFile
 ):
 
+    """
+    Base lapse table.
+    """
+
     def __init__(
         self,
         path: str
@@ -24,5 +28,12 @@ class BaseLapse(
         self,
         policy_year: int
     ) -> float:
+
+        """
+        Convenience method to access data from the base lapse table. Returns a base lapse rate.
+
+        :param policy_year:
+        :return:
+        """
 
         return self.cache['lapse_rate'][policy_year]

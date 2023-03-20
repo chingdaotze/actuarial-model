@@ -1,7 +1,16 @@
 from abc import ABC
 from typing import (
-    Dict,
-    Any
+    TypeVar,
+    Dict
+)
+
+
+K = TypeVar(
+    name='K'
+)
+
+V = TypeVar(
+    name='V'
 )
 
 
@@ -21,20 +30,24 @@ class DataSourceCollection(
         self
     ):
 
-        self.__collection: Dict = {}
+        """
+        Constructor method. Initializes internal data structure.
+        """
+
+        self.__collection: Dict[K, V] = {}
 
     def __setitem__(
         self,
-        key,
-        value
+        key: K,
+        value: V
     ) -> None:
 
         self.__collection[key] = value
 
     def __getitem__(
         self,
-        item
-    ) -> Any:
+        item: K
+    ) -> V:
 
         return self.__collection[item]
 

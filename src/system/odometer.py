@@ -1,4 +1,7 @@
-from typing import Callable
+from typing import (
+    Callable,
+    Any
+)
 from datetime import datetime
 from uuid import uuid4
 
@@ -10,7 +13,7 @@ def odometer(
 ) -> Callable:
 
     """
-    Decorator that logs the runtime of the decorated function. Each time a function is called, it is
+    Decorator that logs the runtime of a decorated function. Each time a function is called, it is
     given a unique function ID as a GUID.
 
     :param function:
@@ -20,7 +23,15 @@ def odometer(
     def wrapper(
         *args,
         **kwargs
-    ):
+    ) -> Any:
+
+        """
+        Wrapper function that wraps the decorated function. Contains the core logic for this decorator.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
 
         start_time = datetime.now()
         function_id = str(uuid4())
@@ -29,7 +40,7 @@ def odometer(
             message=f'Function: {function.__qualname__}, ID: {function_id} starting ...'
         )
 
-        function(
+        return_value = function(
             *args,
             **kwargs
         )
@@ -40,5 +51,7 @@ def odometer(
             message=f'Function: {function.__qualname__}, ID: {function_id} complete! '
                     f'Runtime was {round(run_time.seconds, 2)} seconds.'
         )
+
+        return return_value
 
     return wrapper
