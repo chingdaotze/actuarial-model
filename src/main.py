@@ -77,19 +77,30 @@ def main() -> None:
             projection.run_projection()
 
             # Write projection output
-            projection_output_path = join(
+            model_point_dir_path = join(
                 output_dir_path,
-                f'{model_point.id}_{economic_scenario.scenario_index}'
+                model_point.id
             )
 
-            if not exists(path=projection_output_path):
+            if not exists(path=model_point_dir_path):
 
                 mkdir(
-                    path=projection_output_path
+                    path=model_point_dir_path
+                )
+
+            economic_scenario_dir_path = join(
+                model_point_dir_path,
+                str(economic_scenario.scenario_index)
+            )
+
+            if not exists(path=economic_scenario_dir_path):
+
+                mkdir(
+                    path=economic_scenario_dir_path
                 )
 
             projection.write_output(
-                output_dir_path=projection_output_path
+                output_dir_path=economic_scenario_dir_path
             )
 
 

@@ -3,6 +3,7 @@ from os.path import join
 from src.system.data_sources.namespace import DataSourceNamespace
 
 from src.data_sources.annuity.product.base.surrender_charge import SurrenderCharge
+from src.data_sources.annuity.product.base.crediting_rate import CreditingRate
 
 
 class BaseProduct(
@@ -34,4 +35,8 @@ class BaseProduct(
                 self.path,
                 'surrender_charge.csv'
             )
+        )
+
+        self.crediting_rate: CreditingRate = CreditingRate(
+            path=self.path
         )
