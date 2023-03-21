@@ -41,6 +41,8 @@ class ModelPointsBase(
 
         for data in [row[1] for row in self.cache.iterrows()]:
 
-            self[data['id']] = model_point_type(
+            instance = model_point_type(
                 data=data
             )
+
+            self[instance.id] = instance

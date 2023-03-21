@@ -6,6 +6,8 @@ from src.system.constants import DEFAULT_COL
 
 from src.data_sources.model_points.model_point import ModelPointBase
 from src.data_sources.annuity.model_points.model_point.annuitants import Annuitants
+from src.data_sources.annuity.model_points.model_point.gmwb import Gmwb
+from src.data_sources.annuity.model_points.model_point.accounts import Accounts
 
 
 class ModelPoint(
@@ -30,6 +32,22 @@ class ModelPoint(
             data=self.cache[DEFAULT_COL]['annuitants']
         )
 
+        self.gmwb: Union[Gmwb, None]
+
+        if self.cache[DEFAULT_COL]['gmwb'] is not None:
+
+            self.gmwb = Gmwb(
+                data=self.cache[DEFAULT_COL]['gmwb']
+            )
+
+        else:
+
+            self.gmwb = None
+
+        self.accounts: Accounts = Accounts(
+            data=self.cache[DEFAULT_COL]['accounts']
+        )
+
     @property
     def gmdb(
         self
@@ -43,17 +61,3 @@ class ModelPoint(
         """
 
         return self.cache[DEFAULT_COL]['gmdb']
-
-    @property
-    def gmwb(
-        self
-    ) -> Union[str, None]:
-
-        """
-        Guaranteed Minimum Withdrawal Benefit (GMWB) human-readable rider name. Returns None if the model point
-        does not have a GMWB rider.
-
-        :return:
-        """
-
-        return self.cache[DEFAULT_COL]['gmwb']

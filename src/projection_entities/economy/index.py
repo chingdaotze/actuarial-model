@@ -36,18 +36,19 @@ class Index(
     """
 
     data_source: EconomicScenario
+    values: IndexValues
 
     def __init__(
         self,
         projection_parameters: ProjectionParameters,
-        economic_scenario: EconomicScenario,
+        data_source: EconomicScenario,
         index_name: str
     ):
 
         ProjectionEntity.__init__(
             self=self,
             projection_parameters=projection_parameters,
-            data_source=economic_scenario,
+            data_source=data_source,
             values=IndexValues()
         )
 

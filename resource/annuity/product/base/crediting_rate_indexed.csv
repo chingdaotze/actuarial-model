@@ -1,0 +1,4 @@
+account_name,term,cap,spread,participation_rate,floor
+1-Year-Point-To-Point-Spread,1,None,0.05,1,0
+1-Year-Point-To-Point-Participation,1,None,None,0.8,0
+2-Year-Point-To-Point-Cap,2,0.09,None,1,0

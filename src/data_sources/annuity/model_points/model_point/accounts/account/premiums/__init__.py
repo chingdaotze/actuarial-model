@@ -5,24 +5,22 @@ from typing import (
 
 from src.system.data_sources.collection import DataSourceCollection
 
-from src.data_sources.annuity.model_points.model_point.annuitants.annuitant import Annuitant
+from src.data_sources.annuity.model_points.model_point.accounts.account.premiums.premium import Premium
 
 
-class Annuitants(
+class Premiums(
     DataSourceCollection
 ):
-
     """
-    Data source collection that represents one or more annuitants.
+    Data source collection that contains premiums.
     """
 
     def __init__(
         self,
         data: List[Dict]
     ):
-
         """
-        Constructor method. Generates annuitant data sources from a list of dictionaries.
+        Constructor method. Generates premium data sources from a list of dictionaries.
 
         :param data:
         """
@@ -33,8 +31,8 @@ class Annuitants(
 
         for row in data:
 
-            instance = Annuitant(
+            instance = Premium(
                 data=row
             )
 
-            self[instance.id] = instance
+            self[instance.premium_date] = instance
