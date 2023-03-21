@@ -1,12 +1,18 @@
 from sys import argv
 from datetime import date
 from dateutil.relativedelta import relativedelta
+from os.path import (
+    join,
+    exists
+)
+from os import mkdir
 
 from src.system.odometer import odometer
 from src.system.projection.parameters import ProjectionParameters
+from src.system.logger import logger
 
 from src.data_sources.annuity import AnnuityDataSources
-from src.projections.annuity.va.economic_liability import EconomicLiabilityProjection
+from src.projections.annuity.base.economic_liability import EconomicLiabilityProjection
 
 
 @odometer
@@ -50,19 +56,41 @@ def main() -> None:
         projection_parameters=projection_parameters
     )
 
-    # Construct projection object
-    projection = EconomicLiabilityProjection(
-        projection_parameters=projection_parameters,
-        data_sources=data_sources
-    )
+    # Run projections
+    for model_point in data_sources.model_points:
 
-    # Run projection
-    projection.run_projection()
+        for economic_scenario in data_sources.economic_scenarios:
 
-    # Write projection output
-    projection.write_output(
-        output_dir_path=output_dir_path
-    )
+            logger.print(
+                message=f'Calculating model point: {model_point.id}, scenario: {economic_scenario.scenario_index} ...'
+            )
+
+            # Construct projection object
+            projection = EconomicLiabilityProjection(
+                projection_parameters=projection_parameters,
+                data_sources=data_sources,
+                model_point=model_point,
+                economic_scenario=economic_scenario
+            )
+
+            # Run projection
+            projection.run_projection()
+
+            # Write projection output
+            projection_output_path = join(
+                output_dir_path,
+                f'{model_point.id}_{economic_scenario.scenario_index}'
+            )
+
+            if not exists(path=projection_output_path):
+
+                mkdir(
+                    path=projection_output_path
+                )
+
+            projection.write_output(
+                output_dir_path=projection_output_path
+            )
 
 
 if __name__ == '__main__':

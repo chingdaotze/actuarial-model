@@ -15,7 +15,8 @@ class EconomicScenario(
 
     def __init__(
         self,
-        data: DataFrame
+        data: DataFrame,
+        scenario_index: int
     ):
 
         DataSourcePandasDataFrame.__init__(
@@ -32,6 +33,8 @@ class EconomicScenario(
             keys='t',
             inplace=True
         )
+
+        self.scenario_index: int = scenario_index
 
     def get_rate(
         self,

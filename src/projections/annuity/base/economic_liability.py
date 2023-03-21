@@ -2,6 +2,9 @@ from src.system.projection import Projection
 from src.system.projection.parameters import ProjectionParameters
 
 from src.data_sources.annuity import AnnuityDataSources
+from src.data_sources.annuity.model_points.model_point import ModelPoint
+from src.data_sources.economic_scenarios.economic_scenario import EconomicScenario
+
 from src.projection_entities.economy.index import Index
 
 
@@ -10,7 +13,7 @@ class EconomicLiabilityProjection(
 ):
 
     """
-    Sample Variable Annuity economic liability projection.
+    Sample economic liability projection.
     """
 
     data_sources: AnnuityDataSources
@@ -18,7 +21,9 @@ class EconomicLiabilityProjection(
     def __init__(
         self,
         projection_parameters: ProjectionParameters,
-        data_sources: AnnuityDataSources
+        data_sources: AnnuityDataSources,
+        model_point: ModelPoint,
+        economic_scenario: EconomicScenario
     ):
 
         Projection.__init__(
@@ -27,9 +32,12 @@ class EconomicLiabilityProjection(
             data_sources=data_sources
         )
 
+        self.model_point: ModelPoint = model_point
+        self.economic_scenario: EconomicScenario = economic_scenario
+
         self.index = Index(
             projection_parameters=self.projection_parameters,
-            economic_scenario=self.data_sources.economic_scenarios[0],
+            data_source=economic_scenario,
             index_name='SPX'
         )
 

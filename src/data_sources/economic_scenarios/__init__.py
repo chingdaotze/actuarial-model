@@ -47,6 +47,9 @@ class EconomicScenarios(
 
         for scenario_index in self.cache.index.unique():
 
-            self[scenario_index] = EconomicScenario(
-                data=self.cache.loc[scenario_index]
+            instance = EconomicScenario(
+                data=self.cache.loc[scenario_index],
+                scenario_index=scenario_index
             )
+
+            self[instance.scenario_index] = instance
