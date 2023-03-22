@@ -1,7 +1,17 @@
-from typing import Dict
+from typing import (
+    Dict,
+    Union
+)
+from datetime import (
+    date,
+    datetime
+)
 
 from src.system.data_sources.data_source.python_dict import DataSourcePythonDict
-from src.system.constants import DEFAULT_COL
+from src.system.constants import (
+    DEFAULT_COL,
+    DATE_FORMAT
+)
 
 
 class Gmwb(
@@ -47,3 +57,25 @@ class Gmwb(
         """
 
         return self.cache[DEFAULT_COL]['benefit_base']
+
+    @property
+    def first_withdrawal_date(
+        self
+    ) -> Union[date, None]:
+
+        """
+        GMWB Benefit Base, typically used as a basis for GMWB withdrawals.
+
+        :return:
+        """
+
+        return_value = self.cache[DEFAULT_COL]['first_withdrawal_date']
+
+        if return_value is not None:
+
+            return_value = datetime.strptime(
+                return_value,
+                DATE_FORMAT
+            ).date()
+
+        return return_value
