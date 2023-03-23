@@ -57,51 +57,46 @@ def main() -> None:
     )
 
     # Run projections
-    for model_point in data_sources.model_points:
+    for configured_data_source in data_sources.configured_data_sources():
 
-        for economic_scenario in data_sources.economic_scenarios:
+        logger.print(
+            message=f'Calculating model point: {configured_data_source.model_point}, '
+                    f'scenario: {configured_data_source.economic_scenario} ...'
+        )
 
-            logger.print(
-                message=f'Calculating model point: {model_point.id}, scenario: {economic_scenario.scenario_index} ...'
+        # Construct projection object
+        projection = EconomicLiabilityProjection(
+            projection_parameters=projection_parameters,
+            data_sources=data_sources
+        )
+
+        # Run projection
+        projection.run_projection()
+
+        # Write projection output
+        model_point_dir_path = join(
+            output_dir_path,
+            configured_data_source.model_point.id
+        )
+
+        if not exists(path=model_point_dir_path):
+            mkdir(
+                path=model_point_dir_path
             )
 
-            # Construct projection object
-            projection = EconomicLiabilityProjection(
-                projection_parameters=projection_parameters,
-                data_sources=data_sources,
-                model_point=model_point,
-                economic_scenario=economic_scenario
+        economic_scenario_dir_path = join(
+            model_point_dir_path,
+            str(configured_data_source.economic_scenario.scenario_index)
+        )
+
+        if not exists(path=economic_scenario_dir_path):
+            mkdir(
+                path=economic_scenario_dir_path
             )
 
-            # Run projection
-            projection.run_projection()
-
-            # Write projection output
-            model_point_dir_path = join(
-                output_dir_path,
-                model_point.id
-            )
-
-            if not exists(path=model_point_dir_path):
-
-                mkdir(
-                    path=model_point_dir_path
-                )
-
-            economic_scenario_dir_path = join(
-                model_point_dir_path,
-                str(economic_scenario.scenario_index)
-            )
-
-            if not exists(path=economic_scenario_dir_path):
-
-                mkdir(
-                    path=economic_scenario_dir_path
-                )
-
-            projection.write_output(
-                output_dir_path=economic_scenario_dir_path
-            )
+        projection.write_output(
+            output_dir_path=economic_scenario_dir_path
+        )
 
 
 if __name__ == '__main__':

@@ -3,11 +3,13 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from src.system.projection_entity.projection_values import ProjectionValues
-from src.system.projection.parameters import ProjectionParameters
 from src.system.projection_entity import (
     ProjectionEntity,
+    take_init_snapshot,
     take_snapshot
 )
+
+from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.economic_scenarios.economic_scenario import EconomicScenario
 
 
@@ -16,14 +18,15 @@ class IndexValues(
 ):
 
     def __init__(
-        self
+        self,
+        index_value: float
     ):
 
         ProjectionValues.__init__(
             self=self
         )
 
-        self.index_value: float = 0.0
+        self.index_value: float = index_value
         self.pct_change: float = 0.0
 
 
@@ -35,29 +38,37 @@ class Index(
     Projection entity that represents an economic index, like S&P 500, Big Mac, or Inverse Cramer.
     """
 
-    data_source: EconomicScenario
+    data_sources: AnnuityDataSources
     values: IndexValues
 
+    @take_init_snapshot
     def __init__(
         self,
-        projection_parameters: ProjectionParameters,
-        data_source: EconomicScenario,
+        init_t: date,
+        data_sources: AnnuityDataSources,
         index_name: str
     ):
 
         ProjectionEntity.__init__(
             self=self,
-            projection_parameters=projection_parameters,
-            data_source=data_source,
-            values=IndexValues()
+            init_t=init_t,
+            data_sources=data_sources,
+            values=IndexValues(
+                index_value=data_sources.economic_scenario.get_rate(
+                    name=index_name,
+                    t=init_t
+                )
+            )
         )
 
+        self.economic_scenario: EconomicScenario = data_sources.economic_scenario
         self.index_name: str = index_name
 
-        self.project(
-            t=self.projection_parameters.start_t,
-            duration=relativedelta()
-        )
+    def __str__(
+        self
+    ) -> str:
+
+        return f'index_{self.index_name}'
 
     def calc_pct_change(
         self,
@@ -66,19 +77,19 @@ class Index(
     ) -> float:
 
         """
-        Calculates the percentage growth in the index over time.
+        Calculates the percentage growth in the index between two points in time.
 
         :param t:
         :param duration:
         :return:
         """
 
-        curr_rate = self.data_source.get_rate(
+        curr_rate = self.economic_scenario.get_rate(
             name=self.index_name,
             t=t
         )
 
-        next_rate = self.data_source.get_rate(
+        next_rate = self.economic_scenario.get_rate(
             name=self.index_name,
             t=t + duration
         )
@@ -110,7 +121,7 @@ class Index(
             duration=duration
         )
 
-        self.values.index_value = self.data_source.get_rate(
+        self.values.index_value = self.economic_scenario.get_rate(
             name=self.index_name,
             t=t + duration
         )

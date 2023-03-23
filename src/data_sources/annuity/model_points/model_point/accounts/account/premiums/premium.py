@@ -1,14 +1,9 @@
 from typing import Dict
-from datetime import (
-    date,
-    datetime
-)
+from datetime import date
 
 from src.system.data_sources.data_source.python_dict import DataSourcePythonDict
-from src.system.constants import (
-    DEFAULT_COL,
-    DATE_FORMAT
-)
+from src.system.date import str_to_date
+from src.system.constants import DEFAULT_COL
 
 
 class Premium(
@@ -30,10 +25,9 @@ class Premium(
         self
     ) -> date:
 
-        return datetime.strptime(
-            self.cache[DEFAULT_COL]['date'],
-            DATE_FORMAT
-        ).date()
+        return str_to_date(
+            target_str=self.cache[DEFAULT_COL]['date']
+        )
 
     @property
     def premium_amount(

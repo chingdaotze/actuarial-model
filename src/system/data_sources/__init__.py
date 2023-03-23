@@ -1,5 +1,13 @@
-from abc import ABC
-from typing import TYPE_CHECKING
+from abc import (
+    ABC,
+    abstractmethod
+)
+from typing import (
+    TYPE_CHECKING,
+    Generator,
+    Self,
+    Any
+)
 
 from src.system.data_sources.namespace import DataSourceNamespace
 if TYPE_CHECKING:
@@ -33,3 +41,17 @@ class DataSourcesRoot(
         )
 
         self.projection_parameters: ProjectionParameters = projection_parameters
+
+    @abstractmethod
+    def configured_data_sources(
+        self
+    ) -> Generator[Self, Any, None]:
+
+        """
+        Abstract generator that is used to iterate through various run configurations. For example,
+        this can be used to create a generator that iterates through each model point & scenario combination.
+
+        :return:
+        """
+
+        ...

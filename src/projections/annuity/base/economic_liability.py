@@ -21,9 +21,7 @@ class EconomicLiabilityProjection(
     def __init__(
         self,
         projection_parameters: ProjectionParameters,
-        data_sources: AnnuityDataSources,
-        model_point: ModelPoint,
-        economic_scenario: EconomicScenario
+        data_sources: AnnuityDataSources
     ):
 
         Projection.__init__(
@@ -32,12 +30,9 @@ class EconomicLiabilityProjection(
             data_sources=data_sources
         )
 
-        self.model_point: ModelPoint = model_point
-        self.economic_scenario: EconomicScenario = economic_scenario
-
         self.index = Index(
             projection_parameters=self.projection_parameters,
-            data_source=economic_scenario,
+            data_sources=data_sources,
             index_name='SPX'
         )
 

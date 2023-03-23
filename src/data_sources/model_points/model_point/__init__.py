@@ -1,17 +1,12 @@
 from abc import ABC
-from datetime import (
-    date,
-    datetime
-)
+from datetime import date
 
 from pandas import Series
 
 from src.system.data_sources.data_source.pandas_series import DataSourcePandasSeries
-from src.system.constants import (
-    DEFAULT_COL,
-    DATE_FORMAT
-)
+from src.system.constants import DEFAULT_COL
 from src.system.enums import ProductType
+from src.system.date import str_to_date
 
 
 class ModelPointBase(
@@ -86,7 +81,6 @@ class ModelPointBase(
         :return:
         """
 
-        return datetime.strptime(
-            self.cache[DEFAULT_COL]['issue_date'],
-            DATE_FORMAT
-        ).date()
+        return str_to_date(
+            target_str=self.cache[DEFAULT_COL]['issue_date']
+        )

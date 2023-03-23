@@ -3,7 +3,6 @@ from abc import (
     abstractmethod
 )
 from typing import (
-    Union,
     Callable,
     Any
 )
@@ -15,10 +14,7 @@ from os.path import (
 
 from dateutil.relativedelta import relativedelta
 
-from src.system.projection.parameters import ProjectionParameters
-from src.system.data_sources.data_source.base import DataSourceBase
-from src.system.data_sources.namespace import DataSourceNamespace
-from src.system.data_sources.collection import DataSourceCollection
+from src.system.data_sources import DataSourcesRoot
 from src.system.projection_entity.projection_values import ProjectionValues
 
 
@@ -44,14 +40,28 @@ class ProjectionEntity(
 
     def __init__(
         self,
-        projection_parameters: ProjectionParameters,
-        data_source: Union[DataSourceBase, DataSourceNamespace, DataSourceCollection],
+        init_t: date,
+        data_sources: DataSourcesRoot,
         values: ProjectionValues
     ):
 
-        self.projection_parameters: ProjectionParameters = projection_parameters
-        self.data_source: Union[DataSourceBase, DataSourceNamespace, DataSourceCollection] = data_source
+        self.init_t: date = init_t
+        self.data_sources: DataSourcesRoot = data_sources
         self.values: ProjectionValues = values
+
+    @abstractmethod
+    def __str__(
+        self
+    ) -> str:
+
+        """
+        Abstract method that provides a string representation of the projection entity. Also used as a
+        file name when printing output.
+
+        :return:
+        """
+
+        ...
 
     @abstractmethod
     def project(
@@ -90,18 +100,60 @@ class ProjectionEntity(
             path=output_file_path
         )
 
-        for attribute_name, attribute in self.__dict__.items():
+        for attribute in self.__dict__.values():
 
             if issubclass(type(attribute), ProjectionEntity):
 
                 attribute_output_file_path = join(
                     dirname(output_file_path),
-                    f'{attribute_name}.csv'
+                    f'{attribute}.csv'
                 )
 
                 attribute.write_snapshots(
                     output_file_path=attribute_output_file_path
                 )
+
+
+def take_init_snapshot(
+    function: Callable[[ProjectionEntity, ...], None]
+) -> Callable:
+
+    """
+    Decorator that takes a snapshot at object initialization. Note that this only works on the __init__ function.
+
+    :param function:
+    :return:
+    """
+
+    def wrapper(
+        instance: ProjectionEntity,
+        *args,
+        **kwargs
+    ) -> Any:
+
+        """
+        Wrapper function that wraps the decorated function. Contains the core logic for this decorator. Note that
+        instance must be a subclass of a projection entity.
+
+        :param instance:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
+        # Execute function
+        function(
+            instance,
+            *args,
+            **kwargs
+        )
+
+        # Take snapshot
+        instance.values.take_snapshot(
+            t=kwargs['init_t']
+        )
+
+    return wrapper
 
 
 def take_snapshot(
@@ -132,14 +184,16 @@ def take_snapshot(
         :return:
         """
 
-        t = kwargs['t']
-        duration: relativedelta = kwargs['duration']
-
+        # Execute function
         return_value = function(
             instance,
             *args,
             **kwargs
         )
+
+        # Take snapshot
+        t = kwargs['t']
+        duration: relativedelta = kwargs['duration']
 
         instance.values.take_snapshot(
             t=t + duration

@@ -2,16 +2,11 @@ from typing import (
     Dict,
     Union
 )
-from datetime import (
-    date,
-    datetime
-)
+from datetime import date
 
 from src.system.data_sources.data_source.python_dict import DataSourcePythonDict
-from src.system.constants import (
-    DEFAULT_COL,
-    DATE_FORMAT
-)
+from src.system.constants import DEFAULT_COL
+from src.system.date import str_to_date
 
 
 class Gmwb(
@@ -73,9 +68,8 @@ class Gmwb(
 
         if return_value is not None:
 
-            return_value = datetime.strptime(
-                return_value,
-                DATE_FORMAT
-            ).date()
+            return_value = str_to_date(
+                target_str=return_value
+            )
 
         return return_value

@@ -5,11 +5,11 @@ from dateutil.relativedelta import relativedelta
 from src.system.projection_entity.projection_values import ProjectionValues
 from src.system.projection_entity import (
     ProjectionEntity,
+    take_init_snapshot,
     take_snapshot
 )
-from src.system.projection.parameters import ProjectionParameters
 
-from src.data_sources.annuity.model_points.model_point import ModelPoint
+from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.annuitants.annuitant import Annuitant as AnnuitantDataSource
 from src.system.enums import Gender
 
@@ -20,8 +20,8 @@ class AnnuitantValues(
 
     def __init__(
         self,
-        projection_parameters: ProjectionParameters,
-        data_source: AnnuitantDataSource
+        date_of_birth: date,
+        init_t: date
     ):
 
         ProjectionValues.__init__(
@@ -29,8 +29,8 @@ class AnnuitantValues(
         )
 
         self.age: relativedelta = relativedelta(
-            dt1=data_source.date_of_birth,
-            dt2=projection_parameters.start_t
+            dt1=date_of_birth,
+            dt2=init_t
         )
 
 
@@ -39,39 +39,44 @@ class Annuitant(
 ):
 
     """
-    Projection entity that represents a person.
+    Projection entity that represents an annuitant.
     """
 
-    data_source: ModelPoint
+    data_sources: AnnuityDataSources
     values: AnnuitantValues
 
+    @take_init_snapshot
     def __init__(
         self,
-        projection_parameters: ProjectionParameters,
-        data_source: ModelPoint,
-        annuitant_id: str
+        init_t: date,
+        data_sources: AnnuityDataSources,
+        annuitant_data_source: AnnuitantDataSource
     ):
-
-        annuitant_data_source: AnnuitantDataSource = self.data_source.annuitants[
-            annuitant_id
-        ]
 
         ProjectionEntity.__init__(
             self=self,
-            projection_parameters=projection_parameters,
-            data_source=data_source,
+            init_t=init_t,
+            data_sources=data_sources,
             values=AnnuitantValues(
-                projection_parameters=projection_parameters,
-                data_source=annuitant_data_source
+                date_of_birth=annuitant_data_source.date_of_birth,
+                init_t=init_t
             )
         )
+
+        self.id: str = annuitant_data_source.id
 
         self.gender: Gender = annuitant_data_source.gender
 
         self.issue_age: relativedelta = relativedelta(
             dt1=annuitant_data_source.date_of_birth,
-            dt2=self.data_source.issue_date
+            dt2=data_sources.model_point.issue_date
         )
+
+    def __str__(
+        self
+    ) -> str:
+
+        return f'annuitant_{self.id}'
 
     @take_snapshot
     def project(

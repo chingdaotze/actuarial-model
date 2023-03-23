@@ -1,15 +1,10 @@
 from typing import Dict
-from datetime import (
-    date,
-    datetime
-)
+from datetime import date
 
 from src.system.data_sources.data_source.python_dict import DataSourcePythonDict
-from src.system.constants import (
-    DEFAULT_COL,
-    DATE_FORMAT
-)
+from src.system.constants import DEFAULT_COL
 from src.system.enums import Gender
+from src.system.date import str_to_date
 
 
 class Person(
@@ -70,7 +65,6 @@ class Person(
         :return:
         """
 
-        return datetime.strptime(
-            self.cache[DEFAULT_COL]['dob'],
-            DATE_FORMAT
-        ).date()
+        return str_to_date(
+            target_str=self.cache[DEFAULT_COL]['dob']
+        )
