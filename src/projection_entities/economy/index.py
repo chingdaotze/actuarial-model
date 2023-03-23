@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from src.system.projection_entity.projection_values import ProjectionValues
 from src.system.projection_entity import (
     ProjectionEntity,
-    take_init_snapshot,
+    projection_entity_init,
     take_snapshot
 )
 
@@ -18,15 +18,14 @@ class IndexValues(
 ):
 
     def __init__(
-        self,
-        index_value: float
+        self
     ):
 
         ProjectionValues.__init__(
             self=self
         )
 
-        self.index_value: float = index_value
+        self.index_value: float = 0.0
         self.pct_change: float = 0.0
 
 
@@ -41,7 +40,7 @@ class Index(
     data_sources: AnnuityDataSources
     values: IndexValues
 
-    @take_init_snapshot
+    @projection_entity_init
     def __init__(
         self,
         init_t: date,
@@ -53,12 +52,7 @@ class Index(
             self=self,
             init_t=init_t,
             data_sources=data_sources,
-            values=IndexValues(
-                index_value=data_sources.economic_scenario.get_rate(
-                    name=index_name,
-                    t=init_t
-                )
-            )
+            values=IndexValues()
         )
 
         self.economic_scenario: EconomicScenario = data_sources.economic_scenario

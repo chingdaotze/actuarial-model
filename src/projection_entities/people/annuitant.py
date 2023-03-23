@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from src.system.projection_entity.projection_values import ProjectionValues
 from src.system.projection_entity import (
     ProjectionEntity,
-    take_init_snapshot,
+    projection_entity_init,
     take_snapshot
 )
 
@@ -19,19 +19,14 @@ class AnnuitantValues(
 ):
 
     def __init__(
-        self,
-        date_of_birth: date,
-        init_t: date
+        self
     ):
 
         ProjectionValues.__init__(
             self=self
         )
 
-        self.age: relativedelta = relativedelta(
-            dt1=date_of_birth,
-            dt2=init_t
-        )
+        self.age: relativedelta = relativedelta()
 
 
 class Annuitant(
@@ -45,7 +40,7 @@ class Annuitant(
     data_sources: AnnuityDataSources
     values: AnnuitantValues
 
-    @take_init_snapshot
+    @projection_entity_init
     def __init__(
         self,
         init_t: date,
@@ -57,15 +52,13 @@ class Annuitant(
             self=self,
             init_t=init_t,
             data_sources=data_sources,
-            values=AnnuitantValues(
-                date_of_birth=annuitant_data_source.date_of_birth,
-                init_t=init_t
-            )
+            values=AnnuitantValues()
         )
 
         self.id: str = annuitant_data_source.id
 
         self.gender: Gender = annuitant_data_source.gender
+        self.date_of_birth: date = annuitant_data_source.date_of_birth
 
         self.issue_age: relativedelta = relativedelta(
             dt1=annuitant_data_source.date_of_birth,
@@ -85,4 +78,9 @@ class Annuitant(
         duration: relativedelta
     ) -> None:
 
-        self.values.age += duration
+        next_t = t + duration
+
+        self.values.age = relativedelta(
+            dt1=self.date_of_birth,
+            dt2=next_t
+        )

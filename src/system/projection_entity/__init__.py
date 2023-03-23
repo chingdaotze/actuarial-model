@@ -16,6 +16,7 @@ from dateutil.relativedelta import relativedelta
 
 from src.system.data_sources import DataSourcesRoot
 from src.system.projection_entity.projection_values import ProjectionValues
+from src.system.logger import logger
 
 
 class ProjectionEntity(
@@ -114,12 +115,13 @@ class ProjectionEntity(
                 )
 
 
-def take_init_snapshot(
+def projection_entity_init(
     function: Callable[[ProjectionEntity, ...], None]
 ) -> Callable:
 
     """
-    Decorator that takes a snapshot at object initialization. Note that this only works on the __init__ function.
+    Decorator that takes a snapshot at object initialization, and calls the projects initial values.
+    Note that this decorator only works on the __init__ function.
 
     :param function:
     :return:
@@ -141,17 +143,40 @@ def take_init_snapshot(
         :return:
         """
 
-        # Execute function
-        function(
-            instance,
-            *args,
-            **kwargs
-        )
+        if issubclass(type(instance), ProjectionEntity):
 
-        # Take snapshot
-        instance.values.take_snapshot(
-            t=kwargs['init_t']
-        )
+            if function.__name__ == '__init__':
+
+                # Execute function
+                function(
+                    instance,
+                    *args,
+                    **kwargs
+                )
+
+                # Execute projection
+                init_t = kwargs['init_t']
+
+                instance.project(
+                    t=init_t,
+                    duration=relativedelta()
+                )  # Snapshot automatically taken here if method is decorated
+
+            else:
+
+                logger.raise_expr(
+                    expr=AssertionError(
+                        'Must use the @projection_entity_init decorator on the __init__ function!'
+                    )
+                )
+
+        else:
+
+            logger.raise_expr(
+                expr=AssertionError(
+                    'Must use the @projection_entity_init decorator on a projection entity!'
+                )
+            )
 
     return wrapper
 
@@ -175,8 +200,10 @@ def take_snapshot(
     ) -> Any:
 
         """
-        Wrapper function that wraps the decorated function. Contains the core logic for this decorator. Note that
-        instance must be a subclass of a projection entity.
+        Wrapper function that wraps the decorated function. Contains the core logic for this decorator. Note that:
+
+        1. Instance must be a subclass of a projection entity.
+        2. There must be keyword arguments of t and duration.
 
         :param instance:
         :param args:
@@ -184,21 +211,41 @@ def take_snapshot(
         :return:
         """
 
-        # Execute function
-        return_value = function(
-            instance,
-            *args,
-            **kwargs
-        )
+        if issubclass(type(instance), ProjectionEntity):
 
-        # Take snapshot
-        t = kwargs['t']
-        duration: relativedelta = kwargs['duration']
+            if 't' in kwargs and 'duration' in kwargs:
 
-        instance.values.take_snapshot(
-            t=t + duration
-        )
+                # Execute function
+                return_value = function(
+                    instance,
+                    *args,
+                    **kwargs
+                )
 
-        return return_value
+                # Take snapshot
+                t = kwargs['t']
+                duration: relativedelta = kwargs['duration']
+
+                instance.values.take_snapshot(
+                    t=t + duration
+                )
+
+                return return_value
+
+            else:
+
+                logger.raise_expr(
+                    expr=AssertionError(
+                        '@take_snapshot decorator missing required arguments t and duration!'
+                    )
+                )
+
+        else:
+
+            logger.raise_expr(
+                expr=AssertionError(
+                    'Must use the @take_snapshot decorator on a projection entity!'
+                )
+            )
 
     return wrapper

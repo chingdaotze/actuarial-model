@@ -60,8 +60,8 @@ def main() -> None:
     for configured_data_source in data_sources.configured_data_sources():
 
         logger.print(
-            message=f'Calculating model point: {configured_data_source.model_point}, '
-                    f'scenario: {configured_data_source.economic_scenario} ...'
+            message=f'Calculating model point: {configured_data_source.model_point.id}, '
+                    f'scenario: {str(configured_data_source.economic_scenario.scenario_index)} ...'
         )
 
         # Construct projection object

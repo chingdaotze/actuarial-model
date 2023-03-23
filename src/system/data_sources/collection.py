@@ -1,7 +1,8 @@
 from abc import ABC
 from typing import (
     TypeVar,
-    Dict
+    Dict,
+    List
 )
 
 
@@ -72,3 +73,12 @@ class DataSourceCollection(
     ) -> str:
 
         return str(self.__collection)
+
+    @property
+    def keys(
+        self
+    ) -> List[K]:
+
+        return list(
+            self.__collection.keys()
+        )

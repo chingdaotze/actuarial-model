@@ -100,13 +100,13 @@ class Projection(
         :return:
         """
 
-        for attribute_name, attribute in self.__dict__.items():
+        for attribute in self.__dict__.values():
 
             if issubclass(type(attribute), ProjectionEntity):
 
                 attribute_output_file_path = join(
                     output_dir_path,
-                    f'{attribute_name}.csv'
+                    f'{attribute}.csv'
                 )
 
                 attribute.write_snapshots(
