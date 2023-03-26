@@ -28,19 +28,44 @@ class Contract(
             data_sources=data_sources
         )
 
-        self.accounts: List[Account] = self.get_new_accounts(
+        self.accounts: List[Account] = self._get_new_accounts(
             t=self.init_t,
             duration=relativedelta()
         )
 
+        self.premium_new: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self._calc_new_premium()
+        )
+
+        self.premium_cumulative: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self._calc_new_premium()
+        )
+
         self.account_value: ProjectionValue = ProjectionValue(
             init_t=self.init_t,
-            init_value=self.calc_account_value()
+            init_value=self._calc_account_value()
+        )
+
+        self.interest_credited: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
         )
 
         self.cash_surrender_value: ProjectionValue = ProjectionValue(
             init_t=self.init_t,
-            init_value=self.calc_surrender_charge()
+            init_value=self._calc_surrender_charge()
+        )
+
+        self.gmdb_charge: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.gmwb_charge: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
         )
 
     def __str__(
@@ -49,7 +74,7 @@ class Contract(
 
         return 'contract'
 
-    def get_new_accounts(
+    def _get_new_accounts(
         self,
         t: date,
         duration: relativedelta
@@ -68,7 +93,15 @@ class Contract(
 
         return accounts
 
-    def calc_account_value(
+    def _calc_new_premium(
+        self
+    ) -> float:
+
+        return sum(
+            [sub_account.premium_new.latest_value for sub_account in self.accounts]
+        )
+
+    def _calc_account_value(
         self
     ) -> float:
 
@@ -76,10 +109,41 @@ class Contract(
             [sub_account.account_value.latest_value for sub_account in self.accounts]
         )
 
-    def calc_surrender_charge(
+    def _calc_surrender_charge(
         self
     ) -> float:
 
         return sum(
             [sub_account.surrender_charge.latest_value for sub_account in self.accounts]
         )
+
+    def process_premiums(
+        self,
+        t: date,
+        duration: relativedelta
+    ) -> None:
+
+        next_t = t + duration
+
+        # Process premiums for existing accounts
+        for sub_account in self.accounts:
+
+            sub_account.process_premiums(
+                t=t,
+                duration=duration
+            )
+
+        # Get new accounts
+        new_accounts = self._get_new_accounts(
+            t=t,
+            duration=duration
+        )
+
+        self.accounts += new_accounts
+
+        # Calculate new premium total
+        self.premium_new[next_t] = self._calc_new_premium()
+
+        # Update values
+        self.premium_cumulative[next_t] = self.premium_new.latest_value + self.premium_new.latest_value
+        self.account_value[next_t] = self.account_value.latest_value + self.premium_new.latest_value

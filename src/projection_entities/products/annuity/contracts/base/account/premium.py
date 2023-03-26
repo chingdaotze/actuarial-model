@@ -46,12 +46,12 @@ class Premium(
 
         self.surrender_charge_rate: ProjectionValue = ProjectionValue(
             init_t=self.init_t,
-            init_value=self.calc_surrender_charge_rate()
+            init_value=self._calc_surrender_charge_rate()
         )
 
         self.surrender_charge: ProjectionValue = ProjectionValue(
             init_t=self.init_t,
-            init_value=self.calc_surrender_charge()
+            init_value=self._calc_surrender_charge()
         )
 
     def __str__(
@@ -60,7 +60,7 @@ class Premium(
 
         return f'account_{self._account_id}_premium_{date_to_str(target_date=self.init_t)}'
 
-    def calc_surrender_charge_rate(
+    def _calc_surrender_charge_rate(
         self
     ) -> float:
 
@@ -69,7 +69,7 @@ class Premium(
             product_name=self._product_name
         )
 
-    def calc_surrender_charge(
+    def _calc_surrender_charge(
         self
     ) -> float:
 
@@ -85,5 +85,5 @@ class Premium(
             dt2=next_t
         )
 
-        self.surrender_charge_rate[next_t] = self.calc_surrender_charge_rate()
-        self.surrender_charge[next_t] = self.calc_surrender_charge()
+        self.surrender_charge_rate[next_t] = self._calc_surrender_charge_rate()
+        self.surrender_charge[next_t] = self._calc_surrender_charge()

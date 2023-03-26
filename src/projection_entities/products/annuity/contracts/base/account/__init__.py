@@ -34,14 +34,24 @@ class Account(
 
         self.account_data_source: AccountDataSource = account_data_source
 
-        self.premiums: List[Premium] = self.get_new_premiums(
+        self.premiums: List[Premium] = self._get_new_premiums(
             t=self.init_t,
             duration=relativedelta()
         )
 
+        self.premium_new: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self._calc_total_premium()
+        )
+
+        self.premium_cumulative: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self._calc_total_premium()
+        )
+
         self.account_value: ProjectionValue = ProjectionValue(
             init_t=self.init_t,
-            init_value=self.calc_total_premium()
+            init_value=self._calc_total_premium()
         )
 
         self.interest_credited: ProjectionValue = ProjectionValue(
@@ -51,7 +61,7 @@ class Account(
 
         self.surrender_charge: ProjectionValue = ProjectionValue(
             init_t=self.init_t,
-            init_value=self.calc_surrender_charge()
+            init_value=self._calc_surrender_charge()
         )
 
         self.gmdb_charge: ProjectionValue = ProjectionValue(
@@ -70,7 +80,7 @@ class Account(
 
         return f'account_{self.account_data_source.id}'
 
-    def get_new_premiums(
+    def _get_new_premiums(
         self,
         t: date,
         duration: relativedelta
@@ -90,7 +100,7 @@ class Account(
 
         return premiums
 
-    def calc_total_premium(
+    def _calc_total_premium(
         self
     ) -> float:
 
@@ -98,7 +108,7 @@ class Account(
             [subpay.premium_amount.latest_value for subpay in self.premiums]
         )
 
-    def calc_surrender_charge(
+    def _calc_surrender_charge(
         self
     ) -> float:
 
@@ -113,12 +123,37 @@ class Account(
 
         return surrender_charge
 
-    @abstractmethod
-    def calc_interest_credited(
+    def process_premiums(
         self,
         t: date,
         duration: relativedelta
-    ) -> float:
+    ) -> None:
+
+        next_t = t + duration
+
+        # Get new premiums
+        new_premiums = self._get_new_premiums(
+            t=t,
+            duration=duration
+        )
+
+        self.premiums += new_premiums
+
+        # Calculate new premium total
+        self.premium_new[next_t] = sum(
+            [subpay.premium_amount.latest_value for subpay in new_premiums]
+        )
+
+        # Update values
+        self.premium_cumulative[next_t] = self.premium_cumulative.latest_value + self.premium_new.latest_value
+        self.account_value[next_t] = self.account_value.latest_value + self.premium_new.latest_value
+
+    @abstractmethod
+    def credit_interest(
+        self,
+        t: date,
+        duration: relativedelta
+    ) -> None:
 
         """
         Abstract method that represents an interest crediting mechanism. Inherit and override to implement
