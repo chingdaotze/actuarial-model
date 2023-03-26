@@ -3,6 +3,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from src.system.projection_entity import ProjectionEntity
+from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
 
 from src.data_sources.annuity import AnnuityDataSources
@@ -22,14 +23,14 @@ class Annuitant(
 
     def __init__(
         self,
-        init_t: date,
+        time_steps: TimeSteps,
         data_sources: AnnuityDataSources,
         annuitant_data_source: AnnuitantDataSource
     ):
 
         ProjectionEntity.__init__(
             self=self,
-            init_t=init_t,
+            time_steps=time_steps,
             data_sources=data_sources
         )
 
@@ -57,14 +58,10 @@ class Annuitant(
         return f'annuitant_{self.id}'
 
     def update_attained_age(
-        self,
-        t: date,
-        duration: relativedelta
+        self
     ) -> None:
 
-        next_t = t + duration
-
-        self.attained_age[next_t] = relativedelta(
+        self.attained_age[self.time_steps.t] = relativedelta(
             dt1=self.date_of_birth,
-            dt2=t + duration
+            dt2=self.time_steps.t
         )

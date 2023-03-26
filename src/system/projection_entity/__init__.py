@@ -10,6 +10,7 @@ from os.path import (
 
 from pandas import DataFrame
 
+from src.system.projection.time_steps import TimeSteps
 from src.system.data_sources import DataSourcesRoot
 from src.system.projection_entity.projection_value import ProjectionValue
 
@@ -36,12 +37,23 @@ class ProjectionEntity(
 
     def __init__(
         self,
-        init_t: date,
-        data_sources: DataSourcesRoot
+        time_steps: TimeSteps,
+        data_sources: DataSourcesRoot,
+        init_t: date = None
     ):
 
-        self.init_t: date = init_t
+        self.time_steps: TimeSteps = time_steps
         self.data_sources: DataSourcesRoot = data_sources
+
+        self.init_t: date
+
+        if init_t is None:
+
+            self.init_t = time_steps.t
+
+        else:
+
+            self.init_t = init_t
 
     @abstractmethod
     def __str__(
@@ -78,23 +90,31 @@ class ProjectionEntity(
                     how='outer'
                 )
 
-        # Create index
-        output_dataframe.insert(
-            loc=0,
-            column='index',
-            value=range(output_dataframe.shape[0])
-        )
-
-        output_dataframe.set_index(
-            keys=['index'],
-            append=True
-        )
-
         # Write DataFrame to disk
-        output_dataframe.to_csv(
-            path_or_buf=output_file_path,
-            index=True
-        )
+        if not output_dataframe.empty:
+
+            output_dataframe.insert(
+                loc=0,
+                column='index',
+                value=range(output_dataframe.shape[0])
+            )
+
+            output_dataframe.set_index(
+                keys=['index'],
+                append=True
+            )
+
+            output_dataframe.to_csv(
+                path_or_buf=output_file_path,
+                index=True
+            )
+
+        else:
+
+            output_dataframe.to_csv(
+                path_or_buf=output_file_path,
+                index=False
+            )
 
     def write_projection_values_recursively(
         self,
@@ -109,6 +129,19 @@ class ProjectionEntity(
         :return:
         """
 
+        def _call_write_projection_values_recursively(
+            projection_entity: ProjectionEntity
+        ):
+
+            projection_entity_output_file_path = join(
+                dirname(output_file_path),
+                f'{projection_entity}.csv'
+            )
+
+            projection_entity.write_projection_values_recursively(
+                output_file_path=projection_entity_output_file_path
+            )
+
         # Write values for this object
         self.write_projection_values(
             output_file_path=output_file_path
@@ -119,11 +152,26 @@ class ProjectionEntity(
 
             if issubclass(type(attribute), ProjectionEntity):
 
-                attribute_output_file_path = join(
-                    dirname(output_file_path),
-                    f'{attribute}.csv'
+                _call_write_projection_values_recursively(
+                    projection_entity=attribute
                 )
 
-                attribute.write_projection_values_recursively(
-                    output_file_path=attribute_output_file_path
-                )
+            elif isinstance(attribute, list):
+
+                for element in attribute:
+
+                    if issubclass(type(element), ProjectionEntity):
+
+                        _call_write_projection_values_recursively(
+                            projection_entity=element
+                        )
+
+            elif isinstance(attribute, dict):
+
+                for element in attribute.values():
+
+                    if issubclass(type(element), ProjectionEntity):
+
+                        _call_write_projection_values_recursively(
+                            projection_entity=element
+                        )

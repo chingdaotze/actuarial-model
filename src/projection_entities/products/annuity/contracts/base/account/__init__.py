@@ -5,6 +5,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from src.system.projection_entity import ProjectionEntity
+from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
 
 from src.data_sources.annuity import AnnuityDataSources
@@ -21,22 +22,23 @@ class Account(
 
     def __init__(
         self,
-        init_t: date,
+        time_steps: TimeSteps,
         data_sources: AnnuityDataSources,
         account_data_source: AccountDataSource
     ):
 
         ProjectionEntity.__init__(
             self=self,
-            init_t=init_t,
-            data_sources=data_sources
+            time_steps=time_steps,
+            data_sources=data_sources,
+            init_t=account_data_source.account_date
         )
 
         self.account_data_source: AccountDataSource = account_data_source
 
         self.premiums: List[Premium] = self._get_new_premiums(
-            t=self.init_t,
-            duration=relativedelta()
+            t1=self.init_t,
+            t2=self.init_t
         )
 
         self.premium_new: ProjectionValue = ProjectionValue(
@@ -78,24 +80,22 @@ class Account(
         self
     ) -> str:
 
-        return f'account_{self.account_data_source.id}'
+        return f'contract.account_{self.account_data_source.id}'
 
     def _get_new_premiums(
         self,
-        t: date,
-        duration: relativedelta
+        t1: date,
+        t2: date
     ) -> List[Premium]:
-
-        next_t = t + duration
 
         premiums = [
             Premium(
-                init_t=premium_date,
+                time_steps=self.time_steps,
                 data_sources=self.data_sources,
                 account_id=self.account_data_source.id,
                 premium_data_source=premium_data_source
             ) for premium_date, premium_data_source in self.account_data_source.premiums.items
-            if t < premium_date <= next_t
+            if t1 < premium_date <= t2
         ]
 
         return premiums
@@ -124,29 +124,34 @@ class Account(
         return surrender_charge
 
     def process_premiums(
-        self,
-        t: date,
-        duration: relativedelta
+        self
     ) -> None:
 
-        next_t = t + duration
-
         # Get new premiums
-        new_premiums = self._get_new_premiums(
-            t=t,
-            duration=duration
-        )
+        if self.time_steps.t != self.init_t:
 
-        self.premiums += new_premiums
+            new_premiums = self._get_new_premiums(
+                t1=self.time_steps.prev_t,
+                t2=self.time_steps.t
+            )
+
+            self.premiums += new_premiums
+
+        else:
+
+            new_premiums = []
 
         # Calculate new premium total
-        self.premium_new[next_t] = sum(
+        self.premium_new[self.time_steps.t] = sum(
             [subpay.premium_amount.latest_value for subpay in new_premiums]
         )
 
         # Update values
-        self.premium_cumulative[next_t] = self.premium_cumulative.latest_value + self.premium_new.latest_value
-        self.account_value[next_t] = self.account_value.latest_value + self.premium_new.latest_value
+        self.premium_cumulative[self.time_steps.t] = \
+            self.premium_cumulative.latest_value + \
+            self.premium_new.latest_value
+
+        self.account_value[self.time_steps.t] = self.account_value.latest_value + self.premium_new.latest_value
 
     @abstractmethod
     def credit_interest(

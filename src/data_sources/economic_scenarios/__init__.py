@@ -1,3 +1,4 @@
+from typing import List
 from pandas import to_datetime
 
 from src.system.data_sources.collection import DataSourceCollection
@@ -36,16 +37,18 @@ class EconomicScenarios(
         )
 
         # Construct scenarios
-        self.cache.set_index(
-            keys='path',
-            inplace=True
-        )
-
         self.cache['t'] = to_datetime(
             self.cache['t']
         ).dt.date
 
-        for scenario_index in self.cache.index.unique():
+        self.cache.set_index(
+            keys=['path', 't'],
+            inplace=True
+        )
+
+        self.rates: List[str] = list(self.cache.columns)
+
+        for scenario_index in self.cache.index.levels[0].unique():
 
             instance = EconomicScenario(
                 data=self.cache.loc[scenario_index],

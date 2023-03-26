@@ -14,11 +14,11 @@ class ProjectionValue:
         init_value: Any
     ):
 
-        self.__history: DataFrame = DataFrame(
+        self._history: DataFrame = DataFrame(
             columns=['t', self.VALUE_COL]
         )
 
-        self.__history.set_index(
+        self._history.set_index(
             keys='t',
             inplace=True
         )
@@ -30,14 +30,14 @@ class ProjectionValue:
         self
     ) -> Any:
 
-        return self.__history[self.__history.index.max]
+        return self._history[self.VALUE_COL][self._history.index.max()]
 
     @property
     def history(
         self
     ) -> DataFrame:
 
-        return self.__history
+        return self._history
 
     def __setitem__(
         self,
@@ -45,11 +45,11 @@ class ProjectionValue:
         value: Any
     ) -> None:
 
-        self.__history.loc[key] = value
+        self._history.loc[key] = value
 
     def __getitem__(
         self,
         item: date
     ) -> Any:
 
-        return self.__history[[item]]
+        return self._history[[item]]

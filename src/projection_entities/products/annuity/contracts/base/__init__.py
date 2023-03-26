@@ -1,9 +1,8 @@
 from typing import List
 from datetime import date
 
-from dateutil.relativedelta import relativedelta
-
 from src.system.projection_entity import ProjectionEntity
+from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
 
 from src.data_sources.annuity import AnnuityDataSources
@@ -18,19 +17,19 @@ class Contract(
 
     def __init__(
         self,
-        init_t: date,
+        time_steps: TimeSteps,
         data_sources: AnnuityDataSources
     ):
 
         ProjectionEntity.__init__(
             self=self,
-            init_t=init_t,
+            time_steps=time_steps,
             data_sources=data_sources
         )
 
         self.accounts: List[Account] = self._get_new_accounts(
-            t=self.init_t,
-            duration=relativedelta()
+            t1=self.init_t,
+            t2=self.init_t
         )
 
         self.premium_new: ProjectionValue = ProjectionValue(
@@ -76,19 +75,17 @@ class Contract(
 
     def _get_new_accounts(
         self,
-        t: date,
-        duration: relativedelta
+        t1: date,
+        t2: date
     ) -> List[Account]:
-
-        next_t = t + duration
 
         accounts = [
             Account(
-                init_t=account_data_source.account_date,
+                time_steps=self.time_steps,
                 data_sources=self.data_sources,
                 account_data_source=account_data_source
             ) for account_data_source in self.data_sources.model_point.accounts
-            if t < account_data_source.account_date <= next_t
+            if t1 < account_data_source.account_date <= t2
         ]
 
         return accounts
@@ -118,32 +115,27 @@ class Contract(
         )
 
     def process_premiums(
-        self,
-        t: date,
-        duration: relativedelta
+        self
     ) -> None:
-
-        next_t = t + duration
 
         # Process premiums for existing accounts
         for sub_account in self.accounts:
 
-            sub_account.process_premiums(
-                t=t,
-                duration=duration
-            )
+            sub_account.process_premiums()
 
         # Get new accounts
-        new_accounts = self._get_new_accounts(
-            t=t,
-            duration=duration
-        )
+        if self.time_steps.t != self.init_t:
 
-        self.accounts += new_accounts
+            new_accounts = self._get_new_accounts(
+                t1=self.time_steps.prev_t,
+                t2=self.time_steps.t
+            )
+
+            self.accounts += new_accounts
 
         # Calculate new premium total
-        self.premium_new[next_t] = self._calc_new_premium()
+        self.premium_new[self.time_steps.t] = self._calc_new_premium()
 
         # Update values
-        self.premium_cumulative[next_t] = self.premium_new.latest_value + self.premium_new.latest_value
-        self.account_value[next_t] = self.account_value.latest_value + self.premium_new.latest_value
+        self.premium_cumulative[self.time_steps.t] = self.premium_new.latest_value + self.premium_new.latest_value
+        self.account_value[self.time_steps.t] = self.account_value.latest_value + self.premium_new.latest_value

@@ -24,16 +24,6 @@ class EconomicScenario(
             data=data
         )
 
-        self.cache.reset_index(
-            drop=True,
-            inplace=True
-        )
-
-        self.cache.set_index(
-            keys='t',
-            inplace=True
-        )
-
         self.scenario_index: int = scenario_index
 
     def get_rate(

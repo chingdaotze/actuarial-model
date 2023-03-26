@@ -6,6 +6,7 @@ from datetime import date
 from os.path import join
 
 from src.system.projection.parameters import ProjectionParameters
+from src.system.projection.time_steps import TimeSteps
 from src.system.data_sources import DataSourcesRoot
 from src.system.projection_entity import ProjectionEntity
 
@@ -33,7 +34,12 @@ class Projection(
         """
 
         self.projection_parameters: ProjectionParameters = projection_parameters
-        self.t: date = self.projection_parameters.start_t
+
+        self.time_steps: TimeSteps = TimeSteps(
+            start_t=projection_parameters.start_t,
+            end_t=projection_parameters.end_t,
+            time_step=projection_parameters.time_step
+        )
 
         self.data_sources: DataSourcesRoot = data_sources
 
@@ -77,11 +83,9 @@ class Projection(
         :return:
         """
 
-        while self.t < self.projection_parameters.end_t:
+        for _ in self.time_steps:
 
             self.project_time_step()
-
-            self.t += self.projection_parameters.time_step
 
             if self.halt_projection():
 

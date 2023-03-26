@@ -1,8 +1,7 @@
 from datetime import date
 
-from dateutil.relativedelta import relativedelta
-
 from src.system.projection_entity import ProjectionEntity
+from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
 
 from src.data_sources.annuity import AnnuityDataSources
@@ -21,14 +20,14 @@ class Index(
 
     def __init__(
         self,
-        init_t: date,
+        time_steps: TimeSteps,
         data_sources: AnnuityDataSources,
         index_name: str
     ):
 
         ProjectionEntity.__init__(
             self=self,
-            init_t=init_t,
+            time_steps=time_steps,
             data_sources=data_sources
         )
 
@@ -52,30 +51,30 @@ class Index(
         self
     ) -> str:
 
-        return f'index_{self.index_name}'
+        return f'economy.index_{self.index_name}'
 
     def calc_pct_change(
         self,
-        t: date,
-        duration: relativedelta
+        t1: date,
+        t2: date
     ) -> float:
 
         """
         Calculates the percentage growth in the index between two points in time.
 
-        :param t:
-        :param duration:
+        :param t1:
+        :param t2:
         :return:
         """
 
         curr_rate = self.economic_scenario.get_rate(
             name=self.index_name,
-            t=t
+            t=t1
         )
 
         next_rate = self.economic_scenario.get_rate(
             name=self.index_name,
-            t=t + duration
+            t=t2
         )
 
         pct_change = (next_rate / curr_rate) - 1.0
@@ -83,9 +82,7 @@ class Index(
         return pct_change
 
     def update_index(
-        self,
-        t: date,
-        duration: relativedelta
+        self
     ) -> None:
 
         """
@@ -94,19 +91,15 @@ class Index(
         1. The percent change in the index from one period to the next.
         2. The index value itself.
 
-        :param t:
-        :param duration:
         :return:
         """
 
-        next_t = t + duration
-
-        self.pct_change[next_t] = self.calc_pct_change(
-            t=t,
-            duration=duration
+        self.pct_change[self.time_steps.t] = self.calc_pct_change(
+            t1=self.time_steps.prev_t,
+            t2=self.time_steps.t
         )
 
-        self.index_value[next_t] = self.economic_scenario.get_rate(
+        self.index_value[self.time_steps.t] = self.economic_scenario.get_rate(
             name=self.index_name,
-            t=next_t
+            t=self.time_steps.t
         )

@@ -1,8 +1,7 @@
-from datetime import date
-
 from dateutil.relativedelta import relativedelta
 
 from src.system.projection_entity import ProjectionEntity
+from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
 from src.system.date import date_to_str
 
@@ -19,7 +18,7 @@ class Premium(
 
     def __init__(
         self,
-        init_t: date,
+        time_steps: TimeSteps,
         data_sources: AnnuityDataSources,
         account_id: str,
         premium_data_source: PremiumDataSource
@@ -27,8 +26,9 @@ class Premium(
 
         ProjectionEntity.__init__(
             self=self,
-            init_t=init_t,
-            data_sources=data_sources
+            time_steps=time_steps,
+            data_sources=data_sources,
+            init_t=premium_data_source.premium_date
         )
 
         self._product_name: str = self.data_sources.model_point.product_name
@@ -58,14 +58,21 @@ class Premium(
         self
     ) -> str:
 
-        return f'account_{self._account_id}_premium_{date_to_str(target_date=self.init_t)}'
+        return f'contract.account_{self._account_id}.premium_{date_to_str(target_date=self.init_t)}'
+
+    @property
+    def premium_year(
+        self
+    ) -> int:
+
+        return self.premium_age.latest_value.years + 1
 
     def _calc_surrender_charge_rate(
         self
     ) -> float:
 
         return self.data_sources.product.base_product.surrender_charge.surrender_charge_rate(
-            policy_year=self.premium_age.latest_value.years + 1,
+            policy_year=self.premium_year,
             product_name=self._product_name
         )
 
@@ -76,14 +83,13 @@ class Premium(
         return self.premium_amount.latest_value * self.surrender_charge_rate.latest_value
 
     def update_premium(
-        self,
-        next_t: date
+        self
     ) -> None:
 
-        self.premium_age[next_t] = relativedelta(
+        self.premium_age[self.time_steps.t] = relativedelta(
             dt1=self.init_t,
-            dt2=next_t
+            dt2=self.time_steps.t
         )
 
-        self.surrender_charge_rate[next_t] = self._calc_surrender_charge_rate()
-        self.surrender_charge[next_t] = self._calc_surrender_charge()
+        self.surrender_charge_rate[self.time_steps.t] = self._calc_surrender_charge_rate()
+        self.surrender_charge[self.time_steps.t] = self._calc_surrender_charge()
