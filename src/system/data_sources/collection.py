@@ -82,3 +82,12 @@ class DataSourceCollection(
         return list(
             self.__collection.keys()
         )
+
+    @property
+    def items(
+        self
+    ) -> List[K]:
+
+        return list(
+            self.__collection.items()
+        )

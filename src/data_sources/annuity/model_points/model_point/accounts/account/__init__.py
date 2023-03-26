@@ -1,4 +1,5 @@
 from typing import Dict
+from datetime import date
 
 from src.system.data_sources.data_source.python_dict import DataSourcePythonDict
 from src.system.constants import DEFAULT_COL
@@ -54,3 +55,12 @@ class Account(
     ) -> float:
 
         return self.cache[DEFAULT_COL]['account_value']
+
+    @property
+    def account_date(
+        self
+    ) -> date:
+
+        return min(
+            premium.premium_date for premium in self.premiums
+        )

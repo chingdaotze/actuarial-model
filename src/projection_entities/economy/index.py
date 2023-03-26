@@ -2,31 +2,11 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
-from src.system.projection_entity.projection_values import ProjectionValues
-from src.system.projection_entity import (
-    ProjectionEntity,
-    projection_entity_init,
-    take_snapshot
-)
+from src.system.projection_entity import ProjectionEntity
+from src.system.projection_entity.projection_value import ProjectionValue
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.economic_scenarios.economic_scenario import EconomicScenario
-
-
-class IndexValues(
-    ProjectionValues
-):
-
-    def __init__(
-        self
-    ):
-
-        ProjectionValues.__init__(
-            self=self
-        )
-
-        self.index_value: float = 0.0
-        self.pct_change: float = 0.0
 
 
 class Index(
@@ -38,9 +18,7 @@ class Index(
     """
 
     data_sources: AnnuityDataSources
-    values: IndexValues
 
-    @projection_entity_init
     def __init__(
         self,
         init_t: date,
@@ -51,12 +29,24 @@ class Index(
         ProjectionEntity.__init__(
             self=self,
             init_t=init_t,
-            data_sources=data_sources,
-            values=IndexValues()
+            data_sources=data_sources
         )
 
         self.economic_scenario: EconomicScenario = data_sources.economic_scenario
         self.index_name: str = index_name
+
+        self.index_value: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self.economic_scenario.get_rate(
+                name=self.index_name,
+                t=self.init_t
+            )
+        )
+
+        self.pct_change: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
 
     def __str__(
         self
@@ -92,8 +82,7 @@ class Index(
 
         return pct_change
 
-    @take_snapshot
-    def project(
+    def update_index(
         self,
         t: date,
         duration: relativedelta
@@ -110,12 +99,14 @@ class Index(
         :return:
         """
 
-        self.values.pct_change = self.calc_pct_change(
+        next_t = t + duration
+
+        self.pct_change[next_t] = self.calc_pct_change(
             t=t,
             duration=duration
         )
 
-        self.values.index_value = self.economic_scenario.get_rate(
+        self.index_value[next_t] = self.economic_scenario.get_rate(
             name=self.index_name,
-            t=t + duration
+            t=next_t
         )

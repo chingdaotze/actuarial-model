@@ -4,33 +4,12 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
-from src.system.projection_entity.projection_values import ProjectionValues
-from src.system.projection_entity import (
-    ProjectionEntity,
-    projection_entity_init,
-    take_snapshot
-)
+from src.system.projection_entity import ProjectionEntity
+from src.system.projection_entity.projection_value import ProjectionValue
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.accounts.account import Account as AccountDataSource
 from src.projection_entities.products.annuity.contracts.base.account.premium import Premium
-
-
-class AccountValues(
-    ProjectionValues
-):
-
-    def __init__(
-        self
-    ):
-
-        ProjectionValues.__init__(
-            self=self
-        )
-
-        self.account_value: float = 0.0
-        self.interest_credited: float = 0.0
-        self.surrender_charge_quote: float = 0.0
 
 
 class Account(
@@ -39,9 +18,7 @@ class Account(
 ):
 
     data_sources: AnnuityDataSources
-    values: AccountValues
 
-    @projection_entity_init
     def __init__(
         self,
         init_t: date,
@@ -52,13 +29,40 @@ class Account(
         ProjectionEntity.__init__(
             self=self,
             init_t=init_t,
-            data_sources=data_sources,
-            values=AccountValues()
+            data_sources=data_sources
         )
 
         self.account_data_source: AccountDataSource = account_data_source
 
-        self.premiums: List[Premium] = []
+        self.premiums: List[Premium] = self.get_new_premiums(
+            t=self.init_t,
+            duration=relativedelta()
+        )
+
+        self.account_value: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self.calc_total_premium()
+        )
+
+        self.interest_credited: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.surrender_charge: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self.calc_surrender_charge()
+        )
+
+        self.gmdb_charge: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.gmwb_charge: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
 
     def __str__(
         self
@@ -66,26 +70,51 @@ class Account(
 
         return f'account_{self.account_data_source.id}'
 
-    @property
-    def surrender_charge_quote(
+    def get_new_premiums(
+        self,
+        t: date,
+        duration: relativedelta
+    ) -> List[Premium]:
+
+        next_t = t + duration
+
+        premiums = [
+            Premium(
+                init_t=premium_date,
+                data_sources=self.data_sources,
+                account_id=self.account_data_source.id,
+                premium_data_source=premium_data_source
+            ) for premium_date, premium_data_source in self.account_data_source.premiums.items
+            if t < premium_date <= next_t
+        ]
+
+        return premiums
+
+    def calc_total_premium(
         self
     ) -> float:
 
-        surrender_charge_quote = 0.0
-
-        for subpay in self.premiums:
-
-            surrender_charge_quote += subpay.surrender_charge_quote
-
-        surrender_charge_quote = min(
-            surrender_charge_quote,
-            self.values.account_value
+        return sum(
+            [subpay.premium_amount.latest_value for subpay in self.premiums]
         )
 
-        return surrender_charge_quote
+    def calc_surrender_charge(
+        self
+    ) -> float:
+
+        surrender_charge = sum(
+            [subpay.surrender_charge.latest_value for subpay in self.premiums]
+        )
+
+        surrender_charge = min(
+            surrender_charge,
+            self.account_value.latest_value
+        )
+
+        return surrender_charge
 
     @abstractmethod
-    def credit_interest(
+    def calc_interest_credited(
         self,
         t: date,
         duration: relativedelta
@@ -101,38 +130,3 @@ class Account(
         """
 
         ...
-
-    @take_snapshot
-    def project(
-        self,
-        t: date,
-        duration: relativedelta
-    ) -> None:
-
-        next_t = t + duration
-
-        # Add new premiums
-        if next_t in self.account_data_source.premiums.keys:
-
-            subpay = Premium(
-                init_t=next_t,
-                data_sources=self.data_sources,
-                account_data_source=self.account_data_source
-            )
-
-            self.premiums.append(
-                subpay
-            )
-
-            self.values.account_value += subpay.values.premium_amount
-
-        # Credit interest to account
-        self.values.interest_credited = self.credit_interest(
-            t=t,
-            duration=duration
-        )
-
-        self.values.account_value += self.values.interest_credited
-
-        # Calculate surrender charge quote
-        self.values.surrender_charge_quote = self.surrender_charge_quote

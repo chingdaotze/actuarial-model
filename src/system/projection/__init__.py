@@ -109,6 +109,6 @@ class Projection(
                     f'{attribute}.csv'
                 )
 
-                attribute.write_snapshots(
+                attribute.write_projection_values_recursively(
                     output_file_path=attribute_output_file_path
                 )

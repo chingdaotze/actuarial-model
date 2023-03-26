@@ -38,7 +38,7 @@ class EconomicLiabilityProjection(
         self
     ) -> None:
 
-        self.index.project(
+        self.index.update_index(
             t=self.t,
             duration=self.projection_parameters.time_step
         )

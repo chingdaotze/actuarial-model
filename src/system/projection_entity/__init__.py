@@ -2,21 +2,16 @@ from abc import (
     ABC,
     abstractmethod
 )
-from typing import (
-    Callable,
-    Any
-)
 from datetime import date
 from os.path import (
     join,
     dirname
 )
 
-from dateutil.relativedelta import relativedelta
+from pandas import DataFrame
 
 from src.system.data_sources import DataSourcesRoot
-from src.system.projection_entity.projection_values import ProjectionValues
-from src.system.logger import logger
+from src.system.projection_entity.projection_value import ProjectionValue
 
 
 class ProjectionEntity(
@@ -42,13 +37,11 @@ class ProjectionEntity(
     def __init__(
         self,
         init_t: date,
-        data_sources: DataSourcesRoot,
-        values: ProjectionValues
+        data_sources: DataSourcesRoot
     ):
 
         self.init_t: date = init_t
         self.data_sources: DataSourcesRoot = data_sources
-        self.values: ProjectionValues = values
 
     @abstractmethod
     def __str__(
@@ -64,27 +57,46 @@ class ProjectionEntity(
 
         ...
 
-    @abstractmethod
-    def project(
+    def write_projection_values(
         self,
-        t: date,
-        duration: relativedelta
+        output_file_path: str
     ) -> None:
 
-        """
-        Abstract method that pushes the projection entity forward in time. This method should
-        trigger all events that are time-dependent. For example, updating policy counts for any
-        decrements that occur within the interval, or updating account values using the latest
-        market values.
+        # Combine all values into single DataFrame
+        output_dataframe = DataFrame()
 
-        :param t:
-        :param duration:
-        :return:
-        """
+        for attribute_name, attribute in self.__dict__.items():
 
-        ...
+            if issubclass(type(attribute), ProjectionValue):
 
-    def write_snapshots(
+                output_dataframe = output_dataframe.join(
+                    other=attribute.history.rename(
+                        columns={
+                            attribute.VALUE_COL: attribute_name
+                        }
+                    ),
+                    how='outer'
+                )
+
+        # Create index
+        output_dataframe.insert(
+            loc=0,
+            column='index',
+            value=range(output_dataframe.shape[0])
+        )
+
+        output_dataframe.set_index(
+            keys=['index'],
+            append=True
+        )
+
+        # Write DataFrame to disk
+        output_dataframe.to_csv(
+            path_or_buf=output_file_path,
+            index=True
+        )
+
+    def write_projection_values_recursively(
         self,
         output_file_path: str
     ) -> None:
@@ -97,10 +109,12 @@ class ProjectionEntity(
         :return:
         """
 
-        self.values.write_snapshots(
-            path=output_file_path
+        # Write values for this object
+        self.write_projection_values(
+            output_file_path=output_file_path
         )
 
+        # Write values for all child objects
         for attribute in self.__dict__.values():
 
             if issubclass(type(attribute), ProjectionEntity):
@@ -110,142 +124,6 @@ class ProjectionEntity(
                     f'{attribute}.csv'
                 )
 
-                attribute.write_snapshots(
+                attribute.write_projection_values_recursively(
                     output_file_path=attribute_output_file_path
                 )
-
-
-def projection_entity_init(
-    function: Callable[[ProjectionEntity, ...], None]
-) -> Callable:
-
-    """
-    Decorator that takes a snapshot at object initialization, and calls the projects initial values.
-    Note that this decorator only works on the __init__ function.
-
-    :param function:
-    :return:
-    """
-
-    def wrapper(
-        instance: ProjectionEntity,
-        *args,
-        **kwargs
-    ) -> Any:
-
-        """
-        Wrapper function that wraps the decorated function. Contains the core logic for this decorator. Note that
-        instance must be a subclass of a projection entity.
-
-        :param instance:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-
-        if issubclass(type(instance), ProjectionEntity):
-
-            if function.__name__ == '__init__':
-
-                # Execute function
-                function(
-                    instance,
-                    *args,
-                    **kwargs
-                )
-
-                # Execute projection
-                init_t = kwargs['init_t']
-
-                instance.project(
-                    t=init_t,
-                    duration=relativedelta()
-                )  # Snapshot automatically taken here if method is decorated
-
-            else:
-
-                logger.raise_expr(
-                    expr=AssertionError(
-                        'Must use the @projection_entity_init decorator on the __init__ function!'
-                    )
-                )
-
-        else:
-
-            logger.raise_expr(
-                expr=AssertionError(
-                    'Must use the @projection_entity_init decorator on a projection entity!'
-                )
-            )
-
-    return wrapper
-
-
-def take_snapshot(
-    function: Callable[[ProjectionEntity, date, relativedelta], Any]
-) -> Callable:
-
-    """
-    Decorator that takes a snapshot whenever it is used. Note that this only works on functions within a projection
-    entity.
-
-    :param function:
-    :return:
-    """
-
-    def wrapper(
-        instance: ProjectionEntity,
-        *args,
-        **kwargs
-    ) -> Any:
-
-        """
-        Wrapper function that wraps the decorated function. Contains the core logic for this decorator. Note that:
-
-        1. Instance must be a subclass of a projection entity.
-        2. There must be keyword arguments of t and duration.
-
-        :param instance:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-
-        if issubclass(type(instance), ProjectionEntity):
-
-            if 't' in kwargs and 'duration' in kwargs:
-
-                # Execute function
-                return_value = function(
-                    instance,
-                    *args,
-                    **kwargs
-                )
-
-                # Take snapshot
-                t = kwargs['t']
-                duration: relativedelta = kwargs['duration']
-
-                instance.values.take_snapshot(
-                    t=t + duration
-                )
-
-                return return_value
-
-            else:
-
-                logger.raise_expr(
-                    expr=AssertionError(
-                        '@take_snapshot decorator missing required arguments t and duration!'
-                    )
-                )
-
-        else:
-
-            logger.raise_expr(
-                expr=AssertionError(
-                    'Must use the @take_snapshot decorator on a projection entity!'
-                )
-            )
-
-    return wrapper
