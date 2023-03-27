@@ -48,3 +48,5 @@ class EconomicLiabilityProjection(
         self.contract.update_annuitants()
 
         self.contract.process_premiums()
+
+        self.contract.update_cash_surrender_value()

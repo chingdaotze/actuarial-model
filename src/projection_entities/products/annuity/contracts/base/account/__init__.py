@@ -166,6 +166,12 @@ class Account(
 
             self.account_value[self.time_steps.t] = self.account_value.latest_value + self.premium_new.latest_value
 
+    def update_surrender_charge(
+        self
+    ) -> None:
+
+        self.surrender_charge[self.time_steps.t] = self._calc_surrender_charge()
+
     def credit_interest(
         self,
         t: date,

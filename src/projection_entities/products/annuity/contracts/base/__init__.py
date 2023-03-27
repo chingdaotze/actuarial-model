@@ -186,3 +186,14 @@ class Contract(
                 self.premium_cumulative.latest_value + self.premium_new.latest_value
 
             self.account_value[self.time_steps.t] = self.account_value.latest_value + self.premium_new.latest_value
+
+    def update_cash_surrender_value(
+        self
+    ) -> None:
+
+        for sub_account in self.accounts:
+
+            sub_account.update_surrender_charge()
+
+        self.surrender_charge[self.time_steps.t] = self._calc_surrender_charge()
+        self.cash_surrender_value[self.time_steps.t] = self._calc_cash_surrender_value()
