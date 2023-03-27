@@ -6,6 +6,7 @@ from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
 
 from src.data_sources.annuity import AnnuityDataSources
+from src.projection_entities.people.annuitant import Annuitant
 from src.projection_entities.products.annuity.contracts.base.account import Account
 
 
@@ -26,6 +27,14 @@ class Contract(
             time_steps=time_steps,
             data_sources=data_sources
         )
+
+        self.annuitants: List[Annuitant] = [
+            Annuitant(
+                time_steps=self.time_steps,
+                data_sources=self.data_sources,
+                annuitant_data_source=annuitant_data_source
+            ) for annuitant_data_source in self.data_sources.model_point.annuitants
+        ]
 
         self.accounts: List[Account] = self._get_new_accounts(
             t1=self.init_t,
@@ -113,6 +122,14 @@ class Contract(
         return sum(
             [sub_account.surrender_charge.latest_value for sub_account in self.accounts]
         )
+
+    def update_annuitants(
+        self
+    ) -> None:
+
+        for annuitant in self.annuitants:
+
+            annuitant.update_attained_age()
 
     def process_premiums(
         self
