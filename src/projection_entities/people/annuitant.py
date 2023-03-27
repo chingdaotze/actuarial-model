@@ -39,15 +39,15 @@ class Annuitant(
         self.date_of_birth: date = annuitant_data_source.date_of_birth
 
         self.issue_age: relativedelta = relativedelta(
-            dt1=annuitant_data_source.date_of_birth,
-            dt2=data_sources.model_point.issue_date
+            dt1=data_sources.model_point.issue_date,
+            dt2=annuitant_data_source.date_of_birth
         )
 
         self.attained_age = ProjectionValue(
             init_t=self.init_t,
             init_value=relativedelta(
-                dt1=self.date_of_birth,
-                dt2=self.init_t
+                dt1=self.init_t,
+                dt2=self.date_of_birth
             )
         )
 
@@ -62,6 +62,6 @@ class Annuitant(
     ) -> None:
 
         self.attained_age[self.time_steps.t] = relativedelta(
-            dt1=self.date_of_birth,
-            dt2=self.time_steps.t
+            dt1=self.time_steps.t,
+            dt2=self.date_of_birth
         )

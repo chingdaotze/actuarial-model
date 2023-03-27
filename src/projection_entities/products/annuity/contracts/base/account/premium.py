@@ -87,8 +87,8 @@ class Premium(
     ) -> None:
 
         self.premium_age[self.time_steps.t] = relativedelta(
-            dt1=self.init_t,
-            dt2=self.time_steps.t
+            dt1=self.premium_age.latest_value.years,
+            dt2=self.init_t
         )
 
         self.surrender_charge_rate[self.time_steps.t] = self._calc_surrender_charge_rate()

@@ -4,6 +4,7 @@ from src.system.projection.parameters import ProjectionParameters
 from src.data_sources.annuity import AnnuityDataSources
 
 from src.projection_entities.economy import Economy
+from src.projection_entities.products.annuity.contracts.base import Contract
 
 
 class EconomicLiabilityProjection(
@@ -33,8 +34,17 @@ class EconomicLiabilityProjection(
             data_sources=self.data_sources
         )
 
+        self.contract: Contract = Contract(
+            time_steps=self.time_steps,
+            data_sources=self.data_sources
+        )
+
     def project_time_step(
         self
     ) -> None:
 
         self.economy.update_economy()
+
+        self.contract.update_annuitants()
+
+        self.contract.process_premiums()
