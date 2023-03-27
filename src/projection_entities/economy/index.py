@@ -51,7 +51,7 @@ class Index(
         self
     ) -> str:
 
-        return f'economy.index_{self.index_name}'
+        return f'economy.index.{self.index_name}'
 
     def calc_pct_change(
         self,

@@ -37,8 +37,7 @@ class Account(
         self.account_data_source: AccountDataSource = account_data_source
 
         self.premiums: List[Premium] = self._get_new_premiums(
-            t1=self.init_t,
-            t2=self.init_t
+            t1=self.init_t
         )
 
         self.premium_new: ProjectionValue = ProjectionValue(
@@ -80,23 +79,37 @@ class Account(
         self
     ) -> str:
 
-        return f'contract.account_{self.account_data_source.id}'
+        return f'contract.account.{self.account_data_source.id}'
 
     def _get_new_premiums(
         self,
         t1: date,
-        t2: date
+        t2: date = None
     ) -> List[Premium]:
 
-        premiums = [
-            Premium(
-                time_steps=self.time_steps,
-                data_sources=self.data_sources,
-                account_id=self.account_data_source.id,
-                premium_data_source=premium_data_source
-            ) for premium_date, premium_data_source in self.account_data_source.premiums.items
-            if t1 < premium_date <= t2
-        ]
+        if t2 is None:
+
+            premiums = [
+                Premium(
+                    time_steps=self.time_steps,
+                    data_sources=self.data_sources,
+                    account_id=self.account_data_source.id,
+                    premium_data_source=premium_data_source
+                ) for premium_date, premium_data_source in self.account_data_source.premiums.items
+                if t1 == premium_date
+            ]
+
+        else:
+
+            premiums = [
+                Premium(
+                    time_steps=self.time_steps,
+                    data_sources=self.data_sources,
+                    account_id=self.account_data_source.id,
+                    premium_data_source=premium_data_source
+                ) for premium_date, premium_data_source in self.account_data_source.premiums.items
+                if t1 < premium_date <= t2
+            ]
 
         return premiums
 
@@ -127,9 +140,14 @@ class Account(
         self
     ) -> None:
 
-        # Get new premiums
         if self.time_steps.t != self.init_t:
 
+            # Age existing premiums
+            for subpay in self.premiums:
+
+                subpay.update_premium()
+
+            # Get new premiums
             new_premiums = self._get_new_premiums(
                 t1=self.time_steps.prev_t,
                 t2=self.time_steps.t
@@ -137,23 +155,17 @@ class Account(
 
             self.premiums += new_premiums
 
-        else:
+            # Calculate new premium total
+            self.premium_new[self.time_steps.t] = sum(
+                [subpay.premium_amount.latest_value for subpay in new_premiums]
+            )
 
-            new_premiums = []
+            # Update values
+            self.premium_cumulative[self.time_steps.t] = \
+                self.premium_cumulative.latest_value + self.premium_new.latest_value
 
-        # Calculate new premium total
-        self.premium_new[self.time_steps.t] = sum(
-            [subpay.premium_amount.latest_value for subpay in new_premiums]
-        )
+            self.account_value[self.time_steps.t] = self.account_value.latest_value + self.premium_new.latest_value
 
-        # Update values
-        self.premium_cumulative[self.time_steps.t] = \
-            self.premium_cumulative.latest_value + \
-            self.premium_new.latest_value
-
-        self.account_value[self.time_steps.t] = self.account_value.latest_value + self.premium_new.latest_value
-
-    @abstractmethod
     def credit_interest(
         self,
         t: date,

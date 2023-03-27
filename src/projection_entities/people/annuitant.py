@@ -55,7 +55,7 @@ class Annuitant(
         self
     ) -> str:
 
-        return f'annuitant_{self.id}'
+        return f'annuitant.{self.id}'
 
     def update_attained_age(
         self

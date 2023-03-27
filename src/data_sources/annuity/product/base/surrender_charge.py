@@ -38,4 +38,9 @@ class SurrenderCharge(
         :return:
         """
 
-        return self.cache[product_name][policy_year]
+        max_lookup_value = min(
+            policy_year,
+            self.cache.index.max()
+        )
+
+        return self.cache[product_name][max_lookup_value]

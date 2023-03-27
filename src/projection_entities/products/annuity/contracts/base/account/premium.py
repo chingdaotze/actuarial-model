@@ -58,7 +58,7 @@ class Premium(
         self
     ) -> str:
 
-        return f'contract.account_{self._account_id}.premium_{date_to_str(target_date=self.init_t)}'
+        return f'contract.account.{self._account_id}.premium.{date_to_str(target_date=self.init_t)}'
 
     @property
     def premium_year(
@@ -87,7 +87,7 @@ class Premium(
     ) -> None:
 
         self.premium_age[self.time_steps.t] = relativedelta(
-            dt1=self.premium_age.latest_value.years,
+            dt1=self.time_steps.t,
             dt2=self.init_t
         )
 
