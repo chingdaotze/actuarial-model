@@ -350,7 +350,15 @@ class Contract(
                 self.premium_cumulative.latest_value + self.premium_new.latest_value
 
             self.account_value[self.time_steps.t] = self._calc_account_value()
+
             self.update_cash_surrender_value()
+
+        # Process premiums for riders
+        for rider in self.riders:
+
+            rider.process_premiums(
+                base_contract=self
+            )
 
     def credit_interest(
         self
@@ -367,7 +375,8 @@ class Contract(
 
     def assess_charge(
         self,
-        charge_amount: float
+        charge_amount: float,
+        charge_account_name: str
     ) -> None:
 
         # Apply charge pro rata across accounts
@@ -377,10 +386,14 @@ class Contract(
             pro_rata_charge = charge_amount * pro_rata_factor
 
             sub_account.process_charge(
-                charge_amount=pro_rata_charge
+                charge_amount=pro_rata_charge,
+                charge_account_name=charge_account_name
             )
 
         # Update values
+        charge_account = self.__dict__[charge_account_name]
+        charge_account[self.time_steps.t] = charge_amount
+
         self.account_value[self.time_steps.t] = self._calc_account_value()
         self.update_cash_surrender_value()
 
@@ -388,7 +401,12 @@ class Contract(
         self
     ) -> None:
 
-        pass
+        # Assess rider charges
+        for rider in self.riders:
+
+            rider.process_charge(
+                base_contract=self
+            )
 
     def process_withdrawal(
         self

@@ -52,4 +52,4 @@ class ProjectionValue:
         item: date
     ) -> Any:
 
-        return self._history[[item]]
+        return self._history[self.VALUE_COL][item]

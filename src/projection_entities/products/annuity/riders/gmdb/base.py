@@ -44,6 +44,16 @@ class GmdbBase(
             init_value=0.0
         )
 
+        self.charge_rate = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.charge_amount = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
         self.net_amount_at_risk = ProjectionValue(
             init_t=self.init_t,
             init_value=0.0
@@ -70,14 +80,16 @@ class GmdbBase(
 
         for _ in base_contract.monthiversaries.latest_value:
 
-            gmdb_charge_rate = self.data_sources.product.gmdb_rider.charge.charge_rate(
+            self.charge_rate[self.time_steps.t] = self.data_sources.product.gmdb_rider.charge.charge_rate(
                 rider_name=self.rider_name
             )
 
-            gmdb_charge = base_contract.account_value.latest_value * (gmdb_charge_rate / 12.0)
+            self.charge_amount[self.time_steps.t] = \
+                base_contract.account_value.latest_value * (self.charge_rate.latest_value / 12.0)
 
             base_contract.assess_charge(
-                charge_amount=gmdb_charge
+                charge_amount=self.charge_amount.latest_value,
+                charge_account_name='gmdb_charge'
             )
 
     @abstractmethod

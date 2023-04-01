@@ -42,6 +42,26 @@ class Gmwb(
             init_value=gmwb_data_source.benefit_base
         )
 
+        self.charge_rate = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.charge_amount = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.withdrawal = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.claim = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
     def __str__(
         self
     ) -> str:
@@ -54,7 +74,7 @@ class Gmwb(
     ) -> None:
 
         self.benefit_base[self.time_steps.t] = \
-            self.benefit_base.latest_value + base_contract.premium_new[self.time_steps.t]
+            self.benefit_base.latest_value + base_contract.premium_new.latest_value
 
     def process_charge(
         self,
@@ -63,17 +83,18 @@ class Gmwb(
 
         for _ in base_contract.quarterversaries.latest_value:
 
-            gmwb_charge_rate = self.data_sources.product.gmwb_rider.gmwb_charge.charge_rate(
+            self.charge_rate[self.time_steps.t] = self.data_sources.product.gmwb_rider.gmwb_charge.charge_rate(
                 product_name=self.rider_name
             )
 
-            gmwb_charge = min(
-                self.benefit_base.latest_value * (gmwb_charge_rate / 4.0),
+            self.charge_amount[self.time_steps.t] = min(
+                self.benefit_base.latest_value * (self.charge_rate.latest_value / 4.0),
                 base_contract.account_value.latest_value
             )
 
             base_contract.assess_charge(
-                charge_amount=gmwb_charge
+                charge_amount=self.charge_amount.latest_value,
+                charge_account_name='gmwb_charge'
             )
 
     def process_withdrawal(

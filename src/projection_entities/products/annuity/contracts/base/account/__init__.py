@@ -186,8 +186,12 @@ class Account(
 
     def process_charge(
         self,
-        charge_amount: float
+        charge_amount: float,
+        charge_account_name: str
     ) -> None:
+
+        charge_account = self.__dict__[charge_account_name]
+        charge_account[self.time_steps.t] = charge_amount
 
         self.account_value[self.time_steps.t] = self.account_value.latest_value - charge_amount
 
