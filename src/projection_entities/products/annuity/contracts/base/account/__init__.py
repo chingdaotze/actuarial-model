@@ -60,11 +60,6 @@ class Account(
             init_value=0.0
         )
 
-        self.surrender_charge: ProjectionValue = ProjectionValue(
-            init_t=self.init_t,
-            init_value=self._calc_surrender_charge()
-        )
-
         self.gmdb_charge: ProjectionValue = ProjectionValue(
             init_t=self.init_t,
             init_value=0.0
@@ -73,6 +68,16 @@ class Account(
         self.gmwb_charge: ProjectionValue = ProjectionValue(
             init_t=self.init_t,
             init_value=0.0
+        )
+
+        self.withdrawal: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.surrender_charge: ProjectionValue = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self._calc_surrender_charge()
         )
 
     def __str__(
@@ -166,25 +171,35 @@ class Account(
 
             self.account_value[self.time_steps.t] = self.account_value.latest_value + self.premium_new.latest_value
 
-    def update_surrender_charge(
-        self
-    ) -> None:
-
-        self.surrender_charge[self.time_steps.t] = self._calc_surrender_charge()
-
     def credit_interest(
-        self,
-        t: date,
-        duration: relativedelta
+        self
     ) -> None:
 
         """
         Abstract method that represents an interest crediting mechanism. Inherit and override to implement
         a custom crediting algorithm (e.g. RILA, separate account crediting, or indexed crediting).
 
-        :param t:
-        :param duration:
         :return:
         """
 
         ...
+
+    def process_charge(
+        self,
+        charge_amount: float
+    ) -> None:
+
+        self.account_value[self.time_steps.t] = self.account_value.latest_value - charge_amount
+
+    def process_withdrawal(
+        self,
+        withdrawal_amount: float
+    ) -> None:
+
+        self.account_value[self.time_steps.t] = self.account_value.latest_value - withdrawal_amount
+
+    def update_surrender_charge(
+        self
+    ) -> None:
+
+        self.surrender_charge[self.time_steps.t] = self._calc_surrender_charge()

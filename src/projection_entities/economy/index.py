@@ -81,7 +81,7 @@ class Index(
 
         return pct_change
 
-    def update_index(
+    def age_index(
         self
     ) -> None:
 

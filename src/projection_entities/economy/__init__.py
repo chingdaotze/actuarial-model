@@ -39,10 +39,10 @@ class Economy(
 
         return 'economy'
 
-    def update_economy(
+    def age_economy(
         self
     ):
 
         for economic_index in self.indexes:
 
-            economic_index.update_index()
+            economic_index.age_index()

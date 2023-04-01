@@ -43,10 +43,14 @@ class EconomicLiabilityProjection(
         self
     ) -> None:
 
-        self.economy.update_economy()
+        self.economy.age_economy()
 
-        self.contract.update_annuitants()
+        self.contract.age_contract()
 
         self.contract.process_premiums()
+
+        self.contract.credit_interest()
+
+        self.contract.assess_charges()
 
         self.contract.update_cash_surrender_value()

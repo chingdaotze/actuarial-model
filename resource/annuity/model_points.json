@@ -1,21 +1,25 @@
 [
 	{
-		"id": "da13cb03-ba52-4ea3-922c-1d6c5064cad6",
+		"id": "e2a02a6d-d647-4fc9-a67a-7f66518168d6",
 		"product_type": "fa",
 		"product_name": "FutureSecure",
 		"issue_date": "2023-03-16",
-		"gmdb": "LegacyProtector",
-		"gmwb": null,
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "LegacyProtector"
+			}
+		],
 		"annuitants": [
 			{
-				"id": "4ca01acf-7548-467b-9167-46b546e0316c",
+				"id": "d4822b1c-ee23-4ef1-a96d-805f7cc76474",
 				"gender": "male",
 				"dob": "1968-06-19"
 			}
 		],
 		"accounts": [
 			{
-				"id": "80e7b77b-ef1c-4f14-935c-028ec0ac5e33",
+				"id": "b3bff220-93d7-4d0b-b31e-3b0fcaaa8ec3",
 				"account_type": "fixed",
 				"account_name": "Fixed",
 				"account_value": 0.0,
@@ -37,31 +41,37 @@
 		]
 	},
 	{
-		"id": "4bfde36d-6b92-4f81-9398-0e971e71da06",
+		"id": "807d9c10-9034-4291-8d53-bf31945104b6",
 		"product_type": "fa",
 		"product_name": "FutureSecure",
 		"issue_date": "2023-03-16",
-		"gmdb": "LegacyProtector",
-		"gmwb": {
-			"rider_name": "ProtectPlus",
-			"benefit_base": 0.0,
-			"first_withdrawal_date": "2033-03-16"
-		},
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "LegacyProtector"
+			},
+			{
+				"rider_type": "gmwb",
+				"rider_name": "ProtectPlus",
+				"benefit_base": 0.0,
+				"first_withdrawal_date": "2033-03-16"
+			}
+		],
 		"annuitants": [
 			{
-				"id": "90451a86-90a9-4b82-b6ae-9384c44d7885",
+				"id": "e0ad702c-26ca-44d6-95e9-b02702e0ee41",
 				"gender": "male",
 				"dob": "1971-12-06"
 			},
 			{
-				"id": "5effa53f-aaa3-4344-b55e-7330ec8488f3",
+				"id": "41289ade-5a2e-42e4-9948-e66832bc7c72",
 				"gender": "female",
 				"dob": "1973-05-26"
 			}
 		],
 		"accounts": [
 			{
-				"id": "0aa33b05-6589-4a83-a282-c62d25069195",
+				"id": "280407dd-ca88-41e2-b796-3348a5afdcb6",
 				"account_type": "fixed",
 				"account_name": "Fixed",
 				"account_value": 0.0,
@@ -75,31 +85,37 @@
 		]
 	},
 	{
-		"id": "a32cc5c8-19a2-4302-a4de-36db81519f70",
+		"id": "3aac167f-3504-4e50-b49e-e056f1e3e816",
 		"product_type": "fa",
 		"product_name": "FutureSecure",
 		"issue_date": "2023-03-16",
-		"gmdb": "LegacyProtector",
-		"gmwb": {
-			"rider_name": "IncomeGuard",
-			"benefit_base": 0.0,
-			"first_withdrawal_date": null
-		},
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "LegacyProtector"
+			},
+			{
+				"rider_type": "gmwb",
+				"rider_name": "IncomeGuard",
+				"benefit_base": 0.0,
+				"first_withdrawal_date": null
+			}
+		],
 		"annuitants": [
 			{
-				"id": "6450a2aa-fa32-4c29-8b43-93e847efe97f",
+				"id": "516e3c39-2a25-4aaf-9d65-28ef17ee505d",
 				"gender": "male",
 				"dob": "1983-04-11"
 			},
 			{
-				"id": "5ae6cf28-874d-48b4-9c67-8351d338f04b",
+				"id": "5d4f3fec-4894-4a19-a69f-4cebd58c0b67",
 				"gender": "female",
 				"dob": "1982-01-30"
 			}
 		],
 		"accounts": [
 			{
-				"id": "b14428d3-44e1-4790-9da5-f4f767a627df",
+				"id": "951e6654-d1f5-432d-99d7-6a86ae3e9ee0",
 				"account_type": "fixed",
 				"account_name": "Fixed",
 				"account_value": 0.0,
@@ -117,22 +133,26 @@
 		]
 	},
 	{
-		"id": "ee27ab22-f329-4f41-9e15-eefae4907729",
+		"id": "64819f01-cf51-4394-bec4-4a6547c777e2",
 		"product_type": "fa",
 		"product_name": "GrowthSecure",
 		"issue_date": "2023-03-16",
-		"gmdb": "LegacyProtector",
-		"gmwb": null,
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "LegacyProtector"
+			}
+		],
 		"annuitants": [
 			{
-				"id": "236cef33-a077-47ef-8419-9301407a1c2e",
+				"id": "74096496-271c-4c0d-95bc-d589edb91f8b",
 				"gender": "female",
 				"dob": "1951-01-09"
 			}
 		],
 		"accounts": [
 			{
-				"id": "7e79d42d-c4e4-4118-a017-b1038615590d",
+				"id": "58c7e3cd-18df-4072-9a2d-b0062d6b3c5e",
 				"account_type": "fixed",
 				"account_name": "Fixed",
 				"account_value": 0.0,
@@ -158,26 +178,32 @@
 		]
 	},
 	{
-		"id": "061b9196-6184-4eb4-a046-c936c0a99e8e",
+		"id": "29807d23-e7ae-412d-bb46-06f93969af94",
 		"product_type": "fa",
 		"product_name": "GrowthSecure",
 		"issue_date": "2023-03-16",
-		"gmdb": "LegacyProtector",
-		"gmwb": {
-			"rider_name": "ProtectPlus",
-			"benefit_base": 0.0,
-			"first_withdrawal_date": "2038-03-16"
-		},
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "LegacyProtector"
+			},
+			{
+				"rider_type": "gmwb",
+				"rider_name": "ProtectPlus",
+				"benefit_base": 0.0,
+				"first_withdrawal_date": "2038-03-16"
+			}
+		],
 		"annuitants": [
 			{
-				"id": "73da87eb-6715-4ff3-8834-22f13be6b58c",
+				"id": "fb0e852a-3387-4866-879c-25a65fd8b413",
 				"gender": "male",
 				"dob": "1955-07-29"
 			}
 		],
 		"accounts": [
 			{
-				"id": "274de3a8-76cc-414d-8509-dc409ded9549",
+				"id": "dbcf7504-8305-454c-b1ea-52753bce2a02",
 				"account_type": "fixed",
 				"account_name": "Fixed",
 				"account_value": 0.0,
@@ -191,31 +217,37 @@
 		]
 	},
 	{
-		"id": "c753e6e0-35b7-4597-98cf-aa689f2b2b5d",
+		"id": "ca01f02e-8486-4b49-bcbe-fa42d1fce3a6",
 		"product_type": "ia",
 		"product_name": "GoldenYears",
 		"issue_date": "2023-03-16",
-		"gmdb": "EstateMax",
-		"gmwb": {
-			"rider_name": "DreamSecure",
-			"benefit_base": 0.0,
-			"first_withdrawal_date": null
-		},
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "DreamSecure"
+			},
+			{
+				"rider_type": "gmwb",
+				"rider_name": "DreamSecure",
+				"benefit_base": 0.0,
+				"first_withdrawal_date": null
+			}
+		],
 		"annuitants": [
 			{
-				"id": "52b4b757-db87-4985-8a20-6948416e27ba",
+				"id": "f7c00562-1fc3-4557-848f-316c7e8c81aa",
 				"gender": "male",
 				"dob": "1958-03-11"
 			},
 			{
-				"id": "7d442791-5315-4e39-b28f-b159b90b4534",
+				"id": "cd0c472b-de6c-4499-9f6b-0374a6c387c6",
 				"gender": "female",
 				"dob": "1960-08-14"
 			}
 		],
 		"accounts": [
 			{
-				"id": "774a936d-cd3c-4e12-885a-b5c5cec0a362",
+				"id": "5eaf3eea-5537-4f36-82d0-4e62469c16b0",
 				"account_type": "indexed",
 				"account_name": "2-Year-Point-To-Point-Cap",
 				"account_value": 0.0,
@@ -229,26 +261,32 @@
 		]
 	},
 	{
-		"id": "81578aaa-c333-44e1-a0ee-2d59e619177b",
+		"id": "fde68d2f-7b02-4724-8da0-35d8b5717485",
 		"product_type": "ia",
 		"product_name": "GoldenYears",
 		"issue_date": "2023-03-16",
-		"gmdb": "EstateMax",
-		"gmwb": {
-			"rider_name": "RetirementSaver",
-			"benefit_base": 0.0,
-			"first_withdrawal_date": "2053-03-16"
-		},
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "EstateMax"
+			},
+			{
+				"rider_type": "gmwb",
+				"rider_name": "RetirementSaver",
+				"benefit_base": 0.0,
+				"first_withdrawal_date": "2053-03-16"
+			}
+		],
 		"annuitants": [
 			{
-				"id": "7a2476b2-75c5-4086-a351-86c8298702f3",
+				"id": "500ef8ce-5359-4433-9389-081f7c52c2b7",
 				"gender": "female",
 				"dob": "1971-11-06"
 			}
 		],
 		"accounts": [
 			{
-				"id": "0e6dd80f-85e7-477c-84d1-a360559eb59c",
+				"id": "56f905e1-864e-445c-ba1b-f9b0141f9032",
 				"account_type": "indexed",
 				"account_name": "1-Year-Point-To-Point-Spread",
 				"account_value": 0.0,
@@ -262,26 +300,32 @@
 		]
 	},
 	{
-		"id": "b3720ced-5981-4841-b6da-8fb8c12fef95",
+		"id": "c59cd29e-13e0-4080-bfbd-4e52c8d4626c",
 		"product_type": "ia",
 		"product_name": "GoldenYears",
 		"issue_date": "2023-03-16",
-		"gmdb": "EstateMax",
-		"gmwb": {
-			"rider_name": "RetirementSaver",
-			"benefit_base": 0.0,
-			"first_withdrawal_date": "2033-03-16"
-		},
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "EstateMax"
+			},
+			{
+				"rider_type": "gmwb",
+				"rider_name": "RetirementSaver",
+				"benefit_base": 0.0,
+				"first_withdrawal_date": "2033-03-16"
+			}
+		],
 		"annuitants": [
 			{
-				"id": "d9a1a9de-b4d4-445c-98aa-c925e7e64f4f",
+				"id": "4675b343-4d31-4b7d-924e-c7338d5d84c2",
 				"gender": "male",
 				"dob": "1983-02-02"
 			}
 		],
 		"accounts": [
 			{
-				"id": "60a03237-4d4a-4277-ad42-83011e4569c8",
+				"id": "dd260ade-207f-40b7-a743-fb558636ea49",
 				"account_type": "indexed",
 				"account_name": "1-Year-Point-To-Point-Participation",
 				"account_value": 0.0,
@@ -293,7 +337,7 @@
 				]
 			},
 			{
-				"id": "3bb5208e-0a05-4348-a99d-dbbbd9a47ad7",
+				"id": "a11175d8-64f1-43e1-bcec-6f9f527c5e47",
 				"account_type": "indexed",
 				"account_name": "2-Year-Point-To-Point-Cap",
 				"account_value": 0.0,
@@ -307,22 +351,26 @@
 		]
 	},
 	{
-		"id": "60743ae1-40fd-46af-8c4b-89ab80946938",
+		"id": "8c08f3bc-11cc-4855-b23a-4b0815b62696",
 		"product_type": "va",
 		"product_name": "ProsperityPlus",
 		"issue_date": "2023-03-16",
-		"gmdb": "EstateMax",
-		"gmwb": null,
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "EstateMax"
+			}
+		],
 		"annuitants": [
 			{
-				"id": "1d25f0e2-d76b-44c8-90fe-1aed825d5ab8",
+				"id": "4937bc0f-041b-4c23-acfa-a92b17042bf0",
 				"gender": "female",
 				"dob": "1988-09-03"
 			}
 		],
 		"accounts": [
 			{
-				"id": "e3afe3ca-2347-4db7-9cbe-1e23d8a9f0d7",
+				"id": "ac35dce3-5f02-4ce9-8086-52a997870597",
 				"account_type": "fixed",
 				"account_name": "Fixed",
 				"account_value": 0.0,
@@ -334,7 +382,7 @@
 				]
 			},
 			{
-				"id": "7a0cd4a7-865a-4e10-9423-ad488138054d",
+				"id": "bb0e7a1e-3d21-46e2-b59d-11fb3629367d",
 				"account_type": "separate",
 				"account_name": "SPX",
 				"account_value": 0.0,
@@ -346,7 +394,7 @@
 				]
 			},
 			{
-				"id": "5a9c4597-3c96-4a80-9542-fab889cfc187",
+				"id": "227c8613-7683-45df-a6e2-da943380cb49",
 				"account_type": "separate",
 				"account_name": "SJIM",
 				"account_value": 0.0,
@@ -360,31 +408,37 @@
 		]
 	},
 	{
-		"id": "81170371-ed9e-43da-9aec-9b8d4395cbe9",
+		"id": "a45254ed-38e2-4dfb-be12-2d6111b08bc6",
 		"product_type": "va",
 		"product_name": "ProsperityPlus",
 		"issue_date": "2023-03-16",
-		"gmdb": "EstateMax",
-		"gmwb": {
-			"rider_name": "DreamSecure",
-			"benefit_base": 0.0,
-			"first_withdrawal_date": "2063-03-16"
-		},
+		"riders": [
+			{
+				"rider_type": "gmdb",
+				"rider_name": "EstateMax"
+			},
+			{
+				"rider_type": "gmwb",
+				"rider_name": "DreamSecure",
+				"benefit_base": 0.0,
+				"first_withdrawal_date": "2063-03-16"
+			}
+		],
 		"annuitants": [
 			{
-				"id": "fb7b417e-d195-424e-bc80-213b620d4255",
+				"id": "4b0381b8-3ab2-4687-8ea6-f2b7084ddc36",
 				"gender": "male",
 				"dob": "1980-06-03"
 			},
 			{
-				"id": "e65c88b4-cabe-498a-8f99-51d145feec2b",
+				"id": "96beb999-9ac1-4b99-b94c-fe6f6a9ebd3c",
 				"gender": "male",
 				"dob": "1978-10-13"
 			}
 		],
 		"accounts": [
 			{
-				"id": "df0753d7-b758-4abe-a30e-42d4e0546ffb",
+				"id": "11c61a6d-d114-4047-9e19-bd9919d5d1d1",
 				"account_type": "fixed",
 				"account_name": "Fixed",
 				"account_value": 0.0,
@@ -396,7 +450,7 @@
 				]
 			},
 			{
-				"id": "137942b7-7761-49dd-a8c0-0c4f8f234b94",
+				"id": "6defb605-8857-4527-b4d4-9c451c9e6036",
 				"account_type": "separate",
 				"account_name": "SJIM",
 				"account_value": 0.0,
@@ -408,7 +462,7 @@
 				]
 			},
 			{
-				"id": "e5b33f3f-b671-487b-8873-6a6031e994db",
+				"id": "5668ea7a-cfed-4696-a5c5-8e4ae4abc557",
 				"account_type": "separate",
 				"account_name": "BIG_MAC",
 				"account_value": 0.0,

@@ -3,6 +3,7 @@ from os.path import join
 from src.system.data_sources.namespace import DataSourceNamespace
 
 from src.data_sources.annuity.product.gmdb.charge import GmdbCharge
+from src.data_sources.annuity.product.gmdb.types import GmdbTypes
 
 
 class GmdbRider(
@@ -33,5 +34,12 @@ class GmdbRider(
             path=join(
                 self.path,
                 'charge.csv'
+            )
+        )
+
+        self.types: GmdbTypes = GmdbTypes(
+            path=join(
+                self.path,
+                'types.csv'
             )
         )

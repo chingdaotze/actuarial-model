@@ -1,16 +1,13 @@
-from typing import (
-    Dict,
-    Union
-)
+from typing import Dict
 from datetime import date
 
-from src.system.data_sources.data_source.python_dict import DataSourcePythonDict
+from src.data_sources.annuity.model_points.model_point.riders.base import BaseRider
 from src.system.constants import DEFAULT_COL
 from src.system.date import str_to_date
 
 
 class Gmwb(
-    DataSourcePythonDict
+    BaseRider
 ):
 
     """
@@ -22,23 +19,10 @@ class Gmwb(
         data: Dict
     ):
 
-        DataSourcePythonDict.__init__(
+        BaseRider.__init__(
             self=self,
             data=data
         )
-
-    @property
-    def rider_name(
-        self
-    ) -> str:
-
-        """
-        Human-readable rider name.
-
-        :return:
-        """
-
-        return self.cache[DEFAULT_COL]['rider_name']
 
     @property
     def benefit_base(
@@ -56,7 +40,7 @@ class Gmwb(
     @property
     def first_withdrawal_date(
         self
-    ) -> Union[date, None]:
+    ) -> date | None:
 
         """
         GMWB Benefit Base, typically used as a basis for GMWB withdrawals.
