@@ -1,21 +1,12 @@
 from sys import argv
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from os.path import (
-    join,
-    exists
-)
-from os import mkdir
 
 from src.system.odometer import odometer
-from src.system.projection.processor.single_process import SingleProcessProjectionProcessor
+from src.system.projection.processor.multiple_process import MultiProcessProjectionProcessor
 
 from src.system.enums import ProcessingType
 from src.system.projection.parameters import ProjectionParameters
-from src.system.logger import logger
-
-from src.data_sources.annuity import AnnuityDataSources
-from src.projections.annuity.base.economic_liability import EconomicLiabilityProjection
 
 
 @odometer
@@ -59,7 +50,7 @@ def main() -> None:
     )
 
     # Create projection processor
-    projection_processor = SingleProcessProjectionProcessor(
+    projection_processor = MultiProcessProjectionProcessor(
         projection_parameters=projection_parameters
     )
 

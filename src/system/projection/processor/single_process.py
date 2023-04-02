@@ -27,7 +27,7 @@ class SingleProcessProjectionProcessor(
             message=f'Running projections ...'
         )
 
-        projections = tqdm(self.projections, desc=r'Progress: ', unit=r'projection')
+        projections = tqdm(self.projections, desc=r'Progress: ', unit=r' projection(s) ')
 
         for projection in projections:
 

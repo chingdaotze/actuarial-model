@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from typing import List
 from datetime import date
 
-from dateutil.relativedelta import relativedelta
-
 from src.system.projection_entity import ProjectionEntity
 from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
