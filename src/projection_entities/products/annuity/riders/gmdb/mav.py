@@ -8,7 +8,7 @@ from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.riders.gmdb import Gmdb as GmdbDataSource
 
 if TYPE_CHECKING:
-    from src.projection_entities.products.annuity.contracts.base import Contract
+    from src.projection_entities.products.annuity.base_contract import BaseContract
 
 
 class GmdbMav(
@@ -31,7 +31,7 @@ class GmdbMav(
 
     def update_benefit_base(
         self,
-        base_contract: 'Contract'
+        base_contract: 'BaseContract'
     ) -> None:
 
         if base_contract.anniversaries.latest_value:

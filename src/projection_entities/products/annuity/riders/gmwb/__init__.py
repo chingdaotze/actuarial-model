@@ -9,7 +9,7 @@ from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.riders.gmwb import Gmwb as GmwbDataSource
 
 if TYPE_CHECKING:
-    from src.projection_entities.products.annuity.contracts.base import Contract
+    from src.projection_entities.products.annuity.base_contract import BaseContract
 
 
 class Gmwb(
@@ -70,7 +70,7 @@ class Gmwb(
 
     def process_premiums(
         self,
-        base_contract: 'Contract'
+        base_contract: 'BaseContract'
     ) -> None:
 
         self.benefit_base[self.time_steps.t] = \
@@ -78,7 +78,7 @@ class Gmwb(
 
     def process_charge(
         self,
-        base_contract: 'Contract'
+        base_contract: 'BaseContract'
     ) -> None:
 
         for _ in base_contract.quarterversaries.latest_value:
@@ -99,7 +99,7 @@ class Gmwb(
 
     def process_withdrawal(
         self,
-        base_contract: 'Contract'
+        base_contract: 'BaseContract'
     ) -> None:
 
         if self.time_steps.t >= self.first_withdrawal_date:

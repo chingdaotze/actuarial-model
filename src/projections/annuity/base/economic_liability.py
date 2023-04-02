@@ -10,7 +10,7 @@ from src.system.projection.parameters import ProjectionParameters
 from src.data_sources.annuity import AnnuityDataSources
 
 from src.projection_entities.economy import Economy
-from src.projection_entities.products.annuity.contracts.base import Contract
+from src.projection_entities.products.annuity.base_contract import BaseContract
 
 
 class EconomicLiabilityProjection(
@@ -40,7 +40,7 @@ class EconomicLiabilityProjection(
             data_sources=self.data_sources
         )
 
-        self.contract: Contract = Contract(
+        self.base_contract: BaseContract = BaseContract(
             time_steps=self.time_steps,
             data_sources=self.data_sources
         )
@@ -84,12 +84,12 @@ class EconomicLiabilityProjection(
 
         self.economy.age_economy()
 
-        self.contract.age_contract()
+        self.base_contract.age_contract()
 
-        self.contract.process_premiums()
+        self.base_contract.process_premiums()
 
-        self.contract.credit_interest()
+        self.base_contract.credit_interest()
 
-        self.contract.assess_charges()
+        self.base_contract.assess_charges()
 
-        self.contract.update_cash_surrender_value()
+        self.base_contract.update_cash_surrender_value()

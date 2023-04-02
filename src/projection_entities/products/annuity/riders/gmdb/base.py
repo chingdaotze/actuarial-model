@@ -12,7 +12,7 @@ from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.riders.gmdb import Gmdb as GmdbDataSource
 
 if TYPE_CHECKING:
-    from src.projection_entities.products.annuity.contracts.base import Contract
+    from src.projection_entities.products.annuity.base_contract import BaseContract
 
 
 class GmdbBase(
@@ -67,7 +67,7 @@ class GmdbBase(
 
     def process_premiums(
         self,
-        base_contract: 'Contract'
+        base_contract: 'BaseContract'
     ) -> None:
 
         self.benefit_base[self.time_steps.t] = \
@@ -75,7 +75,7 @@ class GmdbBase(
 
     def process_charge(
         self,
-        base_contract: 'Contract'
+        base_contract: 'BaseContract'
     ) -> None:
 
         for _ in base_contract.monthiversaries.latest_value:
@@ -95,14 +95,14 @@ class GmdbBase(
     @abstractmethod
     def update_benefit_base(
         self,
-        base_contract: 'Contract'
+        base_contract: 'BaseContract'
     ) -> None:
 
         ...
 
     def update_net_amount_at_risk(
         self,
-        base_contract: 'Contract'
+        base_contract: 'BaseContract'
     ) -> None:
 
         self.net_amount_at_risk[self.time_steps.t] = max(
@@ -112,7 +112,7 @@ class GmdbBase(
 
     def process_death_benefit(
         self,
-        base_contract: 'Contract'
+        base_contract: 'BaseContract'
     ) -> None:
 
         pass

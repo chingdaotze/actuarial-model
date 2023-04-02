@@ -11,14 +11,14 @@ from src.system.logger import logger
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.projection_entities.people.annuitant import Annuitant
-from src.projection_entities.products.annuity.contracts.base.account import Account
+from src.projection_entities.products.annuity.base_contract.account import Account
 from src.projection_entities.products.annuity.riders.gmwb import Gmwb
 from src.projection_entities.products.annuity.riders.gmdb.rop import GmdbRop
 from src.projection_entities.products.annuity.riders.gmdb.rav import GmdbRav
 from src.projection_entities.products.annuity.riders.gmdb.mav import GmdbMav
 
 
-class Contract(
+class BaseContract(
     ProjectionEntity
 ):
 

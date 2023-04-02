@@ -8,7 +8,7 @@ from src.system.projection_entity.projection_value import ProjectionValue
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.accounts.account import Account as AccountDataSource
-from src.projection_entities.products.annuity.contracts.base.account.premium import Premium
+from src.projection_entities.products.annuity.base_contract.account.premium import Premium
 
 
 class Account(
