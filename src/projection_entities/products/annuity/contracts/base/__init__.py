@@ -125,17 +125,20 @@ class Contract(
 
         self.quarterversaries = ProjectionValue(
             init_t=self.init_t,
-            init_value=[[]]
+            init_value=[[]],
+            print_values=False
         )
 
         self.monthiversaries = ProjectionValue(
             init_t=self.init_t,
-            init_value=[[]]
+            init_value=[[]],
+            print_values=False
         )
 
         self.anniversaries = ProjectionValue(
             init_t=self.init_t,
-            init_value=[[]]
+            init_value=[[]],
+            print_values=False
         )
 
         self.premium_new = ProjectionValue(

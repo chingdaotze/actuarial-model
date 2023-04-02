@@ -4,9 +4,11 @@ from dateutil.relativedelta import relativedelta
 
 from src.system.odometer import odometer
 from src.system.projection.processor.multiple_process import MultiProcessProjectionProcessor
+from src.system.projection.processor.single_process import SingleProcessProjectionProcessor
 
 from src.system.enums import ProcessingType
 from src.system.projection.parameters import ProjectionParameters
+from src.system.logger import logger
 
 
 @odometer
@@ -50,9 +52,27 @@ def main() -> None:
     )
 
     # Create projection processor
-    projection_processor = MultiProcessProjectionProcessor(
-        projection_parameters=projection_parameters
-    )
+    projection_processor = None  # FIXME: https://youtrack.jetbrains.com/issue/PY-24273
+
+    if projection_parameters.processing_type == ProcessingType.MULTI_PROCESS:
+
+        projection_processor = MultiProcessProjectionProcessor(
+            projection_parameters=projection_parameters
+        )
+
+    elif projection_parameters.processing_type == ProcessingType.SINGLE_PROCESS:
+
+        projection_processor = SingleProcessProjectionProcessor(
+            projection_parameters=projection_parameters
+        )
+
+    else:
+
+        logger.raise_expr(
+            expr=NotImplementedError(
+                f'Unhandled processing type: {projection_parameters.processing_type} !'
+            )
+        )
 
     # Setup output
     projection_processor.setup_output()

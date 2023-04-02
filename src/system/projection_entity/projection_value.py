@@ -6,15 +6,18 @@ from pandas import DataFrame
 
 class ProjectionValue:
 
-    VALUE_COL = 'value'
+    VALUE_COL: str = 'value'
+    _history: DataFrame
+    _print_values: bool
 
     def __init__(
         self,
         init_t: date,
-        init_value: Any
+        init_value: Any,
+        print_values: bool = True
     ):
 
-        self._history: DataFrame = DataFrame(
+        self._history = DataFrame(
             columns=['t', self.VALUE_COL]
         )
 
@@ -22,6 +25,8 @@ class ProjectionValue:
             keys='t',
             inplace=True
         )
+
+        self._print_values = print_values
 
         self[init_t] = init_value
 
@@ -38,6 +43,13 @@ class ProjectionValue:
     ) -> DataFrame:
 
         return self._history
+
+    @property
+    def print_values(
+        self
+    ) -> bool:
+
+        return self._print_values
 
     def __setitem__(
         self,

@@ -81,14 +81,16 @@ class ProjectionEntity(
 
             if issubclass(type(attribute), ProjectionValue):
 
-                output_dataframe = output_dataframe.join(
-                    other=attribute.history.rename(
-                        columns={
-                            attribute.VALUE_COL: attribute_name
-                        }
-                    ),
-                    how='outer'
-                )
+                if attribute.print_values:
+
+                    output_dataframe = output_dataframe.join(
+                        other=attribute.history.rename(
+                            columns={
+                                attribute.VALUE_COL: attribute_name
+                            }
+                        ),
+                        how='outer'
+                    )
 
         # Write DataFrame to disk
         if not output_dataframe.empty:
