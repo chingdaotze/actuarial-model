@@ -1,3 +1,9 @@
+from os.path import (
+    exists,
+    join
+)
+from os import mkdir
+
 from src.system.projection import Projection
 from src.system.projection.parameters import ProjectionParameters
 
@@ -38,6 +44,39 @@ class EconomicLiabilityProjection(
             time_steps=self.time_steps,
             data_sources=self.data_sources
         )
+
+    def __str__(
+        self
+    ) -> str:
+
+        return f'{self.data_sources.model_point.id} || {self.data_sources.economic_scenario.scenario_index}'
+
+    def setup_output(
+        self
+    ) -> None:
+
+        model_point_dir_path = join(
+            self.projection_parameters.output_dir_path,
+            self.data_sources.model_point.id
+        )
+
+        if not exists(path=model_point_dir_path):
+
+            mkdir(
+                path=model_point_dir_path
+            )
+
+        economic_scenario_dir_path = join(
+            model_point_dir_path,
+            str(self.data_sources.economic_scenario.scenario_index)
+        )
+
+        if not exists(path=economic_scenario_dir_path):
+            mkdir(
+                path=economic_scenario_dir_path
+            )
+
+        self.output_dir_path = economic_scenario_dir_path
 
     def project_time_step(
         self

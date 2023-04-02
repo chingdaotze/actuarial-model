@@ -8,6 +8,9 @@ from os.path import (
 from os import mkdir
 
 from src.system.odometer import odometer
+from src.system.projection.processor.single_process import SingleProcessProjectionProcessor
+
+from src.system.enums import ProcessingType
 from src.system.projection.parameters import ProjectionParameters
 from src.system.logger import logger
 
@@ -48,55 +51,23 @@ def main() -> None:
         time_step=relativedelta(
             months=1
         ),
-        resource_dir_path=resource_dir_path
+        resource_dir_path=resource_dir_path,
+        output_dir_path=output_dir_path,
+        processing_type=ProcessingType.MULTI_PROCESS,
+        projection='src.projections.annuity.base.economic_liability.EconomicLiabilityProjection',
+        data_source='src.data_sources.annuity.AnnuityDataSources'
     )
 
-    # Construct data sources
-    data_sources = AnnuityDataSources(
+    # Create projection processor
+    projection_processor = SingleProcessProjectionProcessor(
         projection_parameters=projection_parameters
     )
 
+    # Setup output
+    projection_processor.setup_output()
+
     # Run projections
-    for configured_data_source in data_sources.configured_data_sources():
-
-        logger.print(
-            message=f'Calculating model point: {configured_data_source.model_point.id}, '
-                    f'scenario: {str(configured_data_source.economic_scenario.scenario_index)} ...'
-        )
-
-        # Construct projection object
-        projection = EconomicLiabilityProjection(
-            projection_parameters=projection_parameters,
-            data_sources=data_sources
-        )
-
-        # Run projection
-        projection.run_projection()
-
-        # Write projection output
-        model_point_dir_path = join(
-            output_dir_path,
-            configured_data_source.model_point.id
-        )
-
-        if not exists(path=model_point_dir_path):
-            mkdir(
-                path=model_point_dir_path
-            )
-
-        economic_scenario_dir_path = join(
-            model_point_dir_path,
-            str(configured_data_source.economic_scenario.scenario_index)
-        )
-
-        if not exists(path=economic_scenario_dir_path):
-            mkdir(
-                path=economic_scenario_dir_path
-            )
-
-        projection.write_output(
-            output_dir_path=economic_scenario_dir_path
-        )
+    projection_processor.run_projections()
 
 
 if __name__ == '__main__':

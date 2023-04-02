@@ -2,7 +2,6 @@ from abc import (
     ABC,
     abstractmethod
 )
-from datetime import date
 from os.path import join
 
 from src.system.projection.parameters import ProjectionParameters
@@ -20,6 +19,11 @@ class Projection(
     implement a projection.
     """
 
+    projection_parameters: ProjectionParameters
+    time_steps: TimeSteps
+    data_sources: DataSourcesRoot
+    output_dir_path: str
+
     def __init__(
         self,
         projection_parameters: ProjectionParameters,
@@ -33,15 +37,22 @@ class Projection(
         :param projection_parameters:
         """
 
-        self.projection_parameters: ProjectionParameters = projection_parameters
+        self.projection_parameters = projection_parameters
 
-        self.time_steps: TimeSteps = TimeSteps(
+        self.time_steps = TimeSteps(
             start_t=projection_parameters.start_t,
             end_t=projection_parameters.end_t,
             time_step=projection_parameters.time_step
         )
 
-        self.data_sources: DataSourcesRoot = data_sources
+        self.data_sources = data_sources
+
+    @abstractmethod
+    def __str__(
+        self
+    ) -> str:
+
+        ...
 
     @abstractmethod
     def project_time_step(
@@ -92,15 +103,14 @@ class Projection(
                 break
 
     def write_output(
-        self,
-        output_dir_path: str
+        self
     ) -> None:
 
         """
         Convenience method that writes output for projection entity members. Note that this function behaves
         recursively, and will write output for nested projection entity members as well.
 
-        :param output_dir_path:
+        :param:
         :return:
         """
 
@@ -109,10 +119,24 @@ class Projection(
             if issubclass(type(attribute), ProjectionEntity):
 
                 attribute_output_file_path = join(
-                    output_dir_path,
+                    self.output_dir_path,
                     f'{attribute}.csv'
                 )
 
                 attribute.write_projection_values_recursively(
                     output_file_path=attribute_output_file_path
                 )
+
+    @abstractmethod
+    def setup_output(
+        self
+    ) -> None:
+
+        """
+        Abstract method that sets up the projection's output directory. Method is called serially for each projection
+        before the projection starts running.
+
+        :return:
+        """
+
+        ...

@@ -7,7 +7,6 @@ from typing import (
 
 from src.system.data_sources import DataSourcesRoot
 from src.system.projection.parameters import ProjectionParameters
-from src.system.logger import logger
 from src.system.data_sources.namespace import DataSourceNamespace
 
 
@@ -43,10 +42,6 @@ class AnnuityDataSources(
                 self.projection_parameters.resource_dir_path,
                 'annuity'
             )
-        )
-
-        logger.print(
-            message=f'Compiling annuity data sources from: {self.path} ...'
         )
 
         # Economic scenarios
