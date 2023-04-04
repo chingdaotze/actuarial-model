@@ -5,6 +5,7 @@ from typing import (
 
 from src.system.data_sources.collection import DataSourceCollection
 from src.system.logger import logger
+from src.system.enums import Rider
 
 from src.data_sources.annuity.model_points.model_point.riders.base import BaseRider
 from src.data_sources.annuity.model_points.model_point.riders.gmwb import Gmwb
@@ -42,13 +43,13 @@ class Riders(
 
             instance = None
 
-            if base_rider.rider_type == 'gmwb':
+            if base_rider.rider_type == Rider.GUARANTEED_MINIMUM_WITHDRAWAL_BENEFIT:
 
                 instance = Gmwb(
                     data=row
                 )
 
-            elif base_rider.rider_type == 'gmdb':
+            elif base_rider.rider_type == Rider.GUARANTEED_MINIMUM_DEATH_BENEFIT:
 
                 instance = Gmdb(
                     data=row

@@ -81,16 +81,27 @@ class Gmwb(
         base_contract: 'BaseContract'
     ) -> None:
 
-        for _ in base_contract.quarterversaries.latest_value:
+        if base_contract.quarterversaries.latest_value:
 
-            self.charge_rate[self.time_steps.t] = self.data_sources.product.gmwb_rider.gmwb_charge.charge_rate(
-                product_name=self.rider_name
-            )
+            for _ in base_contract.quarterversaries.latest_value:
 
-            self.charge_amount[self.time_steps.t] = min(
-                self.benefit_base.latest_value * (self.charge_rate.latest_value / 4.0),
-                base_contract.account_value.latest_value
-            )
+                self.charge_rate[self.time_steps.t] = self.data_sources.product.gmwb_rider.gmwb_charge.charge_rate(
+                    product_name=self.rider_name
+                )
+
+                self.charge_amount[self.time_steps.t] = min(
+                    self.benefit_base.latest_value * (self.charge_rate.latest_value / 4.0),
+                    base_contract.account_value.latest_value
+                )
+
+                base_contract.assess_charge(
+                    charge_amount=self.charge_amount.latest_value,
+                    charge_account_name='gmwb_charge'
+                )
+
+        else:
+
+            self.charge_amount[self.time_steps.t] = 0.0
 
             base_contract.assess_charge(
                 charge_amount=self.charge_amount.latest_value,

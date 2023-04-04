@@ -1,3 +1,5 @@
+from pandas import isna
+
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
 
 
@@ -24,6 +26,20 @@ class IndexedCreditingRate(
             inplace=True
         )
 
+    def index(
+        self,
+        account_name: str
+    ) -> str:
+
+        """
+        Convenience method to access data from the crediting table. Returns a crediting rate index.
+
+        :param account_name:
+        :return:
+        """
+
+        return self.cache['index'][account_name]
+
     def term(
         self,
         account_name: str
@@ -36,12 +52,12 @@ class IndexedCreditingRate(
         :return:
         """
 
-        return self.cache[account_name]['term']
+        return self.cache['term'][account_name]
 
     def cap(
         self,
         account_name: str
-    ) -> int:
+    ) -> float | None:
 
         """
         Convenience method to access data from the crediting table. Returns a crediting rate cap.
@@ -50,12 +66,20 @@ class IndexedCreditingRate(
         :return:
         """
 
-        return self.cache[account_name]['cap']
+        value = self.cache['cap'][account_name]
+
+        if isna(value):
+
+            return None
+
+        else:
+
+            return value
 
     def spread(
         self,
         account_name: str
-    ) -> int:
+    ) -> float | None:
 
         """
         Convenience method to access data from the crediting table. Returns a crediting rate spread.
@@ -64,12 +88,20 @@ class IndexedCreditingRate(
         :return:
         """
 
-        return self.cache[account_name]['spread']
+        value = self.cache['spread'][account_name]
+
+        if isna(value):
+
+            return None
+
+        else:
+
+            return value
 
     def participation_rate(
         self,
         account_name: str
-    ) -> int:
+    ) -> float | None:
 
         """
         Convenience method to access data from the crediting table. Returns a participation rate.
@@ -78,12 +110,20 @@ class IndexedCreditingRate(
         :return:
         """
 
-        return self.cache[account_name]['participation_rate']
+        value = self.cache['participation_rate'][account_name]
+
+        if isna(value):
+
+            return None
+
+        else:
+
+            return value
 
     def floor(
         self,
         account_name: str
-    ) -> int:
+    ) -> float | None:
 
         """
         Convenience method to access data from the crediting table. Returns a crediting rate floor.
@@ -92,4 +132,12 @@ class IndexedCreditingRate(
         :return:
         """
 
-        return self.cache[account_name]['floor']
+        value = self.cache['floor'][account_name]
+
+        if isna(value):
+
+            return None
+
+        else:
+
+            return value

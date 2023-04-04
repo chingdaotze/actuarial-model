@@ -5,10 +5,12 @@ from multiprocessing import (
     Pool,
     Queue
 )
+from traceback import format_exc
 
 from src.system.projection.processor import ProjectionProcessor
 from src.system.projection.parameters import ProjectionParameters
 from src.system.logger import logger
+from src.system.enums import LoggerLevel
 
 
 class PoisonPill:
@@ -74,9 +76,18 @@ class MultiProcessProjectionProcessor(
 
             if not isinstance(work_item, PoisonPill):
 
-                cls.run_projection(
-                    projection=work_item
-                )
+                try:
+
+                    cls.run_projection(
+                        projection=work_item
+                    )
+
+                except Exception as expr:
+
+                    logger.print(
+                        message=format_exc(),
+                        level=LoggerLevel.ERROR
+                    )
 
             out_queue.put(
                 work_item

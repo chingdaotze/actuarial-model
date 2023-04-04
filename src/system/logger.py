@@ -13,6 +13,7 @@ from datetime import datetime
 from multiprocessing import Lock
 
 from src.system.constants import DATETIME_FORMAT
+from src.system.enums import LoggerLevel
 
 
 class Logger:
@@ -76,17 +77,19 @@ class Logger:
 
     def print(
         self,
-        message: str
+        message: str,
+        level: LoggerLevel = LoggerLevel.MESSAGE
     ) -> None:
 
         """
         Prints a message to both console and log file.
 
         :param message:
+        :param level:
         :return:
         """
 
-        wrapped_message = f'MESSAGE || {self.timestamp} || {message}'
+        wrapped_message = f'{level} || {self.timestamp} || {message}'
 
         self.lock.acquire()
 
@@ -113,18 +116,12 @@ class Logger:
         :return:
         """
 
-        error_indicator_message = f'ERROR || {self.timestamp} || Traceback below:'
+        self.print(
+            message='Traceback below:',
+            level=LoggerLevel.ERROR
+        )
 
         self.lock.acquire()
-
-        print(
-            error_indicator_message
-        )
-
-        print(
-            error_indicator_message,
-            file=self.log_file
-        )
 
         print(
             expr,

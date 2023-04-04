@@ -1,6 +1,10 @@
-from abc import ABC, abstractmethod
+from abc import (
+    ABC,
+    abstractmethod
+)
 from typing import List
 from datetime import date
+from calendar import isleap
 
 from src.system.projection_entity import ProjectionEntity
 from src.system.projection.time_steps import TimeSteps
@@ -17,6 +21,17 @@ class Account(
 ):
 
     data_sources: AnnuityDataSources
+    account_data_source: AccountDataSource
+    premiums: List[Premium]
+
+    premium_new: ProjectionValue
+    premium_cumulative: ProjectionValue
+    account_value: ProjectionValue
+    interest_credited: ProjectionValue
+    gmdb_charge: ProjectionValue
+    gmwb_charge: ProjectionValue
+    withdrawal: ProjectionValue
+    surrender_charge: ProjectionValue
 
     def __init__(
         self,
@@ -32,48 +47,48 @@ class Account(
             init_t=account_data_source.account_date
         )
 
-        self.account_data_source: AccountDataSource = account_data_source
+        self.account_data_source = account_data_source
 
-        self.premiums: List[Premium] = self._get_new_premiums(
+        self.premiums = self._get_new_premiums(
             t1=self.init_t
         )
 
-        self.premium_new: ProjectionValue = ProjectionValue(
+        self.premium_new = ProjectionValue(
             init_t=self.init_t,
             init_value=self._calc_total_premium()
         )
 
-        self.premium_cumulative: ProjectionValue = ProjectionValue(
+        self.premium_cumulative = ProjectionValue(
             init_t=self.init_t,
             init_value=self._calc_total_premium()
         )
 
-        self.account_value: ProjectionValue = ProjectionValue(
+        self.interest_credited = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.gmdb_charge = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.gmwb_charge = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.withdrawal = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+        self.account_value = ProjectionValue(
             init_t=self.init_t,
             init_value=self._calc_total_premium()
         )
 
-        self.interest_credited: ProjectionValue = ProjectionValue(
-            init_t=self.init_t,
-            init_value=0.0
-        )
-
-        self.gmdb_charge: ProjectionValue = ProjectionValue(
-            init_t=self.init_t,
-            init_value=0.0
-        )
-
-        self.gmwb_charge: ProjectionValue = ProjectionValue(
-            init_t=self.init_t,
-            init_value=0.0
-        )
-
-        self.withdrawal: ProjectionValue = ProjectionValue(
-            init_t=self.init_t,
-            init_value=0.0
-        )
-
-        self.surrender_charge: ProjectionValue = ProjectionValue(
+        self.surrender_charge = ProjectionValue(
             init_t=self.init_t,
             init_value=self._calc_surrender_charge()
         )
@@ -83,6 +98,20 @@ class Account(
     ) -> str:
 
         return f'contract.account.{self.account_data_source.id}'
+
+    def _calc_days_in_year(
+        self
+    ) -> int:
+
+        if not isleap(year=self.time_steps.t.year):
+
+            days_in_year = 365
+
+        else:
+
+            days_in_year = 366  # Leap year
+
+        return days_in_year
 
     def _get_new_premiums(
         self,
@@ -169,6 +198,7 @@ class Account(
 
             self.account_value[self.time_steps.t] = self.account_value.latest_value + self.premium_new.latest_value
 
+    @abstractmethod
     def credit_interest(
         self
     ) -> None:

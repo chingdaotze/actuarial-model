@@ -1,17 +1,24 @@
 from typing import List
 from datetime import date
-from math import floor
-
-from dateutil.relativedelta import relativedelta
 
 from src.system.projection_entity import ProjectionEntity
 from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
+from src.system.enums import (
+    AccountType,
+    Rider,
+    DeathBenefitOptions
+)
 from src.system.logger import logger
+from src.system.projection.scripts.get_xversaries import get_xversaries
 
 from src.data_sources.annuity import AnnuityDataSources
+from src.data_sources.annuity.model_points.model_point.accounts.account import Account as AccountDataSource
 from src.projection_entities.people.annuitant import Annuitant
 from src.projection_entities.products.annuity.base_contract.account import Account
+from src.projection_entities.products.annuity.base_contract.account.fa import FixedAccount
+from src.projection_entities.products.annuity.base_contract.account.ia import IndexedAccount
+from src.projection_entities.products.annuity.base_contract.account.va import SeparateAccount
 from src.projection_entities.products.annuity.riders.gmwb import Gmwb
 from src.projection_entities.products.annuity.riders.gmdb.rop import GmdbRop
 from src.projection_entities.products.annuity.riders.gmdb.rav import GmdbRav
@@ -33,11 +40,11 @@ class BaseContract(
     anniversaries: ProjectionValue
     premium_new: ProjectionValue
     premium_cumulative: ProjectionValue
-    account_value: ProjectionValue
     interest_credited: ProjectionValue
     gmdb_charge: ProjectionValue
     gmwb_charge: ProjectionValue
     withdrawal: ProjectionValue
+    account_value: ProjectionValue
     surrender_charge: ProjectionValue
     cash_surrender_value: ProjectionValue
 
@@ -69,7 +76,7 @@ class BaseContract(
 
         for rider_data_source in self.data_sources.model_point.riders:
 
-            if rider_data_source.rider_type == 'gmwb':
+            if rider_data_source.rider_type == Rider.GUARANTEED_MINIMUM_WITHDRAWAL_BENEFIT:
 
                 self.riders.append(
                     Gmwb(
@@ -79,13 +86,13 @@ class BaseContract(
                     )
                 )
 
-            elif rider_data_source.rider_type == 'gmdb':
+            elif rider_data_source.rider_type == Rider.GUARANTEED_MINIMUM_DEATH_BENEFIT:
 
                 rider_type = self.data_sources.product.gmdb_rider.types.gmdb_type(
                     rider_name=rider_data_source.rider_name
                 )
 
-                if rider_type == 'rop':
+                if rider_type == DeathBenefitOptions.RETURN_OF_PREMIUM:
 
                     self.riders.append(
                         GmdbRop(
@@ -95,17 +102,17 @@ class BaseContract(
                         )
                     )
 
-                elif rider_type == 'mav':
+                elif rider_type == DeathBenefitOptions.ACCOUNT_VALUE_RATCHET:
 
                     self.riders.append(
-                        GmdbRop(
+                        GmdbMav(
                             time_steps=self.time_steps,
                             data_sources=self.data_sources,
                             gmdb_data_source=rider_data_source
                         )
                     )
 
-                elif rider_type == 'rav':
+                elif rider_type == DeathBenefitOptions.RETURN_OF_ACCOUNT_VALUE:
 
                     self.riders.append(
                         GmdbRav(
@@ -151,11 +158,6 @@ class BaseContract(
             init_value=self._calc_new_premium()
         )
 
-        self.account_value = ProjectionValue(
-            init_t=self.init_t,
-            init_value=self._calc_account_value()
-        )
-
         self.interest_credited = ProjectionValue(
             init_t=self.init_t,
             init_value=0.0
@@ -176,6 +178,11 @@ class BaseContract(
             init_value=0.0
         )
 
+        self.account_value = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self._calc_account_value()
+        )
+
         self.surrender_charge = ProjectionValue(
             init_t=self.init_t,
             init_value=self._calc_surrender_charge()
@@ -192,6 +199,43 @@ class BaseContract(
 
         return 'contract'
 
+    def _get_new_account(
+        self,
+        account_data_source: AccountDataSource
+    ) -> Account:
+
+        if account_data_source.account_type == AccountType.FIXED:
+
+            return FixedAccount(
+                time_steps=self.time_steps,
+                data_sources=self.data_sources,
+                account_data_source=account_data_source
+            )
+
+        elif account_data_source.account_type == AccountType.INDEXED:
+
+            return IndexedAccount(
+                time_steps=self.time_steps,
+                data_sources=self.data_sources,
+                account_data_source=account_data_source
+            )
+
+        elif account_data_source.account_type == AccountType.SEPARATE:
+
+            return SeparateAccount(
+                time_steps=self.time_steps,
+                data_sources=self.data_sources,
+                account_data_source=account_data_source
+            )
+
+        else:
+
+            logger.raise_expr(
+                expr=NotImplementedError(
+                    f'Unhandled account type: {account_data_source.account_type} !'
+                )
+            )
+
     def _get_new_accounts(
         self,
         t1: date,
@@ -201,23 +245,15 @@ class BaseContract(
         if t2 is None:
 
             accounts = [
-                Account(
-                    time_steps=self.time_steps,
-                    data_sources=self.data_sources,
-                    account_data_source=account_data_source
-                ) for account_data_source in self.data_sources.model_point.accounts
-                if t1 == account_data_source.account_date
+                self._get_new_account(account_data_source=account_data_source) for account_data_source
+                in self.data_sources.model_point.accounts if t1 == account_data_source.account_date
             ]
 
         else:
 
             accounts = [
-                Account(
-                    time_steps=self.time_steps,
-                    data_sources=self.data_sources,
-                    account_data_source=account_data_source
-                ) for account_data_source in self.data_sources.model_point.accounts
-                if t1 < account_data_source.account_date <= t2
+                self._get_new_account(account_data_source=account_data_source) for account_data_source
+                in self.data_sources.model_point.accounts if t1 < account_data_source.account_date <= t2
             ]
 
         return accounts
@@ -255,50 +291,6 @@ class BaseContract(
             0.0
         )
 
-    def _update_xversaries(
-        self,
-        xversaries: ProjectionValue,
-        frequency: int
-    ) -> None:
-
-        issue_date = self.data_sources.model_point.issue_date
-
-        start_date_range = relativedelta(
-            dt1=self.time_steps.prev_t,
-            dt2=issue_date
-        )
-
-        start_xversary_months = floor((start_date_range.years * 12 + start_date_range.months) / frequency) * frequency
-
-        end_date_rate = relativedelta(
-            dt1=self.time_steps.t,
-            dt2=issue_date
-        )
-
-        end_xversary_months = floor((end_date_rate.years * 12 + end_date_rate.months) / frequency) * frequency
-
-        max_xversary_date = issue_date + relativedelta(
-            months=end_xversary_months
-        )
-
-        xversary_date = issue_date + relativedelta(
-            months=start_xversary_months
-        )
-
-        xversary_dates = []
-
-        while xversary_date < max_xversary_date:
-
-            xversary_date += relativedelta(
-                months=frequency
-            )
-
-            xversary_dates.append(
-                xversary_date
-            )
-
-        xversaries[self.time_steps.t] = [xversary_dates]
-
     def age_contract(
         self
     ) -> None:
@@ -309,20 +301,26 @@ class BaseContract(
             annuitant.update_attained_age()
 
         # Update upcoming anniversaries
-        self._update_xversaries(
-            xversaries=self.monthiversaries,
+        self.monthiversaries[self.time_steps.t] = [get_xversaries(
+            issue_date=self.data_sources.model_point.issue_date,
+            start_date=self.time_steps.prev_t,
+            end_date=self.time_steps.t,
             frequency=1
-        )
+        )]
 
-        self._update_xversaries(
-            xversaries=self.quarterversaries,
+        self.quarterversaries[self.time_steps.t] = [get_xversaries(
+            issue_date=self.data_sources.model_point.issue_date,
+            start_date=self.time_steps.prev_t,
+            end_date=self.time_steps.t,
             frequency=3
-        )
+        )]
 
-        self._update_xversaries(
-            xversaries=self.anniversaries,
+        self.anniversaries[self.time_steps.t] = [get_xversaries(
+            issue_date=self.data_sources.model_point.issue_date,
+            start_date=self.time_steps.prev_t,
+            end_date=self.time_steps.t,
             frequency=12
-        )
+        )]
 
     def process_premiums(
         self
@@ -368,12 +366,18 @@ class BaseContract(
     ) -> None:
 
         # Credit interest for each account
+        interest_credited = 0.0
+
         for sub_account in self.accounts:
 
             sub_account.credit_interest()
 
+            interest_credited += sub_account.interest_credited.latest_value
+
         # Update values
         self.account_value[self.time_steps.t] = self._calc_account_value()
+        self.interest_credited[self.time_steps.t] = interest_credited
+
         self.update_cash_surrender_value()
 
     def assess_charge(

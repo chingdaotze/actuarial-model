@@ -36,4 +36,4 @@ class FixedCreditingRate(
         :return:
         """
 
-        return self.cache[account_name]['crediting_rate']
+        return self.cache['crediting_rate'][account_name]
