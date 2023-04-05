@@ -4,7 +4,6 @@ from src.system.data_sources.namespace import DataSourceNamespace
 
 from src.data_sources.annuity.product.base.crediting_rate.fixed import FixedCreditingRate
 from src.data_sources.annuity.product.base.crediting_rate.indexed import IndexedCreditingRate
-from src.data_sources.annuity.product.base.crediting_rate.separate_account import SeparateAccountCreditingRate
 
 
 class CreditingRate(
@@ -42,12 +41,5 @@ class CreditingRate(
             path=join(
                 self.path,
                 'crediting_rate_indexed.csv'
-            )
-        )
-
-        self.separate_account: SeparateAccountCreditingRate = SeparateAccountCreditingRate(
-            path=join(
-                self.path,
-                'crediting_rate_separate_account.csv'
             )
         )
