@@ -30,12 +30,17 @@ class SeparateAccount(
         self
     ) -> None:
 
-        crediting_rate = 0
+        start_index = self.data_sources.economic_scenario.get_rate(
+            name=self.account_data_source.account_name,
+            t=self.time_steps.prev_t
+        )
 
-        elapsed_days = relativedelta(
-            dt1=self.time_steps.t,
-            dt2=self.time_steps.prev_t
-        ).days
+        end_index = self.data_sources.economic_scenario.get_rate(
+            name=self.account_data_source.account_name,
+            t=self.time_steps.t
+        )
+
+        crediting_rate = (end_index / start_index) - 1.0
 
         self.interest_credited[self.time_steps.t] = self.account_value.latest_value * crediting_rate
 
