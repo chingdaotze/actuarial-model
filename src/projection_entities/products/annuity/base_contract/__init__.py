@@ -20,6 +20,7 @@ from src.projection_entities.products.annuity.base_contract.account.fa import Fi
 from src.projection_entities.products.annuity.base_contract.account.ia import IndexedAccount
 from src.projection_entities.products.annuity.base_contract.account.va import SeparateAccount
 from src.projection_entities.products.annuity.riders.gmwb import Gmwb
+from src.projection_entities.products.annuity.riders.gmdb.base import GmdbBase
 from src.projection_entities.products.annuity.riders.gmdb.rop import GmdbRop
 from src.projection_entities.products.annuity.riders.gmdb.rav import GmdbRav
 from src.projection_entities.products.annuity.riders.gmdb.mav import GmdbMav
@@ -466,13 +467,25 @@ class BaseContract(
 
     def process_withdrawals(
         self
-    ):
+    ) -> None:
 
         for rider in self.riders:
 
             if isinstance(rider, Gmwb):
 
                 rider.process_withdrawal(
+                    base_contract=self
+                )
+
+    def update_gmdb_naar(
+        self
+    ) -> None:
+
+        for rider in self.riders:
+
+            if issubclass(type(rider), GmdbBase):
+
+                rider.update_net_amount_at_risk(
                     base_contract=self
                 )
 

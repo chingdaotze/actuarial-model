@@ -94,4 +94,6 @@ class EconomicLiabilityProjection(
 
         self.base_contract.process_withdrawals()
 
+        self.base_contract.update_gmdb_naar()
+
         self.base_contract.update_cash_surrender_value()
