@@ -228,6 +228,7 @@ class Account(
         withdrawal_amount: float
     ) -> None:
 
+        self.withdrawal[self.time_steps.t] = withdrawal_amount
         self.account_value[self.time_steps.t] = self.account_value.latest_value - withdrawal_amount
 
     def update_surrender_charge(

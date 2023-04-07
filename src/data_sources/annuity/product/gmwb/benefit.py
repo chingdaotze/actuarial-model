@@ -1,3 +1,5 @@
+from typing import Dict
+
 from pandas import DataFrame
 
 from src.system.data_sources.data_source.file_json import DataSourceJsonFile
@@ -23,11 +25,48 @@ class GmwbBenefit(
 
         # Transform tables
         self.cache = self.cache.applymap(
-            func=lambda cell_data: DataFrame.from_dict(
-                data=cell_data,
-                orient='index'
+            func=lambda node_dict: self._parse_table_node(
+                node_dict=node_dict
             )
         )
+
+    @staticmethod
+    def _parse_table_node(
+        node_dict: Dict[str, float]
+    ) -> DataFrame:
+
+        table_data = DataFrame.from_dict(
+            data=node_dict,
+            orient='index'
+        )
+
+        table_data.index = table_data.index.astype(
+            dtype=int
+        )
+
+        return table_data
+
+    @staticmethod
+    def _withdrawal_rate(
+        withdrawal_rate_table: DataFrame,
+        age_first_withdrawal: int
+    ) -> float:
+
+        lookup_key = withdrawal_rate_table.index[0]
+
+        for attained_age in withdrawal_rate_table.index.to_list():
+
+            if age_first_withdrawal >= attained_age:
+
+                lookup_key = attained_age
+
+            else:
+
+                break
+
+        withdrawal_rate = withdrawal_rate_table[0][lookup_key]
+
+        return withdrawal_rate
 
     def av_active_withdrawal_rate(
         self,
@@ -46,6 +85,13 @@ class GmwbBenefit(
 
         withdrawal_rate_table = self.cache[rider_name]['av_active']
 
+        withdrawal_rate = self._withdrawal_rate(
+            withdrawal_rate_table=withdrawal_rate_table,
+            age_first_withdrawal=age_first_withdrawal
+        )
+
+        return withdrawal_rate
+
     def av_exhaust_withdrawal_rate(
         self,
         rider_name: str,
@@ -61,4 +107,11 @@ class GmwbBenefit(
         :return:
         """
 
-        withdrawal_rate_table = self.cache[rider_name]['av_exhaust']
+        withdrawal_rate_table = self.cache[rider_name]['av_exhausted']
+
+        withdrawal_rate = self._withdrawal_rate(
+            withdrawal_rate_table=withdrawal_rate_table,
+            age_first_withdrawal=age_first_withdrawal
+        )
+
+        return withdrawal_rate

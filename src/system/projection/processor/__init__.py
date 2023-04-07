@@ -65,9 +65,8 @@ class ProjectionProcessor(
                 )
             )
 
-    @classmethod
+    @staticmethod
     def _get_type(
-        cls,
         qualified_path: str
     ) -> Type:
 
@@ -91,9 +90,8 @@ class ProjectionProcessor(
 
         return class_def
 
-    @classmethod
+    @staticmethod
     def run_projection(
-        cls,
         projection: Projection
     ) -> None:
 

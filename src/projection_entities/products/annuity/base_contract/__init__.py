@@ -291,6 +291,21 @@ class BaseContract(
             0.0
         )
 
+    @property
+    def primary_annuitant(
+        self
+    ) -> Annuitant:
+
+        annuitants_by_date_of_birth = dict(
+            [(annuitant.date_of_birth, annuitant) for annuitant in self.annuitants]
+        )
+
+        youngest_annuitant_date_of_birth = min(annuitants_by_date_of_birth.keys())
+
+        primary_annuitant = annuitants_by_date_of_birth[youngest_annuitant_date_of_birth]
+
+        return primary_annuitant
+
     def age_contract(
         self
     ) -> None:
@@ -389,7 +404,14 @@ class BaseContract(
         # Apply charge pro rata across accounts
         for sub_account in self.accounts:
 
-            pro_rata_factor = sub_account.account_value.latest_value / self.account_value.latest_value
+            if self.account_value.latest_value:
+
+                pro_rata_factor = sub_account.account_value.latest_value / self.account_value.latest_value
+
+            else:
+
+                pro_rata_factor = 0.0
+
             pro_rata_charge = charge_amount * pro_rata_factor
 
             sub_account.process_charge(
@@ -416,10 +438,43 @@ class BaseContract(
             )
 
     def process_withdrawal(
+        self,
+        withdrawal_amount: float
+    ) -> None:
+
+        # Apply withdrawal pro rata across accounts
+        for sub_account in self.accounts:
+
+            if self.account_value.latest_value:
+
+                pro_rata_factor = sub_account.account_value.latest_value / self.account_value.latest_value
+
+            else:
+
+                pro_rata_factor = 0.0
+
+            pro_rata_withdrawal = withdrawal_amount * pro_rata_factor
+
+            sub_account.process_withdrawal(
+                withdrawal_amount=pro_rata_withdrawal
+            )
+
+        # Update values
+        self.withdrawal[self.time_steps.t] = withdrawal_amount
+        self.account_value[self.time_steps.t] = self._calc_account_value()
+        self.update_cash_surrender_value()
+
+    def process_withdrawals(
         self
     ):
 
-        pass
+        for rider in self.riders:
+
+            if isinstance(rider, Gmwb):
+
+                rider.process_withdrawal(
+                    base_contract=self
+                )
 
     def update_cash_surrender_value(
         self

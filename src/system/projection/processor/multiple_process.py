@@ -34,9 +34,8 @@ class MultiProcessProjectionProcessor(
             projection_parameters=projection_parameters
         )
 
-    @classmethod
+    @staticmethod
     def progress_bar(
-        cls,
         out_queue: Queue,
         projection_count: int,
         cpus: int

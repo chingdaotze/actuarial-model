@@ -92,4 +92,6 @@ class EconomicLiabilityProjection(
 
         self.base_contract.assess_charges()
 
+        self.base_contract.process_withdrawals()
+
         self.base_contract.update_cash_surrender_value()

@@ -77,6 +77,7 @@ class GmdbBase(
         self,
         base_contract: 'BaseContract'
     ) -> None:
+        self.charge_amount[self.time_steps.t] = 0.0
 
         for _ in base_contract.monthiversaries.latest_value:
 
@@ -85,12 +86,13 @@ class GmdbBase(
             )
 
             self.charge_amount[self.time_steps.t] = \
+                self.charge_amount.latest_value + \
                 base_contract.account_value.latest_value * (self.charge_rate.latest_value / 12.0)
 
-            base_contract.assess_charge(
-                charge_amount=self.charge_amount.latest_value,
-                charge_account_name='gmdb_charge'
-            )
+        base_contract.assess_charge(
+            charge_amount=self.charge_amount.latest_value,
+            charge_account_name='gmdb_charge'
+        )
 
     @abstractmethod
     def update_benefit_base(
