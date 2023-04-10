@@ -12,6 +12,8 @@ class Account(
     DataSourcePythonDict
 ):
 
+    premiums: Premiums
+
     def __init__(
         self,
         data: Dict
@@ -22,7 +24,7 @@ class Account(
             data=data
         )
 
-        self.premiums: Premiums = Premiums(
+        self.premiums = Premiums(
             data=data['premiums']
         )
 

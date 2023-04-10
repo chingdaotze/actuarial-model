@@ -22,6 +22,16 @@ class Annuitant(
 
     data_sources: AnnuityDataSources
 
+    id: str
+    gender: Gender
+    date_of_birth: date
+
+    attained_age: ProjectionValue
+    base_mortality_rate: ProjectionValue
+    mortality_improvement_rate: ProjectionValue
+    mortality_improvement_factor: ProjectionValue
+    mortality_rate: ProjectionValue
+
     def __init__(
         self,
         time_steps: TimeSteps,
@@ -35,9 +45,9 @@ class Annuitant(
             data_sources=data_sources
         )
 
-        self.id: str = annuitant_data_source.id
-        self.gender: Gender = annuitant_data_source.gender
-        self.date_of_birth: date = annuitant_data_source.date_of_birth
+        self.id = annuitant_data_source.id
+        self.gender = annuitant_data_source.gender
+        self.date_of_birth = annuitant_data_source.date_of_birth
 
         self.attained_age = ProjectionValue(
             init_t=self.init_t,

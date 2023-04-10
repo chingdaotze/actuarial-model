@@ -16,6 +16,8 @@ class EconomicScenarios(
     Data source collection that holds multiple stochastic economic scenarios.
     """
 
+    rates: List[str]
+
     def __init__(
         self,
         path: str
@@ -46,7 +48,7 @@ class EconomicScenarios(
             inplace=True
         )
 
-        self.rates: List[str] = list(self.cache.columns)
+        self.rates = list(self.cache.columns)
 
         for scenario_index in self.cache.index.levels[0].unique():
 

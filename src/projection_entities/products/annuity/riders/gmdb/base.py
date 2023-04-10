@@ -21,8 +21,13 @@ class GmdbBase(
 ):
 
     data_sources: AnnuityDataSources
+
     rider_name: str
+
     benefit_base: ProjectionValue
+    charge_rate: ProjectionValue
+    charge_amount: ProjectionValue
+    net_amount_at_risk: ProjectionValue
 
     def __init__(
         self,
@@ -81,7 +86,7 @@ class GmdbBase(
 
         for _ in base_contract.monthiversaries:
 
-            self.charge_rate[self.time_steps.t] = self.data_sources.product.gmdb_rider.charge.charge_rate(
+            self.charge_rate[self.time_steps.t] = self.data_sources.product.gmdb_rider.gmdb_charge.charge_rate(
                 rider_name=self.rider_name
             )
 

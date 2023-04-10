@@ -15,6 +15,10 @@ class Mortality(
     Namespace that contains all mortality-related data sources.
     """
 
+    base_mortality: BaseMortality
+    mortality_improvement: MortalityImprovement
+    mortality_improvement_dates: MortalityImprovementDates
+
     def __init__(
         self,
         path: str
@@ -31,21 +35,21 @@ class Mortality(
             path=path
         )
 
-        self.base_mortality: BaseMortality = BaseMortality(
+        self.base_mortality = BaseMortality(
             path=join(
                 self.path,
                 '2012_individual_annuity_mortality_basic_table.csv'
             )
         )
 
-        self.mortality_improvement: MortalityImprovement = MortalityImprovement(
+        self.mortality_improvement = MortalityImprovement(
             path=join(
                 self.path,
                 'mortality_improvement_projection_scale_g2.csv'
             )
         )
 
-        self.mortality_improvement_dates: MortalityImprovementDates = MortalityImprovementDates(
+        self.mortality_improvement_dates = MortalityImprovementDates(
             path=join(
                 self.path,
                 'mortality_improvement_projection_scale_g2_dates.csv'

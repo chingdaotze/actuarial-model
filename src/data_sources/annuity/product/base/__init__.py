@@ -14,6 +14,9 @@ class BaseProduct(
     Namespace that contains all base product-related data sources and namespaces.
     """
 
+    surrender_charge: SurrenderCharge
+    crediting_rate: CreditingRate
+
     def __init__(
         self,
         path: str
@@ -30,13 +33,13 @@ class BaseProduct(
             path=path
         )
 
-        self.surrender_charge: SurrenderCharge = SurrenderCharge(
+        self.surrender_charge = SurrenderCharge(
             path=join(
                 self.path,
                 'surrender_charge.csv'
             )
         )
 
-        self.crediting_rate: CreditingRate = CreditingRate(
+        self.crediting_rate = CreditingRate(
             path=self.path
         )

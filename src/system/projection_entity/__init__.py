@@ -35,6 +35,10 @@ class ProjectionEntity(
     Inherit this class to implement a custom projection entity.
     """
 
+    time_steps: TimeSteps
+    data_sources: DataSourcesRoot
+    init_t: date
+
     def __init__(
         self,
         time_steps: TimeSteps,
@@ -44,8 +48,6 @@ class ProjectionEntity(
 
         self.time_steps: TimeSteps = time_steps
         self.data_sources: DataSourcesRoot = data_sources
-
-        self.init_t: date
 
         if init_t is None:
 

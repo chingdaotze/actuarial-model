@@ -87,7 +87,7 @@ class BaseContract(
 
             elif rider_data_source.rider_type == Rider.GUARANTEED_MINIMUM_DEATH_BENEFIT:
 
-                rider_type = self.data_sources.product.gmdb_rider.types.gmdb_type(
+                rider_type = self.data_sources.product.gmdb_rider.gmdb_types.gmdb_type(
                     rider_name=rider_data_source.rider_name
                 )
 

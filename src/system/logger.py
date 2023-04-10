@@ -1,4 +1,5 @@
 from typing import (
+    ClassVar,
     Self,
     TextIO,
     NoReturn
@@ -22,9 +23,9 @@ class Logger:
     Singleton logger class. Writes messages to disk and prints messages to console.
     """
 
-    instance: Self = None
-    log_file: TextIO = None
-    lock: Lock = Lock()
+    instance: ClassVar[Self] = None
+    log_file: ClassVar[TextIO] = None
+    lock: ClassVar[Lock] = Lock()
 
     def __new__(
         cls

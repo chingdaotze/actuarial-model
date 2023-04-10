@@ -1,8 +1,7 @@
-from dateutil.relativedelta import relativedelta
-
 from src.projection_entities.products.annuity.base_contract.account import Account
 
 from src.system.projection.time_steps import TimeSteps
+from src.system.date import calc_partial_years
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.accounts.account import Account as AccountDataSource
@@ -34,11 +33,12 @@ class FixedAccount(
             account_name=self.account_data_source.account_name
         )
 
-        elapsed_days = (self.time_steps.t - self.time_steps.prev_t).days
+        partial_years = calc_partial_years(
+            dt1=self.time_steps.t,
+            dt2=self.time_steps.prev_t
+        )
 
-        days_in_year = self._calc_days_in_year()
-
-        crediting_rate *= (elapsed_days / days_in_year)
+        crediting_rate *= partial_years
 
         self.interest_credited[self.time_steps.t] = self.account_value * crediting_rate
 

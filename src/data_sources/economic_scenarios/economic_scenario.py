@@ -14,6 +14,8 @@ class EconomicScenario(
     Data source that represents a single economic scenario.
     """
 
+    scenario_index: int
+
     def __init__(
         self,
         data: DataFrame,
@@ -25,7 +27,7 @@ class EconomicScenario(
             data=data
         )
 
-        self.scenario_index: int = scenario_index
+        self.scenario_index = scenario_index
 
     @use_latest_value
     def get_rate(

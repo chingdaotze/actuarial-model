@@ -15,6 +15,10 @@ class PolicyholderBehaviors(
     Namespace that contains all policyholder behavior-related data sources.
     """
 
+    base_lapse: BaseLapse
+    shock_lapse: ShockLapse
+    annuitization: Annuitization
+
     def __init__(
         self,
         path: str
@@ -31,21 +35,21 @@ class PolicyholderBehaviors(
             path=path
         )
 
-        self.base_lapse: BaseLapse = BaseLapse(
+        self.base_lapse = BaseLapse(
             path=join(
                 self.path,
                 'base_lapse_rate.csv'
             )
         )
 
-        self.shock_lapse: ShockLapse = ShockLapse(
+        self.shock_lapse = ShockLapse(
             path=join(
                 self.path,
                 'shock_lapse_multiplier.csv'
             )
         )
 
-        self.annuitization: Annuitization = Annuitization(
+        self.annuitization = Annuitization(
             path=join(
                 self.path,
                 'annuitization_rate.csv'

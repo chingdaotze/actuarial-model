@@ -18,6 +18,12 @@ class Index(
 
     data_sources: AnnuityDataSources
 
+    economic_scenario: EconomicScenario
+    index_name: str
+
+    index_value: ProjectionValue
+    pct_change: ProjectionValue
+
     def __init__(
         self,
         time_steps: TimeSteps,
@@ -31,10 +37,10 @@ class Index(
             data_sources=data_sources
         )
 
-        self.economic_scenario: EconomicScenario = data_sources.economic_scenario
-        self.index_name: str = index_name
+        self.economic_scenario = data_sources.economic_scenario
+        self.index_name = index_name
 
-        self.index_value: ProjectionValue = ProjectionValue(
+        self.index_value = ProjectionValue(
             init_t=self.init_t,
             init_value=self.economic_scenario.get_rate(
                 name=self.index_name,
@@ -42,7 +48,7 @@ class Index(
             )
         )
 
-        self.pct_change: ProjectionValue = ProjectionValue(
+        self.pct_change = ProjectionValue(
             init_t=self.init_t,
             init_value=0.0
         )

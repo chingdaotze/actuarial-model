@@ -23,6 +23,12 @@ class AnnuityDataSources(
     DataSourcesRoot
 ):
 
+    economic_scenarios: EconomicScenarios
+    model_points: ModelPoints
+    mortality: Mortality
+    policyholder_behaviors: PolicyholderBehaviors
+    product: Product
+
     economic_scenario: EconomicScenario
     model_point: ModelPoint
 
@@ -45,7 +51,7 @@ class AnnuityDataSources(
         )
 
         # Economic scenarios
-        self.economic_scenarios: EconomicScenarios = EconomicScenarios(
+        self.economic_scenarios = EconomicScenarios(
             path=join(
                 self.path,
                 'economic_scenarios.csv'
@@ -53,7 +59,7 @@ class AnnuityDataSources(
         )
 
         # Model points
-        self.model_points: ModelPoints = ModelPoints(
+        self.model_points = ModelPoints(
             path=join(
                 self.path,
                 'model_points.json'
@@ -61,7 +67,7 @@ class AnnuityDataSources(
         )
 
         # Mortality
-        self.mortality: Mortality = Mortality(
+        self.mortality = Mortality(
             path=join(
                 self.path,
                 'mortality'
@@ -69,7 +75,7 @@ class AnnuityDataSources(
         )
 
         # Policyholder behaviors
-        self.policyholder_behaviors: PolicyholderBehaviors = PolicyholderBehaviors(
+        self.policyholder_behaviors = PolicyholderBehaviors(
             path=join(
                 self.path,
                 'policyholder_behaviors'
@@ -77,7 +83,7 @@ class AnnuityDataSources(
         )
 
         # Product
-        self.product: Product = Product(
+        self.product = Product(
             path=join(
                 self.path,
                 'product'

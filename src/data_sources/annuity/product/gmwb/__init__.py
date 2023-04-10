@@ -14,6 +14,9 @@ class GmwbRider(
     Namespace that contains all GMWB-related data sources and namespaces.
     """
 
+    gmwb_benefit: GmwbBenefit
+    gmwb_charge: GmwbCharge
+
     def __init__(
         self,
         path: str
@@ -30,14 +33,14 @@ class GmwbRider(
             path=path
         )
 
-        self.gmwb_benefit: GmwbBenefit = GmwbBenefit(
+        self.gmwb_benefit = GmwbBenefit(
             path=join(
                 self.path,
                 'benefit.json'
             )
         )
 
-        self.gmwb_charge: GmwbCharge = GmwbCharge(
+        self.gmwb_charge = GmwbCharge(
             path=join(
                 self.path,
                 'charge.csv'

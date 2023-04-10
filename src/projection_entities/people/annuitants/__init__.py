@@ -19,7 +19,21 @@ class Annuitants(
     """
 
     data_sources: AnnuityDataSources
+
     annuitants: List[Annuitant]
+
+    t_q_x: ProjectionValue
+    t_q_y: ProjectionValue
+    base_lapse_rate: ProjectionValue
+    lapse_multiplier: ProjectionValue
+    lapse_rate: ProjectionValue
+    annuitization_rate: ProjectionValue
+    l_xy: ProjectionValue
+    l_x: ProjectionValue
+    l_y: ProjectionValue
+    d_xy: ProjectionValue
+    d_lapse: ProjectionValue
+    d_annuitization: ProjectionValue
 
     def __init__(
         self,

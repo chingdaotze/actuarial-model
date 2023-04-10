@@ -14,6 +14,9 @@ class GmdbRider(
     Namespace that contains all base GMDB-related data sources and namespaces.
     """
 
+    gmdb_charge: GmdbCharge
+    gmdb_types: GmdbTypes
+
     def __init__(
         self,
         path: str
@@ -30,14 +33,14 @@ class GmdbRider(
             path=path
         )
 
-        self.charge: GmdbCharge = GmdbCharge(
+        self.gmdb_charge = GmdbCharge(
             path=join(
                 self.path,
                 'charge.csv'
             )
         )
 
-        self.types: GmdbTypes = GmdbTypes(
+        self.gmdb_types = GmdbTypes(
             path=join(
                 self.path,
                 'types.csv'

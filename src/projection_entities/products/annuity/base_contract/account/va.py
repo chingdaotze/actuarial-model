@@ -1,5 +1,3 @@
-from dateutil.relativedelta import relativedelta
-
 from src.projection_entities.products.annuity.base_contract.account import Account
 
 from src.system.projection.time_steps import TimeSteps

@@ -15,6 +15,10 @@ class Product(
     Namespace that contains all product-related data sources and namespaces.
     """
 
+    base_product: BaseProduct
+    gmdb_rider: GmdbRider
+    gmwb_rider: GmwbRider
+
     def __init__(
         self,
         path: str
@@ -31,21 +35,21 @@ class Product(
             path=path
         )
 
-        self.base_product: BaseProduct = BaseProduct(
+        self.base_product = BaseProduct(
             path=join(
                 self.path,
                 'base'
             )
         )
 
-        self.gmdb_rider: GmdbRider = GmdbRider(
+        self.gmdb_rider = GmdbRider(
             path=join(
                 self.path,
                 'gmdb'
             )
         )
 
-        self.gmwb_rider: GmwbRider = GmwbRider(
+        self.gmwb_rider = GmwbRider(
             path=join(
                 self.path,
                 'gmwb'

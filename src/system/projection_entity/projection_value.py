@@ -1,4 +1,5 @@
 from typing import (
+    ClassVar,
     Any,
     Self,
     Callable
@@ -10,7 +11,7 @@ from pandas import DataFrame
 
 class ProjectionValue:
 
-    VALUE_COL: str = 'value'
+    VALUE_COL: ClassVar[str] = 'value'
     _history: DataFrame
     _print_values: bool
 

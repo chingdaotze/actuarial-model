@@ -4,7 +4,6 @@ from abc import (
 )
 from typing import List
 from datetime import date
-from calendar import isleap
 
 from src.system.projection_entity import ProjectionEntity
 from src.system.projection.time_steps import TimeSteps
@@ -25,6 +24,7 @@ class Account(
 
     data_sources: AnnuityDataSources
     account_data_source: AccountDataSource
+
     premiums: List[Premium]
 
     premium_new: ProjectionValue
@@ -34,6 +34,7 @@ class Account(
     gmdb_charge: ProjectionValue
     gmwb_charge: ProjectionValue
     withdrawal: ProjectionValue
+    account_value: ProjectionValue
     surrender_charge: ProjectionValue
 
     def __init__(
@@ -101,20 +102,6 @@ class Account(
     ) -> str:
 
         return f'contract.account.{self.account_data_source.id}'
-
-    def _calc_days_in_year(
-        self
-    ) -> int:
-
-        if not isleap(year=self.time_steps.t.year):
-
-            days_in_year = 365
-
-        else:
-
-            days_in_year = 366  # Leap year
-
-        return days_in_year
 
     def _get_new_premiums(
         self,

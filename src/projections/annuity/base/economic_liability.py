@@ -23,6 +23,9 @@ class EconomicLiabilityProjection(
 
     data_sources: AnnuityDataSources
 
+    economy: Economy
+    base_contract: BaseContract
+
     def __init__(
         self,
         projection_parameters: ProjectionParameters,
@@ -35,12 +38,12 @@ class EconomicLiabilityProjection(
             data_sources=data_sources
         )
 
-        self.economy: Economy = Economy(
+        self.economy = Economy(
             time_steps=self.time_steps,
             data_sources=self.data_sources
         )
 
-        self.base_contract: BaseContract = BaseContract(
+        self.base_contract = BaseContract(
             time_steps=self.time_steps,
             data_sources=self.data_sources
         )

@@ -13,6 +13,8 @@ class Economy(
 
     data_sources: AnnuityDataSources
 
+    indexes: List[Index]
+
     def __init__(
         self,
         time_steps: TimeSteps,
@@ -25,7 +27,7 @@ class Economy(
             data_sources=data_sources
         )
 
-        self.indexes: List[Index] = [
+        self.indexes = [
             Index(
                 time_steps=self.time_steps,
                 data_sources=self.data_sources,

@@ -14,6 +14,9 @@ class CreditingRate(
     Namespace that contains all crediting-related data sources and namespaces.
     """
 
+    fixed: FixedCreditingRate
+    indexed: IndexedCreditingRate
+
     def __init__(
         self,
         path: str
@@ -30,14 +33,14 @@ class CreditingRate(
             path=path
         )
 
-        self.fixed: FixedCreditingRate = FixedCreditingRate(
+        self.fixed = FixedCreditingRate(
             path=join(
                 self.path,
                 'crediting_rate_fixed.csv'
             )
         )
 
-        self.indexed: IndexedCreditingRate = IndexedCreditingRate(
+        self.indexed = IndexedCreditingRate(
             path=join(
                 self.path,
                 'crediting_rate_indexed.csv'

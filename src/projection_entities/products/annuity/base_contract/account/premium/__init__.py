@@ -19,6 +19,14 @@ class Premium(
 
     data_sources: AnnuityDataSources
 
+    _product_name: str
+    _account_id: str
+
+    premium_amount: ProjectionValue
+    premium_age: ProjectionValue
+    surrender_charge_rate: ProjectionValue
+    surrender_charge: ProjectionValue
+
     def __init__(
         self,
         time_steps: TimeSteps,
@@ -34,8 +42,8 @@ class Premium(
             init_t=premium_data_source.premium_date
         )
 
-        self._product_name: str = self.data_sources.model_point.product_name
-        self._account_id: str = account_id
+        self._product_name = self.data_sources.model_point.product_name
+        self._account_id = account_id
 
         self.premium_amount: ProjectionValue = ProjectionValue(
             init_t=self.init_t,
