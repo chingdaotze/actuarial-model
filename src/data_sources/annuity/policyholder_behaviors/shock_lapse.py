@@ -26,14 +26,19 @@ class ShockLapse(
 
     def shock_lapse_multiplier(
         self,
-        years_after_surrender_charge: int
+        years_after_cdsc_period: int
     ) -> float:
 
         """
         Convenience method to access data from the shock lapse table. Returns a shock lapse multiplier.
 
-        :param years_after_surrender_charge:
+        :param years_after_cdsc_period:
         :return:
         """
 
-        return self.cache['multiplier'][years_after_surrender_charge]
+        lookup_value = min(
+            years_after_cdsc_period,
+            self.cache.index.max()
+        )
+
+        return self.cache['multiplier'][lookup_value]

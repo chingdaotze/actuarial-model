@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING
-from dateutil.relativedelta import relativedelta
 
 from src.system.projection_entity import ProjectionEntity
 from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
+from src.system.date import calc_whole_years
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.riders.gmwb import Gmwb as GmwbDataSource
@@ -151,10 +151,10 @@ class Gmwb(
 
                 primary_annuitant = base_contract.primary_annuitant
 
-                age_first_withdrawal = relativedelta(
+                age_first_withdrawal = calc_whole_years(
                     dt1=self._gmwb_data_source.first_withdrawal_date,
                     dt2=primary_annuitant.date_of_birth
-                ).years + 1
+                )
 
                 self.av_active_withdrawal_rate[self.time_steps.t] = \
                     self.data_sources.product.gmwb_rider.gmwb_benefit.av_active_withdrawal_rate(

@@ -4,6 +4,7 @@ from src.system.data_sources.namespace import DataSourceNamespace
 
 from src.data_sources.annuity.mortality.base_mortality import BaseMortality
 from src.data_sources.annuity.mortality.mortality_improvement import MortalityImprovement
+from src.data_sources.annuity.mortality.mortality_improvement_dates import MortalityImprovementDates
 
 
 class Mortality(
@@ -41,5 +42,12 @@ class Mortality(
             path=join(
                 self.path,
                 'mortality_improvement_projection_scale_g2.csv'
+            )
+        )
+
+        self.mortality_improvement_dates: MortalityImprovementDates = MortalityImprovementDates(
+            path=join(
+                self.path,
+                'mortality_improvement_projection_scale_g2_dates.csv'
             )
         )

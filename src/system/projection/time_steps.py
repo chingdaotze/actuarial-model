@@ -8,15 +8,19 @@ from typing import (
 
 class TimeSteps:
 
+    _index: int
+    _time_step: relativedelta
+    _time_steps: List[date]
+
     def __init__(
         self,
         start_t: date,
         end_t: date,
         time_step: relativedelta
     ):
-        self._index: int = 0
-        self._time_step: relativedelta = time_step
-        self._time_steps: List[date] = []
+        self._index = 0
+        self._time_step = time_step
+        self._time_steps = []
 
         time_step = start_t
 
@@ -100,3 +104,10 @@ class TimeSteps:
                 len(self._time_steps) - 1
             )
         ]
+
+    @property
+    def time_step(
+        self
+    ) -> relativedelta:
+
+        return self._time_step

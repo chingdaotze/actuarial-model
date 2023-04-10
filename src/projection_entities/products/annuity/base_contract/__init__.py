@@ -14,7 +14,8 @@ from src.system.projection.scripts.get_xversaries import get_xversaries
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.accounts.account import Account as AccountDataSource
-from src.projection_entities.people.annuitant import Annuitant
+from src.projection_entities.people.annuitants import Annuitants
+from src.projection_entities.people.annuitants.annuitant import Annuitant
 from src.projection_entities.products.annuity.base_contract.account import Account
 from src.projection_entities.products.annuity.base_contract.account.fa import FixedAccount
 from src.projection_entities.products.annuity.base_contract.account.ia import IndexedAccount
@@ -32,7 +33,7 @@ class BaseContract(
 
     data_sources: AnnuityDataSources
 
-    annuitants: List[Annuitant]
+    annuitants: Annuitants
     accounts: List[Account]
     riders: List[Gmwb | GmdbRop | GmdbRav | GmdbMav]
 
@@ -61,13 +62,10 @@ class BaseContract(
             data_sources=data_sources
         )
 
-        self.annuitants = [
-            Annuitant(
-                time_steps=self.time_steps,
-                data_sources=self.data_sources,
-                annuitant_data_source=annuitant_data_source
-            ) for annuitant_data_source in self.data_sources.model_point.annuitants
-        ]
+        self.annuitants = Annuitants(
+            time_steps=self.time_steps,
+            data_sources=self.data_sources
+        )
 
         self.accounts = self._get_new_accounts(
             t1=self.init_t
@@ -297,24 +295,11 @@ class BaseContract(
         self
     ) -> Annuitant:
 
-        annuitants_by_date_of_birth = dict(
-            [(annuitant.date_of_birth, annuitant) for annuitant in self.annuitants]
-        )
-
-        youngest_annuitant_date_of_birth = min(annuitants_by_date_of_birth.keys())
-
-        primary_annuitant = annuitants_by_date_of_birth[youngest_annuitant_date_of_birth]
-
-        return primary_annuitant
+        return self.annuitants.primary_annuitant
 
     def age_contract(
         self
     ) -> None:
-
-        # Update annuitants
-        for annuitant in self.annuitants:
-
-            annuitant.update_attained_age()
 
         # Update upcoming anniversaries
         self.monthiversaries[self.time_steps.t] = [get_xversaries(

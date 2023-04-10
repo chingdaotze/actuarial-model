@@ -38,9 +38,27 @@ class SurrenderCharge(
         :return:
         """
 
-        max_lookup_value = min(
+        lookup_value = min(
             policy_year,
             self.cache.index.max()
         )
 
-        return self.cache[product_name][max_lookup_value]
+        return self.cache[product_name][lookup_value]
+
+    def cdsc_period(
+        self,
+        product_name: str
+    ) -> int:
+
+        """
+        Convenience method to access data from the surrender charge table. Returns the maximum surrender charge period.
+
+        :param product_name:
+        :return:
+        """
+
+        surrender_charge_table = self.cache[product_name]
+
+        return max(
+            surrender_charge_table[surrender_charge_table != 0.0].index
+        )

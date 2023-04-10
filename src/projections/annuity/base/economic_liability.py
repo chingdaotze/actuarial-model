@@ -97,3 +97,5 @@ class EconomicLiabilityProjection(
         self.base_contract.update_gmdb_naar()
 
         self.base_contract.update_cash_surrender_value()
+
+        self.base_contract.annuitants.update_decrements()

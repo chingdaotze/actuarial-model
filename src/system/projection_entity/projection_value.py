@@ -30,6 +30,28 @@ class ProjectionValue:
 
         self[init_t] = init_value
 
+    def __repr__(
+        self
+    ) -> str:
+        return str(
+            self.latest_value
+        )
+
+    def __setitem__(
+        self,
+        key: date,
+        value: Any
+    ) -> None:
+
+        self._history.loc[key] = value
+
+    def __getitem__(
+        self,
+        item: date
+    ) -> Any:
+
+        return self._history[self.VALUE_COL][item]
+
     @property
     def latest_value(
         self
@@ -50,18 +72,3 @@ class ProjectionValue:
     ) -> bool:
 
         return self._print_values
-
-    def __setitem__(
-        self,
-        key: date,
-        value: Any
-    ) -> None:
-
-        self._history.loc[key] = value
-
-    def __getitem__(
-        self,
-        item: date
-    ) -> Any:
-
-        return self._history[self.VALUE_COL][item]

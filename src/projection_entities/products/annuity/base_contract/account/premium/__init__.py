@@ -3,7 +3,10 @@ from dateutil.relativedelta import relativedelta
 from src.system.projection_entity import ProjectionEntity
 from src.system.projection.time_steps import TimeSteps
 from src.system.projection_entity.projection_value import ProjectionValue
-from src.system.date import date_to_str
+from src.system.date import (
+    date_to_str,
+    calc_whole_years
+)
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.accounts.account.premiums.premium import Premium as \
@@ -65,7 +68,10 @@ class Premium(
         self
     ) -> int:
 
-        return self.premium_age.latest_value.years + 1
+        return calc_whole_years(
+            dt1=self.time_steps.t,
+            dt2=self.init_t
+        )
 
     def _calc_surrender_charge_rate(
         self
