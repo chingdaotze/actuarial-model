@@ -1,4 +1,5 @@
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
+from src.system.projection_entity.projection_value import use_latest_value
 
 
 class ShockLapse(
@@ -24,6 +25,7 @@ class ShockLapse(
             inplace=True
         )
 
+    @use_latest_value
     def shock_lapse_multiplier(
         self,
         years_after_cdsc_period: int

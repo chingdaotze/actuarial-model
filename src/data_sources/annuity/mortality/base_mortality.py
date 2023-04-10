@@ -1,5 +1,6 @@
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
 from src.system.enums import Gender
+from src.system.projection_entity.projection_value import use_latest_value
 
 
 class BaseMortality(
@@ -25,6 +26,7 @@ class BaseMortality(
             inplace=True
         )
 
+    @use_latest_value
     def base_mortality_rate(
         self,
         gender: Gender,

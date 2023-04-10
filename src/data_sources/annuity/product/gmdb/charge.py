@@ -1,5 +1,6 @@
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
 from src.system.constants import DEFAULT_COL
+from src.system.projection_entity.projection_value import use_latest_value
 
 
 class GmdbCharge(
@@ -25,6 +26,7 @@ class GmdbCharge(
             inplace=True
         )
 
+    @use_latest_value
     def charge_rate(
         self,
         rider_name: str

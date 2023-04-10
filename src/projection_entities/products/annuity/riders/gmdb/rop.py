@@ -34,4 +34,4 @@ class GmdbRop(
         base_contract: 'BaseContract'
     ) -> None:
 
-        self.benefit_base[self.time_steps.t] = base_contract.premium_cumulative.latest_value
+        self.benefit_base[self.time_steps.t] = base_contract.premium_cumulative

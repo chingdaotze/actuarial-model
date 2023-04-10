@@ -42,6 +42,6 @@ class SeparateAccount(
 
         crediting_rate = (end_index / start_index) - 1.0
 
-        self.interest_credited[self.time_steps.t] = self.account_value.latest_value * crediting_rate
+        self.interest_credited[self.time_steps.t] = self.account_value * crediting_rate
 
-        self.account_value[self.time_steps.t] = self.account_value.latest_value + self.interest_credited.latest_value
+        self.account_value[self.time_steps.t] = self.account_value + self.interest_credited

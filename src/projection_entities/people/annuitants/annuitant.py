@@ -86,14 +86,14 @@ class Annuitant(
         # Get base mortality
         self.base_mortality_rate[self.time_steps.t] = self.data_sources.mortality.base_mortality.base_mortality_rate(
             gender=self.gender,
-            attained_age=self.attained_age.latest_value
+            attained_age=self.attained_age
         )
 
         # Get mortality improvement rate
         self.mortality_improvement_rate[self.time_steps.t] = \
             self.data_sources.mortality.mortality_improvement.mortality_improvement_rate(
                 gender=self.gender,
-                attained_age=self.attained_age.latest_value
+                attained_age=self.attained_age
             )
 
         # Calculate mortality improvement factor
@@ -109,8 +109,8 @@ class Annuitant(
         )
 
         self.mortality_improvement_factor[self.time_steps.t] = \
-            (1.0 - self.mortality_improvement_rate.latest_value) ** mortality_improvement_duration
+            (1.0 - self.mortality_improvement_rate) ** mortality_improvement_duration
 
         # Calculate mortality rate
         self.mortality_rate[self.time_steps.t] = \
-            self.base_mortality_rate.latest_value * self.mortality_improvement_factor.latest_value
+            self.base_mortality_rate * self.mortality_improvement_factor

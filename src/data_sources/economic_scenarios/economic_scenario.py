@@ -3,6 +3,7 @@ from datetime import date
 from pandas import DataFrame
 
 from src.system.data_sources.data_source.pandas_data_frame import DataSourcePandasDataFrame
+from src.system.projection_entity.projection_value import use_latest_value
 
 
 class EconomicScenario(
@@ -26,6 +27,7 @@ class EconomicScenario(
 
         self.scenario_index: int = scenario_index
 
+    @use_latest_value
     def get_rate(
         self,
         name: str,

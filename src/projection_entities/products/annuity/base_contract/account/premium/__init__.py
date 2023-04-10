@@ -86,7 +86,7 @@ class Premium(
         self
     ) -> float:
 
-        return self.premium_amount.latest_value * self.surrender_charge_rate.latest_value
+        return self.premium_amount * self.surrender_charge_rate
 
     def update_premium(
         self

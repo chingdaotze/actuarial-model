@@ -262,7 +262,7 @@ class BaseContract(
     ) -> float:
 
         return sum(
-            [sub_account.premium_new.latest_value for sub_account in self.accounts]
+            [sub_account.premium_new for sub_account in self.accounts]
         )
 
     def _calc_account_value(
@@ -270,7 +270,7 @@ class BaseContract(
     ) -> float:
 
         return sum(
-            [sub_account.account_value.latest_value for sub_account in self.accounts]
+            [sub_account.account_value for sub_account in self.accounts]
         )
 
     def _calc_surrender_charge(
@@ -278,7 +278,7 @@ class BaseContract(
     ) -> float:
 
         return sum(
-            [sub_account.surrender_charge.latest_value for sub_account in self.accounts]
+            [sub_account.surrender_charge for sub_account in self.accounts]
         )
 
     def _calc_cash_surrender_value(
@@ -286,7 +286,7 @@ class BaseContract(
     ) -> float:
 
         return max(
-            self.account_value.latest_value - self.surrender_charge.latest_value,
+            self.account_value - self.surrender_charge,
             0.0
         )
 
@@ -348,8 +348,7 @@ class BaseContract(
             self.premium_new[self.time_steps.t] = self._calc_new_premium()
 
             # Update values
-            self.premium_cumulative[self.time_steps.t] = \
-                self.premium_cumulative.latest_value + self.premium_new.latest_value
+            self.premium_cumulative[self.time_steps.t] = self.premium_cumulative + self.premium_new
 
             self.account_value[self.time_steps.t] = self._calc_account_value()
 
@@ -373,7 +372,7 @@ class BaseContract(
 
             sub_account.credit_interest()
 
-            interest_credited += sub_account.interest_credited.latest_value
+            interest_credited += sub_account.interest_credited
 
         # Update values
         self.account_value[self.time_steps.t] = self._calc_account_value()
@@ -383,16 +382,16 @@ class BaseContract(
 
     def assess_charge(
         self,
-        charge_amount: float,
+        charge_amount: ProjectionValue,
         charge_account_name: str
     ) -> None:
 
         # Apply charge pro rata across accounts
         for sub_account in self.accounts:
 
-            if self.account_value.latest_value:
+            if self.account_value:
 
-                pro_rata_factor = sub_account.account_value.latest_value / self.account_value.latest_value
+                pro_rata_factor = sub_account.account_value / self.account_value
 
             else:
 
@@ -425,15 +424,15 @@ class BaseContract(
 
     def process_withdrawal(
         self,
-        withdrawal_amount: float
+        withdrawal_amount: ProjectionValue
     ) -> None:
 
         # Apply withdrawal pro rata across accounts
         for sub_account in self.accounts:
 
-            if self.account_value.latest_value:
+            if self.account_value:
 
-                pro_rata_factor = sub_account.account_value.latest_value / self.account_value.latest_value
+                pro_rata_factor = sub_account.account_value / self.account_value
 
             else:
 

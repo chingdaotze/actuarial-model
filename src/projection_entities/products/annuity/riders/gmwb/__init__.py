@@ -95,7 +95,7 @@ class Gmwb(
     ) -> None:
 
         self.benefit_base[self.time_steps.t] = \
-            self.benefit_base.latest_value + base_contract.premium_new.latest_value
+            self.benefit_base + base_contract.premium_new
 
     def process_charge(
         self,
@@ -107,23 +107,24 @@ class Gmwb(
 
         account_value = base_contract.account_value.latest_value
 
-        for _ in base_contract.quarterversaries.latest_value:
+        for _ in base_contract.quarterversaries:
 
             self.charge_rate[self.time_steps.t] = self.data_sources.product.gmwb_rider.gmwb_charge.charge_rate(
                 product_name=self._gmwb_data_source.rider_name
             )
 
-            self.charge_amount[self.time_steps.t] = \
-                self.charge_amount.latest_value + \
+            self.charge_amount[self.time_steps.t] = (
+                self.charge_amount +
                 min(
-                    self.benefit_base.latest_value * (self.charge_rate.latest_value / 4.0),
+                    self.benefit_base * (self.charge_rate / 4.0),
                     account_value
                 )
+            )
 
-            account_value -= self.charge_amount.latest_value
+            account_value -= self.charge_amount
 
         base_contract.assess_charge(
-            charge_amount=self.charge_amount.latest_value,
+            charge_amount=self.charge_amount,
             charge_account_name='gmwb_charge'
         )
 
@@ -132,7 +133,7 @@ class Gmwb(
         base_contract: 'BaseContract'
     ) -> None:
 
-        if not self.withdrawal_program_active.latest_value:
+        if not self.withdrawal_program_active:
 
             # Determine whether withdrawal program starts
             if (
@@ -142,12 +143,12 @@ class Gmwb(
 
                 self.withdrawal_program_active[self.time_steps.t] = True
 
-            if not base_contract.account_value.latest_value:
+            if not base_contract.account_value:
 
                 self.withdrawal_program_active[self.time_steps.t] = True
 
             # Set withdrawal rates
-            if self.withdrawal_program_active.latest_value:
+            if self.withdrawal_program_active:
 
                 primary_annuitant = base_contract.primary_annuitant
 
@@ -169,9 +170,9 @@ class Gmwb(
                     )
 
         # Roll previous values forward
-        self.withdrawal_program_active[self.time_steps.t] = self.withdrawal_program_active.latest_value
-        self.av_active_withdrawal_rate[self.time_steps.t] = self.av_active_withdrawal_rate.latest_value
-        self.av_exhaust_withdrawal_rate[self.time_steps.t] = self.av_exhaust_withdrawal_rate.latest_value
+        self.withdrawal_program_active[self.time_steps.t] = self.withdrawal_program_active
+        self.av_active_withdrawal_rate[self.time_steps.t] = self.av_active_withdrawal_rate
+        self.av_exhaust_withdrawal_rate[self.time_steps.t] = self.av_exhaust_withdrawal_rate
 
     def process_withdrawal(
         self,
@@ -185,36 +186,32 @@ class Gmwb(
         self.withdrawal[self.time_steps.t] = 0.0
         self.claim[self.time_steps.t] = 0.0
 
-        if self.withdrawal_program_active.latest_value:
+        if self.withdrawal_program_active:
 
             account_value = base_contract.account_value.latest_value
 
-            for _ in base_contract.monthiversaries.latest_value:
+            for _ in base_contract.monthiversaries:
 
                 if account_value:
 
                     # Take withdrawal at AV active rate
-                    withdrawal_requested = \
-                        self.av_active_withdrawal_rate.latest_value * self.benefit_base.latest_value
+                    withdrawal_requested = self.av_active_withdrawal_rate * self.benefit_base
 
-                    self.withdrawal[self.time_steps.t] = \
-                        self.withdrawal.latest_value + \
-                        min(
-                            withdrawal_requested,
-                            account_value
-                        )
+                    self.withdrawal += min(
+                        withdrawal_requested,
+                        account_value
+                    )
 
-                    account_value -= self.withdrawal.latest_value
+                    account_value -= self.withdrawal
 
                     # Take remainder as claim
-                    self.claim[self.time_steps.t] = withdrawal_requested - self.withdrawal.latest_value
+                    self.claim[self.time_steps.t] = withdrawal_requested - self.withdrawal
 
                 else:
 
                     # Take claim at AV exhaust rate
-                    self.claim[self.time_steps.t] = \
-                        self.av_exhaust_withdrawal_rate.latest_value * self.benefit_base.latest_value
+                    self.claim[self.time_steps.t] = self.av_exhaust_withdrawal_rate * self.benefit_base
 
         base_contract.process_withdrawal(
-            withdrawal_amount=self.withdrawal.latest_value
+            withdrawal_amount=self.withdrawal
         )

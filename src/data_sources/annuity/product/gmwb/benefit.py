@@ -3,6 +3,7 @@ from typing import Dict
 from pandas import DataFrame
 
 from src.system.data_sources.data_source.file_json import DataSourceJsonFile
+from src.system.projection_entity.projection_value import use_latest_value
 
 
 class GmwbBenefit(
@@ -68,6 +69,7 @@ class GmwbBenefit(
 
         return withdrawal_rate
 
+    @use_latest_value
     def av_active_withdrawal_rate(
         self,
         rider_name: str,
@@ -92,6 +94,7 @@ class GmwbBenefit(
 
         return withdrawal_rate
 
+    @use_latest_value
     def av_exhaust_withdrawal_rate(
         self,
         rider_name: str,

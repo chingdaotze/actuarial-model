@@ -34,4 +34,4 @@ class GmdbRav(
         base_contract: 'BaseContract'
     ) -> None:
 
-        self.benefit_base[self.time_steps.t] = base_contract.account_value.latest_value
+        self.benefit_base[self.time_steps.t] = base_contract.account_value

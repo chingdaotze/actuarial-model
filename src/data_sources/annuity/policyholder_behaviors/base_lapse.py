@@ -1,4 +1,5 @@
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
+from src.system.projection_entity.projection_value import use_latest_value
 
 
 class BaseLapse(
@@ -24,6 +25,7 @@ class BaseLapse(
             inplace=True
         )
 
+    @use_latest_value
     def base_lapse_rate(
         self,
         policy_year: int

@@ -147,7 +147,7 @@ class Annuitants(
         self.primary_annuitant.update_mortality()
 
         self.t_q_x[self.time_steps.t] = convert_decrement_rate(
-            q_x=self.primary_annuitant.mortality_rate.latest_value,
+            q_x=self.primary_annuitant.mortality_rate,
             interval=self.time_steps.time_step
         )
 
@@ -156,7 +156,7 @@ class Annuitants(
             self.secondary_annuitant.update_mortality()
 
             self.t_q_y[self.time_steps.t] = convert_decrement_rate(
-                q_x=self.secondary_annuitant.mortality_rate.latest_value,
+                q_x=self.secondary_annuitant.mortality_rate,
                 interval=self.time_steps.time_step
             )
 
@@ -195,7 +195,7 @@ class Annuitants(
 
         # Calculate lapse rate
         self.lapse_rate[self.time_steps.t] = convert_decrement_rate(
-            q_x=self.base_lapse_rate.latest_value * self.lapse_multiplier.latest_value,
+            q_x=self.base_lapse_rate * self.lapse_multiplier,
             interval=self.time_steps.time_step
         )
 
@@ -206,7 +206,7 @@ class Annuitants(
         # Get annuitization rate
         self.annuitization_rate[self.time_steps.t] = convert_decrement_rate(
             q_x=self.data_sources.policyholder_behaviors.annuitization.annuitization_rate(
-                attained_age=self.primary_annuitant.attained_age.latest_value
+                attained_age=self.primary_annuitant.attained_age
             ),
             interval=self.time_steps.time_step
         )
@@ -225,45 +225,45 @@ class Annuitants(
             # Update lives
             self.l_xy[self.time_steps.t] = (
                 self.l_xy[self.time_steps.prev_t] *
-                (1.0 - self.t_q_x.latest_value) *
-                (1.0 - self.t_q_y.latest_value) *
-                (1.0 - self.lapse_rate.latest_value) *
-                (1.0 - self.annuitization_rate.latest_value)
+                (1.0 - self.t_q_x) *
+                (1.0 - self.t_q_y) *
+                (1.0 - self.lapse_rate) *
+                (1.0 - self.annuitization_rate)
             )
 
             self.l_x[self.time_steps.t] = (
-                self.l_x[self.time_steps.prev_t] * (1.0 - self.t_q_x.latest_value) +
+                self.l_x[self.time_steps.prev_t] * (1.0 - self.t_q_x) +
                 (
                     self.l_xy[self.time_steps.prev_t] *
-                    self.t_q_y.latest_value *
-                    (1.0 - self.t_q_x.latest_value)
+                    self.t_q_y *
+                    (1.0 - self.t_q_x)
                 )
             ) * (
-                    (1.0 - self.lapse_rate.latest_value) *
-                    (1.0 - self.annuitization_rate.latest_value)
+                    (1.0 - self.lapse_rate) *
+                    (1.0 - self.annuitization_rate)
                 )
 
             self.l_y[self.time_steps.t] = (
-                self.l_y[self.time_steps.prev_t] * (1.0 - self.t_q_y.latest_value) +
+                self.l_y[self.time_steps.prev_t] * (1.0 - self.t_q_y) +
                 (
                     self.l_xy[self.time_steps.prev_t] *
-                    self.t_q_x.latest_value *
-                    (1.0 - self.t_q_y.latest_value)
+                    self.t_q_x *
+                    (1.0 - self.t_q_y)
                 )
             ) * (
-                    (1.0 - self.lapse_rate.latest_value) *
-                    (1.0 - self.annuitization_rate.latest_value)
+                    (1.0 - self.lapse_rate) *
+                    (1.0 - self.annuitization_rate)
                 )
 
             self.d_xy[self.time_steps.t] = (
                 self.d_xy[self.time_steps.prev_t] +
                 (
-                    self.l_xy[self.time_steps.prev_t] * self.t_q_x.latest_value * self.t_q_y.latest_value +
-                    self.l_x[self.time_steps.prev_t] * self.t_q_x.latest_value +
-                    self.l_y[self.time_steps.prev_t] * self.t_q_y.latest_value
+                    self.l_xy[self.time_steps.prev_t] * self.t_q_x * self.t_q_y +
+                    self.l_x[self.time_steps.prev_t] * self.t_q_x +
+                    self.l_y[self.time_steps.prev_t] * self.t_q_y
                 ) * (
-                    (1.0 - self.lapse_rate.latest_value) *
-                    (1.0 - self.annuitization_rate.latest_value)
+                    (1.0 - self.lapse_rate) *
+                    (1.0 - self.annuitization_rate)
                 )
             )
 
@@ -273,8 +273,8 @@ class Annuitants(
                     self.l_xy[self.time_steps.prev_t] +
                     self.l_x[self.time_steps.prev_t] +
                     self.l_y[self.time_steps.prev_t]
-                ) * self.lapse_rate.latest_value * (
-                    (1.0 - self.annuitization_rate.latest_value)
+                ) * self.lapse_rate * (
+                    (1.0 - self.annuitization_rate)
                 )
             )
 
@@ -284,5 +284,5 @@ class Annuitants(
                     self.l_xy[self.time_steps.prev_t] +
                     self.l_x[self.time_steps.prev_t] +
                     self.l_y[self.time_steps.prev_t]
-                ) * self.annuitization_rate.latest_value
+                ) * self.annuitization_rate
             )

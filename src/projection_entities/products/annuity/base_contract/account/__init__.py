@@ -8,7 +8,10 @@ from calendar import isleap
 
 from src.system.projection_entity import ProjectionEntity
 from src.system.projection.time_steps import TimeSteps
-from src.system.projection_entity.projection_value import ProjectionValue
+from src.system.projection_entity.projection_value import (
+    ProjectionValue,
+    compare_latest_value
+)
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.accounts.account import Account as AccountDataSource
@@ -150,7 +153,7 @@ class Account(
     ) -> float:
 
         return sum(
-            [subpay.premium_amount.latest_value for subpay in self.premiums]
+            [subpay.premium_amount for subpay in self.premiums]
         )
 
     def _calc_surrender_charge(
@@ -158,12 +161,13 @@ class Account(
     ) -> float:
 
         surrender_charge = sum(
-            [subpay.surrender_charge.latest_value for subpay in self.premiums]
+            [subpay.surrender_charge for subpay in self.premiums]
         )
 
         surrender_charge = min(
             surrender_charge,
-            self.account_value.latest_value
+            self.account_value,
+            key=compare_latest_value
         )
 
         return surrender_charge
@@ -189,14 +193,13 @@ class Account(
 
             # Calculate new premium total
             self.premium_new[self.time_steps.t] = sum(
-                [subpay.premium_amount.latest_value for subpay in new_premiums]
+                [subpay.premium_amount for subpay in new_premiums]
             )
 
             # Update values
-            self.premium_cumulative[self.time_steps.t] = \
-                self.premium_cumulative.latest_value + self.premium_new.latest_value
+            self.premium_cumulative[self.time_steps.t] = self.premium_cumulative + self.premium_new
 
-            self.account_value[self.time_steps.t] = self.account_value.latest_value + self.premium_new.latest_value
+            self.account_value[self.time_steps.t] = self.account_value + self.premium_new
 
     @abstractmethod
     def credit_interest(
@@ -221,7 +224,7 @@ class Account(
         charge_account = self.__dict__[charge_account_name]
         charge_account[self.time_steps.t] = charge_amount
 
-        self.account_value[self.time_steps.t] = self.account_value.latest_value - charge_amount
+        self.account_value[self.time_steps.t] = self.account_value - charge_amount
 
     def process_withdrawal(
         self,
@@ -229,7 +232,7 @@ class Account(
     ) -> None:
 
         self.withdrawal[self.time_steps.t] = withdrawal_amount
-        self.account_value[self.time_steps.t] = self.account_value.latest_value - withdrawal_amount
+        self.account_value[self.time_steps.t] = self.account_value - self.withdrawal
 
     def update_surrender_charge(
         self

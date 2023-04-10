@@ -73,7 +73,7 @@ class IndexedAccount(
                 name=self.data_sources.product.base_product.crediting_rate.indexed.index(
                     account_name=self.account_data_source.account_name
                 ),
-                t=self.term_start_date.latest_value
+                t=self.term_start_date
             )
 
             end_index = self.data_sources.economic_scenario.get_rate(
@@ -127,9 +127,8 @@ class IndexedAccount(
                     crediting_rate
                 )
 
-            self.interest_credited[self.time_steps.t] = self.account_value.latest_value * crediting_rate
+            self.interest_credited[self.time_steps.t] = self.account_value * crediting_rate
 
-            self.account_value[self.time_steps.t] = \
-                self.account_value.latest_value + self.interest_credited.latest_value
+            self.account_value[self.time_steps.t] = self.account_value + self.interest_credited
 
             self.term_start_date[self.time_steps.t] = term_end_date

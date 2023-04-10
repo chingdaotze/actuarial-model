@@ -1,4 +1,5 @@
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
+from src.system.projection_entity.projection_value import use_latest_value
 
 
 class SurrenderCharge(
@@ -24,6 +25,7 @@ class SurrenderCharge(
             inplace=True
         )
 
+    @use_latest_value
     def surrender_charge_rate(
         self,
         policy_year: int,
@@ -45,6 +47,7 @@ class SurrenderCharge(
 
         return self.cache[product_name][lookup_value]
 
+    @use_latest_value
     def cdsc_period(
         self,
         product_name: str

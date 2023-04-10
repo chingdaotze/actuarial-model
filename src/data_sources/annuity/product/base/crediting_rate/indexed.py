@@ -1,6 +1,7 @@
 from pandas import isna
 
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
+from src.system.projection_entity.projection_value import use_latest_value
 
 
 class IndexedCreditingRate(
@@ -26,6 +27,7 @@ class IndexedCreditingRate(
             inplace=True
         )
 
+    @use_latest_value
     def index(
         self,
         account_name: str
@@ -40,6 +42,7 @@ class IndexedCreditingRate(
 
         return self.cache['index'][account_name]
 
+    @use_latest_value
     def term(
         self,
         account_name: str
@@ -54,6 +57,7 @@ class IndexedCreditingRate(
 
         return self.cache['term'][account_name]
 
+    @use_latest_value
     def cap(
         self,
         account_name: str
@@ -76,6 +80,7 @@ class IndexedCreditingRate(
 
             return value
 
+    @use_latest_value
     def spread(
         self,
         account_name: str
@@ -98,6 +103,7 @@ class IndexedCreditingRate(
 
             return value
 
+    @use_latest_value
     def participation_rate(
         self,
         account_name: str
@@ -120,6 +126,7 @@ class IndexedCreditingRate(
 
             return value
 
+    @use_latest_value
     def floor(
         self,
         account_name: str

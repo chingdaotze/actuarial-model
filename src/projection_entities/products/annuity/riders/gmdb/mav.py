@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from src.projection_entities.products.annuity.riders.gmdb.base import GmdbBase
 
 from src.system.projection.time_steps import TimeSteps
+from src.system.projection_entity.projection_value import compare_latest_value
 
 from src.data_sources.annuity import AnnuityDataSources
 from src.data_sources.annuity.model_points.model_point.riders.gmdb import Gmdb as GmdbDataSource
@@ -34,13 +35,14 @@ class GmdbMav(
         base_contract: 'BaseContract'
     ) -> None:
 
-        if base_contract.anniversaries.latest_value:
+        if base_contract.anniversaries:
 
             self.benefit_base[self.time_steps.t] = max(
-                self.benefit_base.latest_value,
-                base_contract.account_value.latest_value
+                self.benefit_base,
+                base_contract.account_value,
+                key=compare_latest_value
             )
 
         else:
 
-            self.benefit_base[self.time_steps.t] = self.benefit_base.latest_value
+            self.benefit_base[self.time_steps.t] = self.benefit_base

@@ -71,7 +71,7 @@ class GmdbBase(
     ) -> None:
 
         self.benefit_base[self.time_steps.t] = \
-            self.benefit_base.latest_value + base_contract.premium_new[self.time_steps.t]
+            self.benefit_base + base_contract.premium_new[self.time_steps.t]
 
     def process_charge(
         self,
@@ -79,18 +79,17 @@ class GmdbBase(
     ) -> None:
         self.charge_amount[self.time_steps.t] = 0.0
 
-        for _ in base_contract.monthiversaries.latest_value:
+        for _ in base_contract.monthiversaries:
 
             self.charge_rate[self.time_steps.t] = self.data_sources.product.gmdb_rider.charge.charge_rate(
                 rider_name=self.rider_name
             )
 
             self.charge_amount[self.time_steps.t] = \
-                self.charge_amount.latest_value + \
-                base_contract.account_value.latest_value * (self.charge_rate.latest_value / 12.0)
+                self.charge_amount + base_contract.account_value * (self.charge_rate / 12.0)
 
         base_contract.assess_charge(
-            charge_amount=self.charge_amount.latest_value,
+            charge_amount=self.charge_amount,
             charge_account_name='gmdb_charge'
         )
 
@@ -108,7 +107,7 @@ class GmdbBase(
     ) -> None:
 
         self.net_amount_at_risk[self.time_steps.t] = max(
-            self.benefit_base.latest_value - base_contract.account_value.latest_value,
+            self.benefit_base - base_contract.account_value,
             0.0
         )
 
