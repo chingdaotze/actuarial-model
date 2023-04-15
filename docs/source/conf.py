@@ -15,6 +15,7 @@ sys.path.append(
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+master_doc = 'index'
 project = 'actuarial-model'
 copyright = '2023, Michael Ching'
 author = 'Michael Ching'
