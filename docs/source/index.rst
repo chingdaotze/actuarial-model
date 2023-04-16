@@ -26,7 +26,7 @@ First Steps
 
 **It's dangerous to go alone.** Take this :ref:`tutorial <tutorial_pt1>` (and kitten) with you.
 
-.. image:: images/kitten.jpg
+.. image:: images/kitten.png
     :width: 600
     :alt: "Micro Center", age 2 weeks
 
