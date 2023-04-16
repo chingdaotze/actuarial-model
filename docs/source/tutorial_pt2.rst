@@ -50,7 +50,7 @@ within its own directory structure.
   This is the meat and potatoes of the modeling framework. It contains:
 
   * Modeling framework logic and source code.
-  * Models and model logic build on top of the modeling framework.
+  * Models and model logic built on top of the modeling framework.
 
 - **\\venv**
 
@@ -153,7 +153,6 @@ The modeling framework consists of four core building blocks, built using classe
 
   - An insurance contract.
   - A person.
-  - An economic index.
 
   .. _projection_values:
 
@@ -163,25 +162,21 @@ The modeling framework consists of four core building blocks, built using classe
   - An insurance contract might have:
      - A premium payment.
      - A cash surrender value.
+
   - A person might have:
      - An attained age.
      - A marital status.
-  - An economic index might have:
-     - A volatility.
-     - An index value.
 
   Projection entities also define functions that operate on projection values. For example:
 
   - An insurance contract might define:
      - A premium payment function, which adds a premium payment to the contract.
      - A surrender function, which triggers a surrender calculation and benefit release.
+
   - A person might define:
      - A death function, which triggers a death benefit calculation and benefit release
        on a life insurance product.
      - A marriage function, which alters the marital status.
-  - An economic index might have:
-     - A progression function, which projects the index value forward in time using
-       a Wiener process.
 
   Projection entities can also be `nested <https://en.wikipedia.org/wiki/Nesting_(computing)>`_.
   That is, projection entities can also contain other projection entities. For example:
@@ -189,6 +184,7 @@ The modeling framework consists of four core building blocks, built using classe
   - An insurance contract might have:
      - Riders.
      - Sub-accounts.
+
   - A person might have:
      - A cat.
 

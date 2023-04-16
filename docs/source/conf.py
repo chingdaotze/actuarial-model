@@ -6,10 +6,16 @@
 import sys
 from os.path import abspath
 
+project_dir = abspath(
+	r'..\..'
+)
+
+print(
+	f'Setting Project Dir: {project_dir}'
+)
+
 sys.path.append(
-	abspath(
-		'..\..'
-	)
+	project_dir
 )
 
 # -- Project information -----------------------------------------------------
@@ -29,11 +35,9 @@ extensions = [
 	'sphinx.ext.autosummary',
 	'sphinx_toolbox.collapse'
 ]
-
+autosummary_generate = True
 templates_path = ['_templates']
 exclude_patterns = []
-
-
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -44,7 +48,7 @@ html_theme_options = {
 	'nav_title': 'Actuarial Model',
 	'repo_url': 'https://github.com/chingdaotze/actuarial-model',
 	'repo_type': 'github',
-	'repo_name': 'Actuarial Model',
+	'repo_name': 'actuarial-model',
 	'base_url': 'https://actuarial-model.readthedocs.io/en/latest/',
 	'globaltoc_depth': -1,
 	'globaltoc_collapse': True,

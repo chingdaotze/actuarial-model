@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/log" />
       <excludeFolder url="file://$MODULE_DIR$/output" />
+      <excludeFolder url="file://$MODULE_DIR$/docs/source/_autosummary" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

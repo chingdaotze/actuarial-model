@@ -37,3 +37,5 @@ First Steps
     Tutorial, Part 1 <tutorial_pt1.rst>
     Tutorial, Part 2 <tutorial_pt2.rst>
     Tutorial, Part 3 <tutorial_pt3.rst>
+    Model Documentation <model_doc.rst>
+    System Documentation <system_doc.rst>
