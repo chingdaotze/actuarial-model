@@ -13,4 +13,6 @@ And riders:
 - Guaranteed Minimum Withdrawal Benefit (*GMWB*)
 - Guaranteed Minimum Death Benefit (*GMDB*)
 
-Arranged in a basic economic liability projection.
+Arranged in a basic economic liability projection. To learn more, check out the documentation here:
+
+https://actuarial-model.readthedocs.io/en/latest/
