@@ -7,7 +7,7 @@ import sys
 from os.path import abspath
 
 project_dir = abspath(
-	r'..\..'
+	r'../..'
 )
 
 print(
