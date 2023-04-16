@@ -38,8 +38,41 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = 'sphinx_material'
 html_static_path = ['_static']
 html_theme_options = {
-	'prev_next_buttons_location': 'bottom'
+	'nav_title': 'Actuarial Model',
+	'repo_url': 'https://github.com/chingdaotze/actuarial-model',
+	'repo_type': 'github',
+	'repo_name': 'Actuarial Model',
+	'base_url': 'https://actuarial-model.readthedocs.io/en/latest/',
+	'globaltoc_depth': -1,
+	'globaltoc_collapse': True,
+	'globaltoc_includehidden': True,
+	'color_primary': 'deep-purple',
+	'master_doc': False,
+	'nav_links': [
+		{
+			'href': 'index',
+			'title': 'Home',
+			'internal': True
+		},
+		{
+			'href': 'tutorial_pt1',
+			'title': 'Tutorial',
+			'internal': True
+		}
+	],
+	# 'heroes': {
+	# 	'index': 'Home'
+	# }
+}
+
+html_sidebars = {
+	'**': [
+		'logo-text.html',
+		'globaltoc.html',
+		'localtoc.html',
+		'searchbox.html'
+	]
 }

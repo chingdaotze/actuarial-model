@@ -59,14 +59,14 @@ To run the model:
 
    .. note::
 
-        .. _log_file:
+     .. _log_file:
 
-        Console output is also piped to a log file as plain text. The location of the log file can
-        be found in the console output:
+     Console output is also piped to a log file as plain text. The location of the log file can
+     be found in the console output:
 
-        .. image:: images/run_model_3.png
+     .. image:: images/run_model_3.png
 
-    .. _model_output:
+   .. _model_output:
 
 #. Model output can be found in the modeling framework's *output* directory:
 
@@ -74,6 +74,8 @@ To run the model:
 
    For the sample annuity model, the *output* directory is organized like so:
 
-   | \\ Model point ID
-   |    \\ Economic scenario number
-   |        Model output \*.csv files
+   .. code-block:: text
+
+       \ Model point ID
+           \ Economic scenario number
+               Model output *.csv files

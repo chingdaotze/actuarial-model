@@ -1,7 +1,7 @@
 .. _home:
 
-actuarial-model Documentation
-=============================
+Welcome!
+========
 
 Summary
 -------
