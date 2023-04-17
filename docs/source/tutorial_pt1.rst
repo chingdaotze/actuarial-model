@@ -28,7 +28,8 @@ This tutorial is split into 3 parts:
 Installation and Setup
 ----------------------
 
-This modeling framework was developed using (and works best with) PyCharm Community Edition.
+This modeling framework was developed using (and works best with) PyCharm Community Edition. To set up the
+model:
 
 #. **Download and Install Python**
 
@@ -54,11 +55,8 @@ This modeling framework was developed using (and works best with) PyCharm Commun
 
       `<https://www.jetbrains.com/pycharm/download/download-thanks.html?platform=windows&code=PCC>`_
 
-   #. Install PyCharm by double-clicking on the executable:
-
-      `<https://www.jetbrains.com/help/pycharm/installation-guide.html#standalone>`_
-
-      Under the **Installation Options**, select *Add "Open Folder as Project"*
+   #. Install PyCharm by double-clicking on the executable. Under the **Installation Options**,
+      select *Add "Open Folder as Project"*:
 
       .. image:: images/install_pycharm_options.png
 
@@ -99,9 +97,9 @@ This modeling framework was developed using (and works best with) PyCharm Commun
 
       .. image:: images/pycharm_add_interpreter_confirm.png
 
-      The click *OK*.
+      Then click *OK*.
 
-   #. Click *OK* again to save your changes in the *Settings* dialog.
+   #. Click *OK* again to save your changes and exit the *Settings* dialog.
 
       .. image:: images/pycharm_ok.png
 
@@ -109,7 +107,9 @@ This modeling framework was developed using (and works best with) PyCharm Commun
 
 #. **Install the Required Packages**
 
-   #. Click on Terminal to open up a terminal session:
+   #. Near the bottom of the window, click on *Terminal* to open up a terminal session:
+
+      .. image:: images/open_terminal.png
 
    #. In the terminal session, type:
 
@@ -121,7 +121,7 @@ This modeling framework was developed using (and works best with) PyCharm Commun
 
       Then hit ``ENTER`` to execute the command.
 
-   #. Once the command completes, you can close out the terminal session:
+   #. Once the command completes, you can quit the terminal session:
 
       .. image:: images/close_terminal.png
 
