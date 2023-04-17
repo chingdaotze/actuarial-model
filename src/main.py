@@ -8,7 +8,7 @@ from src.system.projection.processor.single_process import SingleProcessProjecti
 
 from src.system.enums import ProcessingType
 from src.system.projection.parameters import ProjectionParameters
-from src.system.logger import logger
+from src.system.logger import Logger
 
 
 @odometer
@@ -68,7 +68,7 @@ def main() -> None:
 
     else:
 
-        logger.raise_expr(
+        Logger().raise_expr(
             expr=NotImplementedError(
                 f'Unhandled processing type: {projection_parameters.processing_type} !'
             )

@@ -1,8 +1,9 @@
 Model Documentation
 ===================
 
-The following directories contain :ref:`annuity model logic <tutorial_pt3>`.
-This section contains auto-generated documentation.
+The following directories contain :ref:`annuity model logic <tutorial_pt3>` from the sample annuity model.
+
+.. note:: This section contains auto-generated documentation.
 
 .. autosummary::
     :toctree: _autosummary

@@ -1,3 +1,7 @@
+"""
+Modeling Framework :ref:`Object Model <object_model>` :ref:`Projection Entities <projection_entities>`.
+"""
+
 from abc import (
     ABC,
     abstractmethod
@@ -23,21 +27,25 @@ class ProjectionEntity(
     Abstract class that represents an entity within a projection (like a person or a policy). A projection
     entity is the primary building block for projections, and has several defined properties:
 
-    1. A projection entity contains a values attribute, which stores the current and historic states
-       of a projection entity.
+    #. A projection entity declares
+       :class:`projection values <src.system.projection_entity.projection_value.ProjectionValue>`
+       as instance attributes. For example, a *person* might have an *attained age* value.
 
-    2. A projection entity declares events as class methods. For example, a person could have a death
-       event. Events typically change and update the values attribute.
+    #. A projection entity declares instance
+       `methods <https://en.wikipedia.org/wiki/Method_(computer_programming)>`_ that update its
+       :class:`projection values <src.system.projection_entity.projection_value.ProjectionValue>`. For example,
+       a person could have a *death* method that updates a death claim payout amount.
 
-    3. A projection entity implements a special project event, which moves the projection entity
-       forward through time.
+    #. A projection entity implements a special write
+       `method <https://en.wikipedia.org/wiki/Method_(computer_programming)>`_, which prints out all its
+       :class:`projection values <src.system.projection_entity.projection_value.ProjectionValue>`.
 
     Inherit this class to implement a custom projection entity.
     """
 
-    time_steps: TimeSteps
-    data_sources: DataSourcesRoot
-    init_t: date
+    time_steps: TimeSteps           #: Projection-wide timekeeping object.
+    data_sources: DataSourcesRoot   #: Data sources to initialize projection values.
+    init_t: date                    #: Initial time step. Marks when this entity first came into existence.
 
     def __init__(
         self,
@@ -45,6 +53,15 @@ class ProjectionEntity(
         data_sources: DataSourcesRoot,
         init_t: date = None
     ):
+
+        """
+        Constructor method. Initializes several critical timekeeping attributes, which synchronize this projection
+        entity with other projection entities across time.
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Data sources to initialize projection values.
+        :param init_t: Optional initial time step. Defaults to time_steps.t if no value is provided.
+        """
 
         self.time_steps: TimeSteps = time_steps
         self.data_sources: DataSourcesRoot = data_sources
@@ -63,10 +80,10 @@ class ProjectionEntity(
     ) -> str:
 
         """
-        Abstract method that provides a string representation of the projection entity. Also used as a
-        file name when printing output.
+        Abstract method that provides a string representation of the projection entity. Used as the
+        file name when writing output.
 
-        :return:
+        :return: String representation of this object.
         """
 
         ...
@@ -75,6 +92,15 @@ class ProjectionEntity(
         self,
         output_file_path: str
     ) -> None:
+
+        """
+        Writes all :class:`~src.system.projection_entity.projection_value.ProjectionValue` attributes in this
+        projection entity to a `CSV file <https://en.wikipedia.org/wiki/Comma-separated_values>`_.
+        Existing file will be overwritten.
+
+        :param output_file_path: Output file path.
+        :return: Nothing.
+        """
 
         # Combine all values into single DataFrame
         output_dataframe = DataFrame()
@@ -126,11 +152,15 @@ class ProjectionEntity(
     ) -> None:
 
         """
-        Convenience method that writes output for itself, as well as any projection entity members.
-        Note that this function behaves recursively.
+        Convenience method that writes
+        :class:`~src.system.projection_entity.projection_value.ProjectionValue` attributes for itself,
+        as well as any nested :class:`~src.system.projection_entity.ProjectionEntity` attributes.
 
-        :param output_file_path:
-        :return:
+        This function behaves recursively, writing output for all nested projection entities no matter
+        how deeply they are nested.
+
+        :param output_file_path: Output file path
+        :return: Nothing.
         """
 
         def _call_write_projection_values_recursively(

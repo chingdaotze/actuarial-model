@@ -1,3 +1,8 @@
+"""
+:class:`~src.system.projection.Projection` processing,
+using Python's `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ module.
+"""
+
 from tqdm import tqdm
 from psutil import cpu_count
 from multiprocessing import (
@@ -9,11 +14,15 @@ from traceback import format_exc
 
 from src.system.projection.processor import ProjectionProcessor
 from src.system.projection.parameters import ProjectionParameters
-from src.system.logger import logger
+from src.system.logger import Logger
 from src.system.enums import LoggerLevel
 
 
 class PoisonPill:
+
+    """
+    Marker that indicates the end of a work queue. Each poison pill "kills" a worker process.
+    """
 
     def __init__(self):
 
@@ -23,6 +32,12 @@ class PoisonPill:
 class MultiProcessProjectionProcessor(
     ProjectionProcessor
 ):
+
+    """
+    :class:`~src.system.projection.processor.ProjectionProcessor` that uses Python's
+    `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ module to calculate
+    :class:`Projections <src.system.projection.Projection>`.
+    """
 
     def __init__(
         self,
@@ -39,7 +54,16 @@ class MultiProcessProjectionProcessor(
         out_queue: Queue,
         projection_count: int,
         cpus: int
-    ):
+    ) -> None:
+
+        """
+        Progress bar display that monitors and updates based on items in a queue.
+
+        :param out_queue: Progress bar monitoring target.
+        :param projection_count: Number of expected projections.
+        :param cpus: Number of parallel processes.
+        :return: None
+        """
 
         progress_bar = tqdm(total=projection_count, desc=r'Progress: ', unit=r' projection(s) ')
         poison_pills = 0
@@ -69,6 +93,15 @@ class MultiProcessProjectionProcessor(
         out_queue: Queue
     ) -> None:
 
+        """
+        Worker that consumes work from a queue, and executes work. If the worker consumes a :class:`PoisonPill`,
+        the worker quits and "dies".
+
+        :param in_queue: Work input queue.
+        :param out_queue: Work output queue.
+        :return: None
+        """
+
         while True:
 
             work_item = in_queue.get()
@@ -83,7 +116,7 @@ class MultiProcessProjectionProcessor(
 
                 except Exception as expr:
 
-                    logger.print(
+                    Logger().print(
                         message=format_exc(),
                         level=LoggerLevel.ERROR
                     )
@@ -103,7 +136,26 @@ class MultiProcessProjectionProcessor(
         cpus: int = None
     ) -> None:
 
-        logger.print(
+        """
+        Runs :class:`projections <src.system.projection.Projection>` in parallel, using Python's
+        `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ module, by:
+
+        #. Creating `Queue <https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Queue>`_ objects.
+        #. Feeding :attr:`~src.system.projection.processor.ProjectionProcessor.projections` into the Queue.
+        #. Feeding :class:`poison pills <PoisonPill>` into the Queue, one for each worker process.
+        #. Spinning up workers using a
+           `Pool <https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.Pool>`_.
+        #. Processing all items in the Queue using the Pool.
+        
+        .. note::
+            If ``cpus`` is ``None``, allow the system to determine the number of CPU's to use. Typically,
+            this would be the physical core count - 1.
+
+        :param cpus: Number of processes to run in parallel.
+        :return: None
+        """
+
+        Logger().print(
             message='Starting manager, queue, and pool ...'
         )
 
@@ -122,7 +174,7 @@ class MultiProcessProjectionProcessor(
                 len(self.projections)
             )
 
-        logger.print(
+        Logger().print(
             message=f'Creating pool with {cpus} CPU\'s ...'
         )
 
@@ -130,7 +182,7 @@ class MultiProcessProjectionProcessor(
             processes=cpus
         )
 
-        logger.print(
+        Logger().print(
             message='Loading projections to queue ...'
         )
 
@@ -146,7 +198,7 @@ class MultiProcessProjectionProcessor(
                 PoisonPill()
             )
 
-        logger.print(
+        Logger().print(
             message='Processing queue ...'
         )
 

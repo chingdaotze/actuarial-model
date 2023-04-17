@@ -1,3 +1,7 @@
+"""
+Python `dict <https://docs.python.org/3/tutorial/datastructures.html#dictionaries>`_-based data source.
+"""
+
 from typing import Dict
 
 from pandas import DataFrame
@@ -11,13 +15,21 @@ class DataSourcePythonDict(
 ):
 
     """
-    Abstract data source for a Python dictionary. Inherit this class to implement a custom Python dictionary.
+    Abstract data source for a Python `dict <https://docs.python.org/3/tutorial/datastructures.html#dictionaries>`_.
+    Inherit this class to implement a custom Python dictionary data source.
     """
 
     def __init__(
         self,
         data: Dict
     ):
+
+        """
+        Constructor method. Copies data from input
+        `dict <https://docs.python.org/3/tutorial/datastructures.html#dictionaries>`_ into the cache.
+
+        :param data: Input dictionary.
+        """
 
         DataSourceBase.__init__(
             self=self

@@ -1,5 +1,8 @@
+"""
+Modeling Framework :ref:`Object Model <object_model>` :ref:`Projection Value <projection_values>`.
+"""
+
 from typing import (
-    ClassVar,
     Any,
     Self,
     Callable
@@ -8,10 +11,34 @@ from datetime import date
 
 from pandas import DataFrame
 
+from src.system.constants import DEFAULT_COL
+
 
 class ProjectionValue:
 
-    VALUE_COL: ClassVar[str] = 'value'
+    """
+    Abstract class that stores values for a :class:`~src.system.projection_entity.ProjectionEntity`.
+
+    It can best be understood as a standard Python `data type <https://docs.python.org/3/library/stdtypes.html>`_
+    with a history.
+
+    For example, imagine an `integer <https://docs.python.org/3/library/functions.html#int>` that keeps a history
+    of its past values.
+
+    - Like an integer, projection values support all standard
+      `numeric operators <https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types>`_
+      (e.g., +, -, /, \\*, etc...)
+
+      The default value used in these operations is the
+      :attr:`latest value <src.system.projection_entity.projection_value.ProjectionValue.latest_value>`
+      from the history.
+
+    - Unlike an integer, a history can be read or written via the
+      `[] operator <https://docs.python.org/3/reference/datamodel.html#object.__getitem__>`_ (like a
+      `dictionary <https://docs.python.org/3/tutorial/datastructures.html#dictionaries>`_).
+
+    """
+
     _history: DataFrame
     _print_values: bool
 
@@ -22,8 +49,16 @@ class ProjectionValue:
         print_values: bool = True
     ):
 
+        """
+        Constructor method.
+
+        :param init_t: Initial time step to record ``init_value`` in history.
+        :param init_value: Initial value to record in history.
+        :param print_values: Boolean flag to determine whether this projection value is printed.
+        """
+
         self._history = DataFrame(
-            columns=['t', self.VALUE_COL]
+            columns=['t', DEFAULT_COL]
         )
 
         self._history.set_index(
@@ -151,7 +186,7 @@ class ProjectionValue:
         item: date
     ) -> Any:
 
-        return self._history[self.VALUE_COL][item]
+        return self._history[DEFAULT_COL][item]
 
     def __delitem__(
         self,
@@ -609,7 +644,25 @@ class ProjectionValue:
         self
     ) -> Any:
 
-        return self._history[self.VALUE_COL][self._history.index.max()]
+        """
+        Latest value from the history. For example, if the history contains:
+
+        +-------------+--------------+
+        | t           | value        |
+        +-------------+--------------+
+        | 3/16/2023   | 0.04         |
+        +-------------+--------------+
+        | 4/16/2023   | 0.06         |
+        +-------------+--------------+
+        | 5/16/2023   | 0.08         |
+        +-------------+--------------+
+
+        This property will return 0.08, as 5/16/2023 is the "latest" date.
+
+        :return: Latest value from history.
+        """
+
+        return self._history[DEFAULT_COL][self._history.index.max()]
 
     @latest_value.setter
     def latest_value(
@@ -617,12 +670,18 @@ class ProjectionValue:
         value: Any
     ) -> None:
 
-        self._history[self.VALUE_COL][self._history.index.max()] = value
+        self._history[DEFAULT_COL][self._history.index.max()] = value
 
     @property
     def history(
         self
     ) -> DataFrame:
+
+        """
+        History of this projection value.
+
+        :return: History of this projection value.
+        """
 
         return self._history
 
@@ -631,12 +690,29 @@ class ProjectionValue:
         self
     ) -> bool:
 
+        """
+        Boolean flag used to indicate whether this object should be printed.
+
+        :return: Printing flag.
+        """
+
         return self._print_values
 
 
 def compare_latest_value(
     element: Any
 ) -> Any:
+
+    """
+    Used as the ``key`` argument for built-in comparison functions like
+    `max() <https://docs.python.org/3/library/functions.html#max>`_ or
+    `min() <https://docs.python.org/3/library/functions.html#min>`_, comparing the
+    :attr:`~src.system.projection_entity.projection_value.ProjectionValue.latest_value` attribute between
+    :class:`~src.system.projection_entity.projection_value.ProjectionValue` objects.
+
+    :param element: Element to parse.
+    :return: Value to compare.
+    """
 
     if issubclass(type(element), ProjectionValue):
 
@@ -652,25 +728,19 @@ def use_latest_value(
 ) -> Callable:
 
     """
-    Decorator that scans function arguments for Projection value types, then replaces them with the latest_value
-    attribute.
+    Decorator that scans function arguments for
+    :class:`~src.system.projection_entity.projection_value.ProjectionValue`'s, then replaces them with the
+    :class:`~src.system.projection_entity.projection_value.ProjectionValue`'s
+    :attr:`~src.system.projection_entity.projection_value.ProjectionValue.latest_value` property.
 
-    :param function:
-    :return:
+    :param function: Function to wrap.
+    :return: A wrapped function.
     """
 
     def wrapper(
         *args,
         **kwargs
     ) -> Any:
-
-        """
-        Wrapper function that wraps the decorated function. Contains the core logic for this decorator.
-
-        :param args:
-        :param kwargs:
-        :return:
-        """
 
         args = [arg.latest_value if issubclass(type(arg), ProjectionValue) else arg for arg in args]
 

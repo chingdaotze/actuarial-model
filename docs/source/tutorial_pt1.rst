@@ -61,8 +61,8 @@ To run the model:
 
      .. _log_file:
 
-     Console output is also piped to a log file as plain text. The location of the log file can
-     be found in the console output:
+     Console output is :mod:`also piped to a log file as plain text <src.system.logger>`. The
+     location of the log file can be found in the console output:
 
      .. image:: images/run_model_3.png
 

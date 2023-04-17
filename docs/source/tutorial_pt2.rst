@@ -132,32 +132,52 @@ The modeling framework consists of four core building blocks, built using classe
 
 - **(1) Data Sources**
 
-  A *data source* is a definition that points to external model data. For example:
+  A :mod:`data source <src.system.data_sources.data_source>` is a definition that provides access external
+  model data. For example:
 
-  - Model points, contained in a model point file.
-  - Model assumptions, contained in a \*.json file.
+  - Model points, contained in a *\*.csv* file.
+  - Model assumptions, contained in a *\*.json* file.
   - Market data, contained in a Snowflake database.
 
-  When the model runs, data from each data source is cached to a `DataFrame
-  <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html>`_.
+  It provides this functionality in two ways:
 
-  The model developer defines `convenience functions <https://en.wikipedia.org/wiki/Convenience_function>`_
-  to access data within the DataFrame, which provide an `interface
-  <https://en.wikipedia.org/wiki/Interface_(computing)>`_ to the data for other objects in the Object Model.
+  #. When the model runs, data for each data source is loaded into an internal
+     `cache <https://en.wikipedia.org/wiki/Cache_(computing)>`_.
+  #. The model developer defines
+     `methods <https://en.wikipedia.org/wiki/Method_(computer_programming)>`_ to access data from
+     the cache. This allows other objects in the :ref:`object model <object_model>` to access the cache
+     without having to navigate the internal structure of the cache.
+
+  Passing multiple data sources throughout the model is cumbersome, so the model developer
+  aggregates individual data sources into a single
+  :class:`data sources root <src.system.data_sources.DataSourcesRoot>` object, which is then passed
+  around the model.
+
+  Data sources can also be `nested <https://en.wikipedia.org/wiki/Nesting_(computing)>`_ using
+  :class:`namespaces <src.system.data_sources.namespace.DataSourceNamespace>` and
+  :class:`collections <src.system.data_sources.collection.DataSourceCollection>` .
+  That is, data sources can contain other data sources. For example:
+
+  - A model point data source might contain data sources for individual people and contracts.
+  - A market data data source might contain data sources that point to external feeds, like
+    `Bloomberg <https://www.bloomberg.com/professional/product/market-data/>`_ or
+    `Treasury.gov <https://home.treasury.gov/treasury-daily-interest-rate-xml-feed>`_.
 
 .. _projection_entities:
 
 - **(2) Projection Entities**
 
-  A *projection entity* is anything that can be projected forwards in time. For example:
+  A :class:`projection <src.system.projection.Projection>` is anything that can be projected
+  forwards in time. For example:
 
   - An insurance contract.
   - A person.
 
   .. _projection_values:
 
-  Projection entities contain **(3) projection values**, which store the future states of a
-  projection entity. For example:
+  Projection entities contain **(3) projection values**.
+  :class:`Projection values <src.system.projection_entity.projection_value.ProjectionValue>`
+  track and store the future states of a projection entity. For example:
 
   - An insurance contract might have:
      - A premium payment.
@@ -167,19 +187,20 @@ The modeling framework consists of four core building blocks, built using classe
      - An attained age.
      - A marital status.
 
-  Projection entities also define functions that operate on projection values. For example:
+  Projection entities also define `methods <https://en.wikipedia.org/wiki/Method_(computer_programming)>`_
+  that operate on projection values. For example:
 
   - An insurance contract might define:
-     - A premium payment function, which adds a premium payment to the contract.
-     - A surrender function, which triggers a surrender calculation and benefit release.
+     - A *premium payment* method, which adds a premium payment to the contract.
+     - A *surrender* method, which triggers a surrender calculation and benefit release.
 
   - A person might define:
-     - A death function, which triggers a death benefit calculation and benefit release
+     - A *death* method, which triggers a death benefit calculation and benefit release
        on a life insurance product.
-     - A marriage function, which alters the marital status.
+     - A *marriage* method, which alters the marital status.
 
   Projection entities can also be `nested <https://en.wikipedia.org/wiki/Nesting_(computing)>`_.
-  That is, projection entities can also contain other projection entities. For example:
+  That is, projection entities can contain other projection entities. For example:
 
   - An insurance contract might have:
      - Riders.
@@ -200,10 +221,11 @@ The modeling framework consists of four core building blocks, built using classe
   - An economic index that drives the life insurance contract's account value growth.
 
   A projection connects projection entities together, defining a logical sequence of
-  projection entity function calls within a *single* time period.
+  projection entity `method <https://en.wikipedia.org/wiki/Method_(computer_programming)>`_ calls
+  within a *single* time period.
 
   The projection will then execute the sequence over and over again across a
   specified number of time periods, calculating and updating :ref:`projection values <projection_values>`
   as it goes along.
 
-  Once the projection finishes, it will print all projection values.
+  Once the projection completes, it will print all projection values.

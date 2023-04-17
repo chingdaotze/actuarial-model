@@ -1,3 +1,7 @@
+"""
+:class:`~src.system.projection.Projection` processing.
+"""
+
 from abc import (
     ABC,
     abstractmethod
@@ -13,27 +17,38 @@ from importlib import import_module
 from src.system.projection import Projection
 from src.system.projection.parameters import ProjectionParameters
 from src.system.data_sources import DataSourcesRoot
-from src.system.logger import logger
+from src.system.logger import Logger
 
 
 class ProjectionProcessor(
     ABC
 ):
 
-    projection_parameters: ProjectionParameters
-    projections: List[Projection]
-    data_sources: DataSourcesRoot
-    projection: Type
+    """
+    Abstract class that processes :class:`Projections <src.system.projection.Projection>`.
+    """
+
+    projection_parameters: ProjectionParameters     #: Parameters to initialize model objects.
+    projections: List[Projection]   #: List of :class:`projections <src.system.projection.Projection>` to run.
+    data_sources: DataSourcesRoot   #: Data sources to be read at runtime.
+    projection: Type                #: :class:`~src.system.projection.Projection` class definition.
 
     def __init__(
         self,
         projection_parameters: ProjectionParameters
     ):
 
+        """
+        Constructor method. Creates :class:`projections <src.system.projection.Projection>` and
+        :class:`root data sources <src.system.data_sources.DataSourcesRoot>`.
+
+        :param projection_parameters: Parameters to initialize model objects.
+        """
+
         self.projection_parameters = projection_parameters
 
         # Create data sources
-        logger.print(
+        Logger().print(
             message=f'Compiling data sources from: {self.projection_parameters.data_source} ...'
         )
 
@@ -44,7 +59,7 @@ class ProjectionProcessor(
         )
 
         # Create projection objects
-        logger.print(
+        Logger().print(
             message=f'Compiling projections from: {self.projection_parameters.projection} ...'
         )
 
@@ -95,6 +110,13 @@ class ProjectionProcessor(
         projection: Projection
     ) -> None:
 
+        """
+        Runs a single projection and writes output.
+
+        :param projection: Projection to run.
+        :return: None
+        """
+
         # Run projection
         projection.run_projection()
 
@@ -105,7 +127,14 @@ class ProjectionProcessor(
         self
     ) -> None:
 
-        logger.print(
+        """
+        Calls :meth:`~src.system.projection.Projection.setup_output` for each projection in
+        :attr:`~src.system.projection.processor.ProjectionProcessor.projections`.
+
+        :return: None
+        """
+
+        Logger().print(
             message=f'Setting up projection output ...'
         )
 
@@ -117,5 +146,12 @@ class ProjectionProcessor(
     def run_projections(
         self
     ) -> None:
+
+        """
+        Abstract method to run all projections in
+        :attr:`~src.system.projection.processor.ProjectionProcessor.projections`.
+
+        :return: None
+        """
 
         ...

@@ -1,3 +1,7 @@
+"""
+Get X-iversaries between dates.
+"""
+
 from datetime import date
 from typing import List
 from dateutil.relativedelta import relativedelta
@@ -10,6 +14,18 @@ def get_xversaries(
     end_date: date,
     frequency: int
 ) -> List[date]:
+
+    """
+    Gets X-iversaries between two dates, where X could be a ann-, month-, quarter-, etc... For example, if the issue
+    date is 3/16/2023, and we want to get all the anniversaries between 7/16/2023 and 5/16/2026, the function will
+    return 3/16/2024, 3/16/2025, and 3/16/2026.
+
+    :param issue_date: First X-iversary date.
+    :param start_date: Search start date.
+    :param end_date: Search end date.
+    :param frequency: Months between X-iversaries.
+    :return:
+    """
 
     start_date_range = relativedelta(
         dt1=start_date,
@@ -36,6 +52,7 @@ def get_xversaries(
     xversary_dates = []
 
     while xversary_date < max_xversary_date:
+
         xversary_date += relativedelta(
             months=frequency
         )

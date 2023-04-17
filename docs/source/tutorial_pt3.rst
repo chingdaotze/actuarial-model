@@ -70,6 +70,8 @@ In the next few sections, we'll see how this works with the sample annuity model
     #. We've declared a new ``_bonus_rate`` attribute, that only exists in ``BonusAccount`` objects
        (and *not* in ``Account`` objects).
 
+    .. _inheritance_override:
+
     #. We've **overridden** the definition of the ``deposit`` function. The behavior of ``deposit``
        changes depending on whether the object is an ``Account`` or a ``BonusAccount``.
 

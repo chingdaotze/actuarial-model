@@ -1,3 +1,7 @@
+"""
+Modeling Framework :ref:`Object Model <object_model>` :ref:`Data Sources <data_sources>`.
+"""
+
 from abc import (
     ABC,
     abstractmethod
@@ -20,8 +24,11 @@ class DataSourcesRoot(
 ):
 
     """
-    Abstract container class that acts as a top-level namespace for data sources.
+    Abstract container class that acts as a top-level :mod:`namespace <src.system.data_sources.namespace>` for
+    data sources.
     """
+
+    projection_parameters: 'ProjectionParameters'     #: Projection parameters.
 
     def __init__(
         self,
@@ -32,7 +39,7 @@ class DataSourcesRoot(
         Constructor method. Data sources can be added by overriding and adding additional class
         attributes.
 
-        :param projection_parameters:
+        :param projection_parameters: Set of projection parameters that contains a resource directory.
         """
 
         DataSourceNamespace.__init__(
@@ -40,7 +47,7 @@ class DataSourcesRoot(
             path=projection_parameters.resource_dir_path
         )
 
-        self.projection_parameters: ProjectionParameters = projection_parameters
+        self.projection_parameters = projection_parameters
 
     @abstractmethod
     def configured_data_sources(
@@ -51,7 +58,7 @@ class DataSourcesRoot(
         Abstract generator that is used to iterate through various run configurations. For example,
         this can be used to create a generator that iterates through each model point & scenario combination.
 
-        :return:
+        :return: Generator that iterates through data sources.
         """
 
         ...

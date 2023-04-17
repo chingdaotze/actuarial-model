@@ -1,36 +1,41 @@
+"""
+Model :class:`~src.system.projection.Projection` parameters.
+"""
+
 from os.path import exists
 from json import load
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from typing import Self
 
-from src.system.logger import logger
+from src.system.logger import Logger
 from src.system.enums import ProcessingType
 
 
 class ProjectionParameters:
 
     """
-    Container class for all projection parameters. Additional projection parameters can be added here
-    (for all projections), or this class can be inherited and extended for additional parameters.
+    Container class for all :class:`~src.system.projection.Projection` parameters.
+    Additional projection parameters can be added here (for all projections), or this class can be inherited
+    and extended for additional parameters.
     """
 
     # Time
-    start_t: date
-    projection_length: relativedelta
-    end_t: date
-    time_step: relativedelta
+    start_t: date                           #: Initial projection time step.
+    projection_length: relativedelta        #: Projection duration.
+    end_t: date                             #: Ending projection time step.
+    time_step: relativedelta                #: Projection time step interval.
 
     # Paths
-    resource_dir_path: str
-    output_dir_path: str
+    resource_dir_path: str                  #: Resource directory path.
+    output_dir_path: str                    #: Output directory path.
 
     # Processing
-    processing_type: ProcessingType
+    processing_type: ProcessingType         #: Processing type. Controls how the projection is run and distributed.
 
     # Projection
-    projection: str
-    data_source: str
+    projection: str                         #: Projection import path.
+    data_source: str                        #: Data source import path.
 
     def __init__(
         self,
@@ -44,12 +49,16 @@ class ProjectionParameters:
         data_source: str
     ):
         """
-        Constructor method.
+        Constructor method. Initializes all variables in this class.
 
-        :param start_t:
-        :param projection_length:
-        :param time_step:
-        :param resource_dir_path:
+        :param start_t: Initial projection time step.
+        :param projection_length: Projection duration.
+        :param time_step: Projection time step interval.
+        :param resource_dir_path: Resource directory path.
+        :param output_dir_path: Output directory path.
+        :param processing_type: Processing type.
+        :param projection: Projection import path.
+        :param data_source: Data source import path.
         """
 
         # Time
@@ -76,15 +85,17 @@ class ProjectionParameters:
     ) -> Self:
 
         """
-        Class factory that constructs an instance by deserializing a JSON file.
+        Class factory that constructs an instance of this class by
+        `deserializing <https://en.wikipedia.org/wiki/Serialization>`_ a
+        `JSON file <https://en.wikipedia.org/wiki/JSON>`_.
 
-        :param path:
-        :return:
+        :param path: Input JSON file path.
+        :return: Instance of this class.
         """
 
         if not exists(path):
 
-            logger.raise_expr(
+            Logger().raise_expr(
                 expr=FileNotFoundError(
                     f'Could not locate projection parameter file at this location: {path} !'
                 )

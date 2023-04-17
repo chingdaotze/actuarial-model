@@ -43,7 +43,10 @@ exclude_patterns = []
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'sphinx_material'
+html_title = 'Actuarial Model'
 html_static_path = ['_static']
+html_logo = 'images/mu_logo.png'
+html_favicon = 'images/mu_favicon.png'
 html_theme_options = {
 	'nav_title': 'Actuarial Model',
 	'repo_url': 'https://github.com/chingdaotze/actuarial-model',
@@ -54,6 +57,7 @@ html_theme_options = {
 	'globaltoc_collapse': True,
 	'globaltoc_includehidden': True,
 	'color_primary': 'deep-purple',
+	'color_accent': 'deep-purple',
 	'master_doc': False,
 	'nav_links': [
 		{
@@ -65,13 +69,22 @@ html_theme_options = {
 			'href': 'tutorial_pt1',
 			'title': 'Tutorial',
 			'internal': True
+		},
+		{
+			'href': 'system_doc',
+			'title': 'API',
+			'internal': True
+		},
+		{
+			'href': 'about_me',
+			'title': 'About Me',
+			'internal': True
 		}
 	],
 	# 'heroes': {
 	# 	'index': 'Home'
 	# }
 }
-
 html_sidebars = {
 	'**': [
 		'logo-text.html',

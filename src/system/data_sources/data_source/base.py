@@ -1,3 +1,7 @@
+"""
+Abstract data source.
+"""
+
 from abc import ABC
 
 from pandas import DataFrame
@@ -13,12 +17,15 @@ class DataSourceBase(
     Inherit this class to implement a custom data source.
     """
 
+    cache: DataFrame  #: Internal cache, populated at runtime.
+
     def __init__(
         self
     ):
 
         """
-        Constructor method. Declares an empty cache.
+        Constructor method. Declares an empty
+        `DataFrame <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html>`_ to use as a cache.
         """
 
-        self.cache: DataFrame = DataFrame()
+        self.cache = DataFrame()

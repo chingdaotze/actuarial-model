@@ -9,7 +9,7 @@ from src.system.enums import (
     Rider,
     DeathBenefitOptions
 )
-from src.system.logger import logger
+from src.system.logger import Logger
 from src.system.projection.scripts.get_xversaries import get_xversaries
 
 from src.data_sources.annuity import AnnuityDataSources
@@ -123,7 +123,7 @@ class BaseContract(
 
                 else:
 
-                    logger.raise_expr(
+                    Logger().raise_expr(
                         expr=NotImplementedError(
                             f'Unhandled GMDB rider type: {rider_type} !'
                         )
@@ -229,7 +229,7 @@ class BaseContract(
 
         else:
 
-            logger.raise_expr(
+            Logger().raise_expr(
                 expr=NotImplementedError(
                     f'Unhandled account type: {account_data_source.account_type} !'
                 )

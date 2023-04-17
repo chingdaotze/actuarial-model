@@ -4,7 +4,7 @@ from typing import (
 )
 
 from src.system.data_sources.collection import DataSourceCollection
-from src.system.logger import logger
+from src.system.logger import Logger
 from src.system.enums import Rider
 
 from src.data_sources.annuity.model_points.model_point.riders.base import BaseRider
@@ -57,7 +57,7 @@ class Riders(
 
             else:
 
-                logger.raise_expr(
+                Logger().raise_expr(
                     expr=NotImplementedError(
                         f'Unhandled rider_type: {base_rider.rider_type} !'
                     )

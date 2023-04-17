@@ -1,3 +1,7 @@
+"""
+System-wide message and event logging.
+"""
+
 from typing import (
     ClassVar,
     Self,
@@ -23,13 +27,18 @@ class Logger:
     Singleton logger class. Writes messages to disk and prints messages to console.
     """
 
-    instance: ClassVar[Self] = None
-    log_file: ClassVar[TextIO] = None
-    lock: ClassVar[Lock] = Lock()
+    instance: ClassVar[Self] = None     #: Global singleton instance.
+    log_file: ClassVar[TextIO] = None   #: Log file object; console output is piped here.
+    lock: ClassVar[Lock] = Lock()       #: Lock object to prevent race conditions when writing to the log file.
 
     def __new__(
         cls
     ):
+
+        """
+        Singleton constructor. If an instance does not exist, create a new instance and store it. If an instance
+        does exist, return the existing instance.
+        """
 
         if cls.instance is None:
 
@@ -69,7 +78,7 @@ class Logger:
         """
         Returns a timestamp as-of now.
 
-        :return:
+        :return: Returns a timestamp as a string.
         """
 
         return datetime.now().strftime(
@@ -85,9 +94,9 @@ class Logger:
         """
         Prints a message to both console and log file.
 
-        :param message:
-        :param level:
-        :return:
+        :param message: Message to print.
+        :param level: Logging level and severity.
+        :return: Nothing.
         """
 
         wrapped_message = f'{level} || {self.timestamp} || {message}'
@@ -113,8 +122,8 @@ class Logger:
         """
         Logs an exception in both the console and log file, then raises the exception.
 
-        :param expr:
-        :return:
+        :param expr: Exception to raise and log.
+        :return: Never.
         """
 
         self.print(
@@ -132,6 +141,3 @@ class Logger:
         self.lock.release()
 
         raise expr
-
-
-logger = Logger()

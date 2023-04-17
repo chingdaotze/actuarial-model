@@ -1,7 +1,11 @@
+"""
+Container that holds a pre-defined collection of :mod:`data sources <src.system.data_sources.data_source>`.
+"""
+
 from abc import ABC
 from os.path import isdir
 
-from src.system.logger import logger
+from src.system.logger import Logger
 
 
 class DataSourceNamespace(
@@ -9,11 +13,14 @@ class DataSourceNamespace(
 ):
 
     """
-    Abstract container class that holds a pre-defined collection of data sources. Data sources can be added by
-    inheriting and declaring additional class attributes.
+    Abstract container class that holds a pre-defined collection of
+    :mod:`data sources <src.system.data_sources.data_source>`. Data sources can be added by inheriting and declaring
+    additional class attributes.
 
     Inherit this class to implement a custom data source collection.
     """
+
+    path: str  #: Path to the namespace.
 
     def __init__(
         self,
@@ -23,14 +30,14 @@ class DataSourceNamespace(
         """
         Constructor method. Checks whether the namespace exists.
 
-        :param path:
+        :param path: File path to a namespace.
         """
 
-        self.path: str = path
+        self.path = path
 
         if not isdir(self.path):
 
-            logger.raise_expr(
+            Logger().raise_expr(
                 expr=NotADirectoryError(
                     f'Could not locate a valid directory at this location: {self.path} !'
                 )

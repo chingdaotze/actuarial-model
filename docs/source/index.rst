@@ -1,5 +1,9 @@
 .. _home:
 
+.. image:: images/mu.png
+    :width: 120
+    :align: center
+
 Welcome!
 ========
 
@@ -28,7 +32,8 @@ First Steps
 
 .. image:: images/kitten.png
     :width: 600
-    :alt: "Micro Center", age 2 weeks
+
+*"Micro Center", age 2 weeks*
 
 .. toctree::
     :hidden:
@@ -39,3 +44,4 @@ First Steps
     Tutorial, Part 3 <tutorial_pt3.rst>
     Model Documentation <model_doc.rst>
     System Documentation <system_doc.rst>
+    About Me <about_me.rst>
