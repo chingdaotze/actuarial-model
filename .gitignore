@@ -131,3 +131,4 @@ dmypy.json
 # Output
 /output/*.csv
 /docs/source/_autosummary/
+/output/
