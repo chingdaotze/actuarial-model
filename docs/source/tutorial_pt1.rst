@@ -30,18 +30,100 @@ Installation and Setup
 
 This modeling framework was developed using (and works best with) PyCharm Community Edition.
 
-#. Download and Install Python 3.11.X
-#. Download and Install PyCharm Community Edition
-#. Download and unzip project from GitHub
-#. Open project in PyCharm
+#. **Download and Install Python**
+
+   #. Download Python 3.11.X from here:
+
+      `<https://www.python.org/ftp/python/3.11.3/python-3.11.3-amd64.exe>`_
+
+   #. Install Python by double-clicking on the executable:
+
+      .. image:: images/install_python.png
+
+      #. Check *Use admin privileges when install py.exe*.
+      #. Check *Add python.exe to PATH*.
+      #. Click *Install Now* when ready.
+
+   #. Once the installer completes, click *Disable path length limit*:
+
+      .. image:: images/install_python_path_length_limit.png
+
+#. **Download and Install PyCharm Community Edition**
+
+   #. Download PyCharm Community Edition from here:
+
+      `<https://www.jetbrains.com/pycharm/download/download-thanks.html?platform=windows&code=PCC>`_
+
+   #. Install PyCharm by double-clicking on the executable:
+
+      `<https://www.jetbrains.com/help/pycharm/installation-guide.html#standalone>`_
+
+      Under the **Installation Options**, select *Add "Open Folder as Project"*
+
+      .. image:: images/install_pycharm_options.png
+
+#. **Download and Unzip the Project from GitHub**
+
+   #. Download the project from here:
+
+      `<https://github.com/chingdaotze/actuarial-model/archive/refs/heads/main.zip>`_
+
+   #. Unzip the project by right-clicking and selecting *Extract All...*:
+
+      .. image:: images/python_project_extract.png
+
+#. **Open the Project in PyCharm**
+
+   #. Navigate to the extraction location and right-click.
+      Then click *Open Folder as PyCharm Community Edition Project*:
+
+      .. image:: images/python_project_open.png
+
+   #. If prompted, select *Trust Project*:
+
+      .. image:: images/trust_project.png
 
    .. _virtual_environment:
 
-#. Set up a virtual environment
+#. **Set up a Virtual Environment**
+
+   #. Go to *File > Settings...*
+
+      .. image:: images/pycharm_settings.png
+
+   #. Navigate to `Project: \* > Python Interpreter > Add Interpreter`:
+
+      .. image:: images/pycharm_add_interpreter.png
+
+      And click on *Add Local Interpreter*.
+
+      .. image:: images/pycharm_add_interpreter_confirm.png
+
+      The click *OK*.
+
+   #. Click *OK* again to save your changes in the *Settings* dialog.
+
+      .. image:: images/pycharm_ok.png
 
    .. _required_packages:
 
-#. Install required packages
+#. **Install the Required Packages**
+
+   #. Click on Terminal to open up a terminal session:
+
+   #. In the terminal session, type:
+
+      .. code-block:: powershell
+
+            pip install -r "install\requirements.txt"
+
+      .. image:: images/install_reqs.png
+
+      Then hit ``ENTER`` to execute the command.
+
+   #. Once the command completes, you can close out the terminal session:
+
+      .. image:: images/close_terminal.png
 
 Running the Model
 -----------------

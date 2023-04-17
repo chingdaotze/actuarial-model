@@ -33,7 +33,7 @@ First Steps
 .. image:: images/kitten.png
     :width: 600
 
-*"Micro Center", age 2 weeks*
+"`Micro Center <https://www.microcenter.com/>`_"*, age 2 weeks*
 
 .. toctree::
     :hidden:

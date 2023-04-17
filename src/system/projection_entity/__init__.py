@@ -17,6 +17,7 @@ from pandas import DataFrame
 from src.system.projection.time_steps import TimeSteps
 from src.system.data_sources import DataSourcesRoot
 from src.system.projection_entity.projection_value import ProjectionValue
+from src.system.constants import DEFAULT_COL
 
 
 class ProjectionEntity(
@@ -114,7 +115,7 @@ class ProjectionEntity(
                     output_dataframe = output_dataframe.join(
                         other=attribute.history.rename(
                             columns={
-                                attribute.VALUE_COL: attribute_name
+                                DEFAULT_COL: attribute_name
                             }
                         ),
                         how='outer'
