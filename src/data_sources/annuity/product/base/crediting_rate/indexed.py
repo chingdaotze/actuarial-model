@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for the fixed indexed account crediting table.
+"""
+
 from pandas import isna
 
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
@@ -9,13 +13,23 @@ class IndexedCreditingRate(
 ):
 
     """
-    Indexed crediting table.
+    :mod:`Data source <src.system.data_sources.data_source>` for the fixed indexed account crediting table.
     """
 
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Loads data from the fixed indexed account crediting table into cache.
+
+        Relative path to the fixed indexed account crediting table:
+
+        ``resource/annuity/product/base/crediting_rate_indexed.csv``
+
+        :param path: Path to the fixed indexed account crediting table.
+        """
 
         DataSourceCsvFile.__init__(
             self=self,
@@ -34,10 +48,10 @@ class IndexedCreditingRate(
     ) -> str:
 
         """
-        Convenience method to access data from the crediting table. Returns a crediting rate index.
+        Returns an account's underlying index.
 
-        :param account_name:
-        :return:
+        :param account_name: Account name.
+        :return: Index name.
         """
 
         return self.cache['index'][account_name]
@@ -49,10 +63,10 @@ class IndexedCreditingRate(
     ) -> int:
 
         """
-        Convenience method to access data from the crediting table. Returns a crediting rate term.
+        Returns a crediting rate term (duration of a crediting strategy), in years.
 
-        :param account_name:
-        :return:
+        :param account_name: Account name.
+        :return: Crediting rate term.
         """
 
         return self.cache['term'][account_name]
@@ -64,10 +78,10 @@ class IndexedCreditingRate(
     ) -> float | None:
 
         """
-        Convenience method to access data from the crediting table. Returns a crediting rate cap.
+        Returns a crediting rate cap.
 
-        :param account_name:
-        :return:
+        :param account_name: Account name.
+        :return: Crediting rate cap.
         """
 
         value = self.cache['cap'][account_name]
@@ -87,10 +101,10 @@ class IndexedCreditingRate(
     ) -> float | None:
 
         """
-        Convenience method to access data from the crediting table. Returns a crediting rate spread.
+        Returns a crediting rate spread.
 
-        :param account_name:
-        :return:
+        :param account_name: Account name.
+        :return: Crediting rate spread.
         """
 
         value = self.cache['spread'][account_name]
@@ -110,10 +124,10 @@ class IndexedCreditingRate(
     ) -> float | None:
 
         """
-        Convenience method to access data from the crediting table. Returns a participation rate.
+        Returns a participation rate.
 
-        :param account_name:
-        :return:
+        :param account_name: Account name.
+        :return: Participation rate.
         """
 
         value = self.cache['participation_rate'][account_name]
@@ -133,10 +147,10 @@ class IndexedCreditingRate(
     ) -> float | None:
 
         """
-        Convenience method to access data from the crediting table. Returns a crediting rate floor.
+        Returns a crediting rate floor.
 
-        :param account_name:
-        :return:
+        :param account_name: Account name.
+        :return: Crediting rate floor.
         """
 
         value = self.cache['floor'][account_name]

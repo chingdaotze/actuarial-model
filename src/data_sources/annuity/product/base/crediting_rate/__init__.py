@@ -1,3 +1,7 @@
+"""
+:class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity interest crediting.
+"""
+
 from os.path import join
 
 from src.system.data_sources.namespace import DataSourceNamespace
@@ -11,11 +15,11 @@ class CreditingRate(
 ):
 
     """
-    Namespace that contains all crediting-related data sources and namespaces.
+    :class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity interest crediting.
     """
 
-    fixed: FixedCreditingRate
-    indexed: IndexedCreditingRate
+    fixed: FixedCreditingRate       #: Fixed account crediting assumptions.
+    indexed: IndexedCreditingRate   #: Fixed indexed account crediting assumptions.
 
     def __init__(
         self,
@@ -23,9 +27,14 @@ class CreditingRate(
     ):
 
         """
-        Constructor method. Constructs additional data sources using files from disk.
+        Constructor method. Constructs additional data sources using files found in the base product
+        assumption folder.
 
-        :param path:
+        Relative path to the base product assumption folder:
+
+        ``resource/annuity/product/base``
+
+        :param path: Path to the base product assumption folder.
         """
 
         DataSourceNamespace.__init__(

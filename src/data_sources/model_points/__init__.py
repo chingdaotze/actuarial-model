@@ -1,3 +1,8 @@
+"""
+:class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+that holds model points.
+"""
+
 from abc import ABC
 from typing import Type
 
@@ -14,7 +19,8 @@ class ModelPointsBase(
 ):
 
     """
-    Data source collection that holds model points.
+    :class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+    that holds model points.
     """
 
     def __init__(
@@ -24,10 +30,11 @@ class ModelPointsBase(
     ):
 
         """
-        Constructor that reads data from a JSON file, and generates model points of an arbitrary type.
+        Constructor method. Reads data from a JSON file and instantiates model points of a specified type, organized
+        by :attr:`model point ID <src.data_sources.model_points.model_point.ModelPointBase.id>`.
 
-        :param path:
-        :param model_point_type:
+        :param path: Path to a model point file.
+        :param model_point_type: Class definition of model point data source to instantiate.
         """
 
         DataSourceJsonFile.__init__(

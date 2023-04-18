@@ -1,5 +1,5 @@
 """
-Modeling Framework :ref:`Object Model <object_model>` :ref:`Data Sources <data_sources>`.
+Modeling framework :ref:`object model <object_model>` :ref:`Data Sources <data_sources>`.
 """
 
 from abc import (

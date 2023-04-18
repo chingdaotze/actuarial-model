@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for a single economic scenario.
+"""
+
 from datetime import date
 
 from pandas import DataFrame
@@ -11,16 +15,22 @@ class EconomicScenario(
 ):
 
     """
-    Data source that represents a single economic scenario.
+    :mod:`Data source <src.system.data_sources.data_source>` for a single economic scenario.
     """
 
-    scenario_index: int
+    scenario_index: int     #: Stochastic scenario number.
 
     def __init__(
         self,
         data: DataFrame,
         scenario_index: int
     ):
+
+        """
+        Constructor method. Initializes an economic scenario based on data within an economic scenario file.
+
+        :param data: Economic scenario data.
+        """
 
         DataSourcePandasDataFrame.__init__(
             self=self,
@@ -37,11 +47,11 @@ class EconomicScenario(
     ) -> float:
 
         """
-        Convenience method to access data from the scenario file. Returns a rate from the scenario file.
+        Returns a rate from the scenario file.
 
-        :param name:
-        :param t:
-        :return:
+        :param name: Rate name.
+        :param t: Time step.
+        :return: Rate.
         """
 
         return self.cache[name][t]

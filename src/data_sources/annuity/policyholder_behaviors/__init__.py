@@ -1,3 +1,8 @@
+"""
+:class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity policyholder behavior
+assumptions.
+"""
+
 from os.path import join
 
 from src.system.data_sources.namespace import DataSourceNamespace
@@ -12,12 +17,13 @@ class PolicyholderBehaviors(
 ):
 
     """
-    Namespace that contains all policyholder behavior-related data sources.
+    :class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity policyholder behavior
+    assumptions.
     """
 
-    base_lapse: BaseLapse
-    shock_lapse: ShockLapse
-    annuitization: Annuitization
+    base_lapse: BaseLapse           #: Base lapse assumptions.
+    shock_lapse: ShockLapse         #: Shock lapse assumptions.
+    annuitization: Annuitization    #: Annuitization assumptions.
 
     def __init__(
         self,
@@ -25,9 +31,14 @@ class PolicyholderBehaviors(
     ):
 
         """
-        Constructor method. Constructs additional data sources using files from disk.
+        Constructor method. Constructs additional data sources using files found in the policyholder behavior
+        assumption folder.
 
-        :param path:
+        Relative path to the policyholder behavior assumption folder:
+
+        ``resource/annuity/policyholder_behaviors``
+
+        :param path: Path to the policyholder behavior assumption folder.
         """
 
         DataSourceNamespace.__init__(

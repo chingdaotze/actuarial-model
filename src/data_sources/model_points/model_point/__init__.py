@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for a single generic, non-product-specific model point.
+"""
+
 from abc import ABC
 from datetime import date
 
@@ -15,7 +19,8 @@ class ModelPointBase(
 ):
 
     """
-    Data source that represents a generic, non-product-specific model point.
+    :mod:`Data source <src.system.data_sources.data_source>` for a single generic, non-product-specific model point.
+    Contains attributes common across all model points.
     """
 
     def __init__(
@@ -34,9 +39,11 @@ class ModelPointBase(
     ) -> str:
 
         """
-        Unique identifier. This could be a Policy Number, counting integer, GUID, or any other unique code.
+        Unique identifier for this model point. This could be a Policy Number, integer,
+        `GUID <https://en.wikipedia.org/wiki/Universally_unique_identifier>`_,
+        or any other unique code.
 
-        :return:
+        :return: Model point ID.
         """
 
         return self.cache[DEFAULT_COL]['id']
@@ -50,7 +57,7 @@ class ModelPointBase(
         Product type enum that denotes what kind of product this model point is. For example, Variable Annuity or
         Universal Life.
 
-        :return:
+        :return: Product type.
         """
 
         return ProductType(
@@ -65,7 +72,7 @@ class ModelPointBase(
         """
         Human-readable product name.
 
-        :return:
+        :return: Friendly product name.
         """
 
         return self.cache[DEFAULT_COL]['product_name']
@@ -78,7 +85,7 @@ class ModelPointBase(
         """
         Policy issue date.
 
-        :return:
+        :return: Issue date.
         """
 
         return str_to_date(

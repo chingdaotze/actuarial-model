@@ -1,3 +1,7 @@
+"""
+:class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity mortality assumptions.
+"""
+
 from os.path import join
 
 from src.system.data_sources.namespace import DataSourceNamespace
@@ -12,12 +16,12 @@ class Mortality(
 ):
 
     """
-    Namespace that contains all mortality-related data sources.
+    :class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity mortality assumptions.
     """
 
-    base_mortality: BaseMortality
-    mortality_improvement: MortalityImprovement
-    mortality_improvement_dates: MortalityImprovementDates
+    base_mortality: BaseMortality                               #: Base mortality assumptions.
+    mortality_improvement: MortalityImprovement                 #: Mortality improvement assumptions.
+    mortality_improvement_dates: MortalityImprovementDates      #: Mortality improvement date assumptions.
 
     def __init__(
         self,
@@ -25,9 +29,13 @@ class Mortality(
     ):
 
         """
-        Constructor method. Constructs additional data sources using files from disk.
+        Constructor method. Constructs additional data sources using files found in the mortality assumption folder.
 
-        :param path:
+        Relative path to the mortality assumption folder:
+
+        ``resource/annuity/mortality``
+
+        :param path: Path to the mortality assumption folder.
         """
 
         DataSourceNamespace.__init__(

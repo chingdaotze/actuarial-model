@@ -1,3 +1,8 @@
+"""
+:class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+that holds all economic stochastic scenarios.
+"""
+
 from typing import List
 from pandas import to_datetime
 
@@ -13,10 +18,11 @@ class EconomicScenarios(
 ):
 
     """
-    Data source collection that holds multiple stochastic economic scenarios.
+    :class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+    that holds all economic stochastic scenarios.
     """
 
-    rates: List[str]
+    rates: List[str]    #: List of rates in the economic scenario file.
 
     def __init__(
         self,
@@ -24,9 +30,14 @@ class EconomicScenarios(
     ):
 
         """
-        Constructor that reads data from a CSV file, and generates economic scenarios.
+        Constructor method. Reads data from a CSV file and instantiates economic scenarios, organized by
+        :attr:`scenario index <src.data_sources.economic_scenarios.economic_scenario.EconomicScenario.scenario_index>`.
 
-        :param path:
+        Relative path to the economic scenario file:
+
+        ``resource/annuity/economic_scenarios.csv``
+
+        :param path: Path to an economic scenario file.
         """
 
         DataSourceCsvFile.__init__(

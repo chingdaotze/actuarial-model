@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for a Guaranteed Minimum Withdrawal Benefit (GMWB) rider.
+"""
+
 from typing import Dict
 from datetime import date
 
@@ -11,13 +15,19 @@ class Gmwb(
 ):
 
     """
-    Data source that represents a Guaranteed Minimum Withdrawal Benefit (GMWB) rider.
+    :mod:`Data source <src.system.data_sources.data_source>` for a Guaranteed Minimum Withdrawal Benefit (GMWB) rider.
     """
 
     def __init__(
         self,
         data: Dict
     ):
+
+        """
+        Constructor method. Initializes a GMWB rider based on data within an annuity model point file.
+
+        :param data: Data for a GMWB rider.
+        """
 
         BaseRider.__init__(
             self=self,
@@ -32,7 +42,7 @@ class Gmwb(
         """
         GMWB Benefit Base, typically used as a basis for GMWB withdrawals.
 
-        :return:
+        :return: GMWB Benefit Base.
         """
 
         return self.cache[DEFAULT_COL]['benefit_base']
@@ -43,9 +53,9 @@ class Gmwb(
     ) -> date | None:
 
         """
-        GMWB Benefit Base, typically used as a basis for GMWB withdrawals.
+        Withdrawal program start date. If this policy has no planned withdrawal program, return None.
 
-        :return:
+        :return: Withdrawal program start date.
         """
 
         return_value = self.cache[DEFAULT_COL]['first_withdrawal_date']

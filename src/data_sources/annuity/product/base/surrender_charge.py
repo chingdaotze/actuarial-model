@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for the surrender charge table.
+"""
+
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
 from src.system.projection_entity.projection_value import use_latest_value
 
@@ -7,13 +11,23 @@ class SurrenderCharge(
 ):
 
     """
-    Surrender charge table.
+    :mod:`Data source <src.system.data_sources.data_source>` for the surrender charge table.
     """
 
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Loads data from the surrender charge (CDSC) table into cache.
+
+        Relative path to the annuitization table:
+
+        ``resource/annuity/product/base/surrender_charge.csv``
+
+        :param path: Path to the surrender charge table.
+        """
 
         DataSourceCsvFile.__init__(
             self=self,
@@ -33,11 +47,11 @@ class SurrenderCharge(
     ) -> float:
 
         """
-        Convenience method to access data from the surrender charge table. Returns a surrender charge rate.
+        Returns a surrender charge rate.
 
-        :param policy_year:
-        :param product_name:
-        :return:
+        :param policy_year: Policy year.
+        :param product_name: Product name.
+        :return: Surrender charge rate.
         """
 
         lookup_value = min(
@@ -54,10 +68,10 @@ class SurrenderCharge(
     ) -> int:
 
         """
-        Convenience method to access data from the surrender charge table. Returns the maximum surrender charge period.
+        Returns a maximum surrender charge period for a given product.
 
-        :param product_name:
-        :return:
+        :param product_name: Product name.
+        :return: Maximum surrender charge period.
         """
 
         surrender_charge_table = self.cache[product_name]

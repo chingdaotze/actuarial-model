@@ -1,3 +1,7 @@
+"""
+:class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity product assumptions.
+"""
+
 from os.path import join
 
 from src.system.data_sources.namespace import DataSourceNamespace
@@ -12,12 +16,12 @@ class Product(
 ):
 
     """
-    Namespace that contains all product-related data sources and namespaces.
+    :class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity product assumptions.
     """
 
-    base_product: BaseProduct
-    gmdb_rider: GmdbRider
-    gmwb_rider: GmwbRider
+    base_product: BaseProduct   #: Base product assumptions.
+    gmdb_rider: GmdbRider       #: Guaranteed Minimum Death Benefit rider assumptions.
+    gmwb_rider: GmwbRider       #: Guaranteed Minimum Withdrawal Benefit rider assumptions.
 
     def __init__(
         self,
@@ -25,9 +29,14 @@ class Product(
     ):
 
         """
-        Constructor method. Constructs additional data sources using files from disk.
+        Constructor method. Constructs additional data sources using files found in the product
+        assumption folder.
 
-        :param path:
+        Relative path to the product assumption folder:
+
+        ``resource/annuity/product``
+
+        :param path: Path to the product assumption folder.
         """
 
         DataSourceNamespace.__init__(

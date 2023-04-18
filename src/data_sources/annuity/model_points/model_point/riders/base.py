@@ -1,3 +1,7 @@
+"""
+:mod:`Abstract data source <src.system.data_sources.data_source>` for a rider.
+"""
+
 from typing import Dict
 
 from src.system.data_sources.data_source.python_dict import DataSourcePythonDict
@@ -9,13 +13,19 @@ class BaseRider(
 ):
 
     """
-    Data source that represents a Guaranteed Minimum Withdrawal Benefit (GMWB) rider.
+    :mod:`Abstract data source <src.system.data_sources.data_source>` for a rider.
     """
 
     def __init__(
         self,
         data: Dict
     ):
+
+        """
+        Constructor method. Initializes an abstract rider based on data within an annuity model point file.
+
+        :param data: Data for any single rider.
+        """
 
         DataSourcePythonDict.__init__(
             self=self,
@@ -25,11 +35,12 @@ class BaseRider(
     @property
     def rider_type(
         self
-    ) -> float:
-        """
-        GMWB Benefit Base, typically used as a basis for GMWB withdrawals.
+    ) -> str:
 
-        :return:
+        """
+        Rider type, used to indicate what kind of rider this is.
+
+        :return: Rider type.
         """
 
         return self.cache[DEFAULT_COL]['rider_type']
@@ -42,7 +53,7 @@ class BaseRider(
         """
         Human-readable rider name.
 
-        :return:
+        :return: Rider name.
         """
 
         return self.cache[DEFAULT_COL]['rider_name']

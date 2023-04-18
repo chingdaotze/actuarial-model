@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for the GMDB charge rate.
+"""
+
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
 from src.system.constants import DEFAULT_COL
 from src.system.projection_entity.projection_value import use_latest_value
@@ -8,13 +12,23 @@ class GmdbCharge(
 ):
 
     """
-    GMDB charge table.
+    :mod:`Data source <src.system.data_sources.data_source>` for the GMDB charge rate.
     """
 
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Loads data from the GMDB charge table into cache.
+
+        Relative path to the GMDB charge table:
+
+        ``resource/annuity/product/gmdb/charge.csv``
+
+        :param path: Path to the GMDB charge table.
+        """
 
         DataSourceCsvFile.__init__(
             self=self,
@@ -33,10 +47,10 @@ class GmdbCharge(
     ) -> float:
 
         """
-        Convenience method to access data from the GMDB charge table. Returns a GMDB charge rate.
+        Returns a GMDB charge rate.
 
-        :param rider_name:
-        :return:
+        :param rider_name: Rider name.
+        :return: GMDB charge rate.
         """
 
         return self.cache[rider_name]['charge_rate']

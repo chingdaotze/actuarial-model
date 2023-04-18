@@ -1,3 +1,9 @@
+"""
+:class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+that contains premium payments into a particular
+:class:`account <src.data_sources.annuity.model_points.model_point.accounts.account.Account>`.
+"""
+
 from typing import (
     List,
     Dict
@@ -12,7 +18,9 @@ class Premiums(
     DataSourceCollection
 ):
     """
-    Data source collection that contains premiums.
+    :class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+    that contains premium payments into a particular
+    :class:`account <src.data_sources.annuity.model_points.model_point.accounts.account.Account>`.
     """
 
     def __init__(
@@ -20,7 +28,9 @@ class Premiums(
         data: List[Dict]
     ):
         """
-        Constructor method. Generates premium data sources from a list of dictionaries.
+        Constructor method. Initializes a collection of premiums based on data within an annuity model point file,
+        organized by
+        :attr:`premium date <src.data_sources.annuity.model_points.model_point.accounts.account.premiums.premium.Premium.premium_date>`.
 
         :param data:
         """

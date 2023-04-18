@@ -1,3 +1,9 @@
+"""
+:class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+that contains annuitants for a particular
+:class:`model point <src.data_sources.annuity.model_points.model_point.ModelPoint>`.
+"""
+
 from typing import (
     List,
     Dict
@@ -13,7 +19,9 @@ class Annuitants(
 ):
 
     """
-    Data source collection that represents one or more annuitants.
+    :class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+    that contains one or more annuitants for a particular
+    :class:`model point <src.data_sources.annuity.model_points.model_point.ModelPoint>`.
     """
 
     def __init__(
@@ -22,9 +30,11 @@ class Annuitants(
     ):
 
         """
-        Constructor method. Generates annuitant data sources from a list of dictionaries.
+        Constructor method. Initializes a collection of annuitants based on data within an annuity model point file,
+        organized by
+        :attr:`annuitant ID <src.data_sources.annuity.model_points.model_point.annuitants.annuitant.Annuitant.id>`.
 
-        :param data:
+        :param data: Data for multiple annuitants.
         """
 
         DataSourceCollection.__init__(

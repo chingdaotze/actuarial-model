@@ -81,17 +81,32 @@ In the next few sections, we'll see how this works with the sample annuity model
     #. Extend the functionality of existing classes.
     #. Change the functionality in existing classes.
 
+Annuity Model Design and Construction
+-------------------------------------
+
+Walk through code base.
+
 Data Sources
-------------
+^^^^^^^^^^^^
 
+#. Create Root Data Sources.
 
+#. Decide on input format.
+
+#. Create a new Data Source type, if it doesn't already exist.
+
+#. Inherit the Data Source type.
+
+#. Define interfaces.
+
+#. Add to Data Sources
 
 Projection Entities
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 
 
-Projections
------------
+Projection
+^^^^^^^^^^
 
 

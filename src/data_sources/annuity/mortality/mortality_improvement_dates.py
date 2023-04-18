@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for mortality improvement date model assumptions.
+"""
+
 from datetime import date
 
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
@@ -9,13 +13,24 @@ class MortalityImprovementDates(
 ):
 
     """
-    Adjustments to the mortality improvement table.
+    Scale G2 mortality improvement assumptions. Scale G2 is based on time elapsed since the table was created.
+    These assumptions are required to calculate the final mortality improvement rate.
     """
 
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Loads data from the assumption table into cache.
+
+        Relative path to the assumption table:
+
+        ``resource/annuity/mortality/mortality_improvement_projection_scale_g2_dates.csv``
+
+        :param path: Path to assumption table.
+        """
 
         DataSourceCsvFile.__init__(
             self=self,
@@ -35,7 +50,7 @@ class MortalityImprovementDates(
         """
         Returns the mortality improvement start date, which is used to adjust the Scale G2 mortality table.
 
-        :return:
+        :return: Mortality improvement start date.
         """
 
         return str_to_date(
@@ -50,7 +65,7 @@ class MortalityImprovementDates(
         """
         Returns the mortality improvement end date, which is used to adjust the Scale G2 mortality table.
 
-        :return:
+        :return: Mortality improvement end date.
         """
 
         return str_to_date(

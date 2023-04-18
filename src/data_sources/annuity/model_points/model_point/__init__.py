@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for a single annuity model point.
+"""
+
 from pandas import Series
 
 from src.system.constants import DEFAULT_COL
@@ -13,17 +17,24 @@ class ModelPoint(
 ):
 
     """
-    Data source that represents an annuity model point.
+    :mod:`Data source <src.system.data_sources.data_source>` for a single annuity model point. Contains
+    nested data sources for dynamic parts of a model point.
     """
 
-    annuitants: Annuitants
-    riders: Riders
-    accounts: Accounts
+    annuitants: Annuitants      #: Annuitants associated with this model point.
+    riders: Riders              #: Riders associated with this model point.
+    accounts: Accounts          #: Accounts associated with this model point.
 
     def __init__(
         self,
         data: Series
     ):
+
+        """
+        Constructor method. Initializes a model point based on data within an annuity model point file.
+
+        :param data: Model point data.
+        """
 
         ModelPointBase.__init__(
             self=self,

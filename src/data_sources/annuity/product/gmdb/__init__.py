@@ -1,3 +1,7 @@
+"""
+:class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity GMDB rider assumptions.
+"""
+
 from os.path import join
 
 from src.system.data_sources.namespace import DataSourceNamespace
@@ -11,11 +15,11 @@ class GmdbRider(
 ):
 
     """
-    Namespace that contains all base GMDB-related data sources and namespaces.
+    :class:`Namespace <src.system.data_sources.namespace.DataSourceNamespace>` for annuity GMDB rider assumptions.
     """
 
-    gmdb_charge: GmdbCharge
-    gmdb_types: GmdbTypes
+    gmdb_charge: GmdbCharge     #: GMDB charge assumptions.
+    gmdb_types: GmdbTypes       #: GMDB type translation.
 
     def __init__(
         self,
@@ -23,9 +27,14 @@ class GmdbRider(
     ):
 
         """
-        Constructor method. Constructs additional data sources using files from disk.
+        Constructor method. Constructs additional data sources using files found in the GMDB rider
+        assumption folder.
 
-        :param path:
+        Relative path to the GMDB rider assumption folder:
+
+        ``resource/annuity/product/gmdb``
+
+        :param path: Path to the GMDB rider assumption folder.
         """
 
         DataSourceNamespace.__init__(

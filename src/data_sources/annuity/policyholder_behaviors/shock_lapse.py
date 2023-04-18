@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for the shock lapse table.
+"""
+
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
 from src.system.projection_entity.projection_value import use_latest_value
 
@@ -7,13 +11,23 @@ class ShockLapse(
 ):
 
     """
-    Shock lapse table.
+    :mod:`Data source <src.system.data_sources.data_source>` for the shock lapse table.
     """
 
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Loads data from the shock lapse table into cache.
+
+        Relative path to the shock lapse table:
+
+        ``resource/annuity/policyholder_behaviors/shock_lapse_multiplier.csv``
+
+        :param path: Path to the shock lapse table.
+        """
 
         DataSourceCsvFile.__init__(
             self=self,
@@ -32,10 +46,10 @@ class ShockLapse(
     ) -> float:
 
         """
-        Convenience method to access data from the shock lapse table. Returns a shock lapse multiplier.
+        Returns a shock lapse multiplier as a percentage of base lapse.
 
-        :param years_after_cdsc_period:
-        :return:
+        :param years_after_cdsc_period: Years elapsed after the CDSC period.
+        :return: Shock lapse multiplier.
         """
 
         lookup_value = min(

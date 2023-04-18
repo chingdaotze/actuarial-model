@@ -1,5 +1,5 @@
 """
-Modeling Framework :ref:`Object Model <object_model>` :ref:`Projection Value <projection_values>`.
+Modeling framework :ref:`object model <object_model>` :ref:`Projection Value <projection_values>`.
 """
 
 from typing import (
@@ -17,26 +17,50 @@ from src.system.constants import DEFAULT_COL
 class ProjectionValue:
 
     """
-    Abstract class that stores values for a :class:`~src.system.projection_entity.ProjectionEntity`.
+    Stores values for a :class:`~src.system.projection_entity.ProjectionEntity`.
 
     It can best be understood as a standard Python `data type <https://docs.python.org/3/library/stdtypes.html>`_
-    with a history.
+    with a *value history*.
 
-    For example, imagine an `integer <https://docs.python.org/3/library/functions.html#int>` that keeps a history
+    For example, imagine an `integer <https://docs.python.org/3/library/functions.html#int>`_ that keeps a history
     of its past values.
 
     - Like an integer, projection values support all standard
       `numeric operators <https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types>`_
       (e.g., +, -, /, \\*, etc...)
 
-      The default value used in these operations is the
+      The value used in these operations is the
       :attr:`latest value <src.system.projection_entity.projection_value.ProjectionValue.latest_value>`
-      from the history.
+      from the value history.
 
-    - Unlike an integer, a history can be read or written via the
+    - Unlike an integer, a value history can be read or written via the
       `[] operator <https://docs.python.org/3/reference/datamodel.html#object.__getitem__>`_ (like a
       `dictionary <https://docs.python.org/3/tutorial/datastructures.html#dictionaries>`_).
 
+    Here is a code example:
+
+    .. code-block:: python
+
+        my_projection_value = ProjectionValue(
+            init_t=date(
+                year=2023,
+                month=3,
+                day=16
+            ),
+            init_value=50.0
+        )  # Create a new ProjectionValue with a starting history of 50.0 on 3/16/2023.
+
+        new_value = my_projection_value + 25.0  # ProjectionValue's support math operands. The value of
+                                                # new_value is 75.0, since my_project_value's latest value is 50.0.
+
+        my_projection_value[
+            date(
+                year=2023,
+                month=4,
+                day=16
+            )
+        ] = new_value           # ProjectionValue's logs a new entry in its history (75.0 on 4/16/2023). Since
+                                # 4/16/2023 is the latest date in the history, 75.0 also becomes the latest value.
     """
 
     _history: DataFrame
@@ -52,8 +76,8 @@ class ProjectionValue:
         """
         Constructor method.
 
-        :param init_t: Initial time step to record ``init_value`` in history.
-        :param init_value: Initial value to record in history.
+        :param init_t: Initial time step to index ``init_value`` in the value history.
+        :param init_value: Initial value to record in the value history.
         :param print_values: Boolean flag to determine whether this projection value is printed.
         """
 
@@ -645,7 +669,7 @@ class ProjectionValue:
     ) -> Any:
 
         """
-        Latest value from the history. For example, if the history contains:
+        Latest value from the value history. For example, if the value history contains:
 
         +-------------+--------------+
         | t           | value        |
@@ -678,9 +702,9 @@ class ProjectionValue:
     ) -> DataFrame:
 
         """
-        History of this projection value.
+        Complete value history for this projection value.
 
-        :return: History of this projection value.
+        :return: Value history of this projection value.
         """
 
         return self._history

@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for GMWB benefits.
+"""
+
 from typing import Dict
 
 from pandas import DataFrame
@@ -11,13 +15,23 @@ class GmwbBenefit(
 ):
 
     """
-    GMWB benefit table.
+    :mod:`Data source <src.system.data_sources.data_source>` for GMWB benefits.
     """
 
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Loads data from the GMWB benefits table into cache.
+
+        Relative path to the GMWB benefits table:
+
+        ``resource/annuity/product/gmwb/benefit.json``
+
+        :param path: Path to the GMWB benefits table.
+        """
 
         DataSourceJsonFile.__init__(
             self=self,
@@ -77,12 +91,11 @@ class GmwbBenefit(
     ) -> float:
 
         """
-        Convenience method to access data from the GMWB charge table. Returns a GMWB withdrawal rate for policies
-        that still have a positive account value.
+        Returns a GMWB withdrawal rate for policies that still have a positive account value.
 
-        :param rider_name:
-        :param age_first_withdrawal:
-        :return:
+        :param rider_name: Rider name.
+        :param age_first_withdrawal: Attained age at 1st withdrawal.
+        :return: GMWB withdrawal rate.
         """
 
         withdrawal_rate_table = self.cache[rider_name]['av_active']
@@ -102,12 +115,11 @@ class GmwbBenefit(
     ) -> float:
 
         """
-        Convenience method to access data from the GMWB charge table. Returns a GMWB withdrawal rate for policies
-        that no longer have an account value.
+        Returns a GMWB withdrawal rate for policies that no longer have an account value.
 
-        :param rider_name:
-        :param age_first_withdrawal:
-        :return:
+        :param rider_name: Rider name.
+        :param age_first_withdrawal: Attained age at 1st withdrawal.
+        :return: GMWB withdrawal rate.
         """
 
         withdrawal_rate_table = self.cache[rider_name]['av_exhausted']

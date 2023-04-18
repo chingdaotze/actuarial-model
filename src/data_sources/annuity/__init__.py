@@ -1,3 +1,7 @@
+"""
+:class:`Root data source <src.system.data_sources.DataSourcesRoot>` for the annuity model.
+"""
+
 from os.path import join
 from typing import (
     Generator,
@@ -23,19 +27,30 @@ class AnnuityDataSources(
     DataSourcesRoot
 ):
 
-    economic_scenarios: EconomicScenarios
-    model_points: ModelPoints
-    mortality: Mortality
-    policyholder_behaviors: PolicyholderBehaviors
-    product: Product
+    """
+    :class:`Root data source <src.system.data_sources.DataSourcesRoot>` input package for the annuity model.
+    This class contains all data sources (model inputs) for the annuity model.
+    """
 
-    economic_scenario: EconomicScenario
-    model_point: ModelPoint
+    economic_scenarios: EconomicScenarios                   #: Economic environment.
+    model_points: ModelPoints                               #: Annuity model points.
+    mortality: Mortality                                    #: Annuity mortality assumptions.
+    policyholder_behaviors: PolicyholderBehaviors           #: Annuity policyholder behavior assumptions.
+    product: Product                                        #: Annuity product assumptions.
+
+    economic_scenario: EconomicScenario                     #: Current stochastic economic scenario.
+    model_point: ModelPoint                                 #: Current model point.
 
     def __init__(
         self,
         projection_parameters: ProjectionParameters
     ):
+
+        """
+        Constructor method. Initializes annuity inputs package.
+
+        :param projection_parameters: Set of projection parameters that contains a resource directory.
+        """
 
         DataSourcesRoot.__init__(
             self=self,
@@ -93,6 +108,13 @@ class AnnuityDataSources(
     def configured_data_sources(
         self
     ) -> Generator[Self, Any, None]:
+
+        """
+        Generator that cycles through each model point and economic scenario combination, setting the
+        :attr:`model_point` and :attr:`economic_scenario` attributes as it goes.
+
+        :return: Data source, with cycling ``model_point`` and ``economic_scenario`` attributes.
+        """
 
         for model_point in self.model_points:
 

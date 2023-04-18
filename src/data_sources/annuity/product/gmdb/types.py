@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for the GMDB type translation.
+"""
+
 from src.system.data_sources.data_source.file_csv import DataSourceCsvFile
 from src.system.constants import DEFAULT_COL
 from src.system.projection_entity.projection_value import use_latest_value
@@ -8,13 +12,23 @@ class GmdbTypes(
 ):
 
     """
-    GMDB type lookup table.
+    :mod:`Data source <src.system.data_sources.data_source>` for the GMDB type translation.
     """
 
     def __init__(
         self,
         path: str
     ):
+
+        """
+        Constructor method. Loads data from the GMDB types table into cache.
+
+        Relative path to the GMDB types table:
+
+        ``resource/annuity/product/gmdb/types.csv``
+
+        :param path: Path to the GMDB types table.
+        """
 
         DataSourceCsvFile.__init__(
             self=self,
@@ -33,10 +47,10 @@ class GmdbTypes(
     ) -> float:
 
         """
-        Convenience method to access data from the GMDB charge table. Returns a GMDB charge rate.
+        Returns a GMDB types translation. Given a GMDB name, returns the type of GMDB rider.
 
-        :param rider_name:
-        :return:
+        :param rider_name: Rider name.
+        :return: GMDB type.
         """
 
         return self.cache[rider_name]['type']

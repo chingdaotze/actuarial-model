@@ -1,3 +1,7 @@
+"""
+:mod:`Data source <src.system.data_sources.data_source>` for a generic person.
+"""
+
 from typing import Dict
 from datetime import date
 
@@ -12,13 +16,19 @@ class Person(
 ):
 
     """
-    Data source that represents a person.
+    :mod:`Data source <src.system.data_sources.data_source>` for a generic person.
     """
 
     def __init__(
         self,
         data: Dict
     ):
+
+        """
+        Constructor method. Initializes a person based on data within a model point file.
+
+        :param data: Model point data.
+        """
 
         DataSourcePythonDict.__init__(
             self=self,
@@ -31,10 +41,10 @@ class Person(
     ) -> str:
 
         """
-        Unique identifier for a particular individual. This could be a Social Security Number or DNA sequence.
+        Unique identifier for this particular individual. This could be a Social Security Number or DNA sequence.
         For security purposes, this value should probably be salted and hashed.
 
-        :return:
+        :return: Person ID.
         """
 
         return self.cache[DEFAULT_COL]['id']
@@ -47,7 +57,7 @@ class Person(
         """
         Gender for this particular individual.
 
-        :return:
+        :return: Gender.
         """
 
         return Gender(
@@ -62,7 +72,7 @@ class Person(
         """
         Date of birth for this particular individual.
 
-        :return:
+        :return: Date of birth.
         """
 
         return str_to_date(

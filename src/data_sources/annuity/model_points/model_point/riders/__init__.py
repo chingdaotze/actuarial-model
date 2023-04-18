@@ -1,3 +1,9 @@
+"""
+:class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+that contains riders for a particular
+:class:`model point <src.data_sources.annuity.model_points.model_point.ModelPoint>`.
+"""
+
 from typing import (
     List,
     Dict
@@ -17,7 +23,9 @@ class Riders(
 ):
 
     """
-    Data source collection that contains accounts.
+    :class:`Data source collection <src.system.data_sources.collection.DataSourceCollection>`
+    that contains riders for a particular
+    :class:`model point <src.data_sources.annuity.model_points.model_point.ModelPoint>`.
     """
 
     def __init__(
@@ -26,9 +34,10 @@ class Riders(
     ):
 
         """
-        Constructor method. Generates account data sources from a list of dictionaries.
+        Constructor method. Initializes a collection of riders based on data within an annuity model point file,
+        organized by integer index.
 
-        :param data:
+        :param data: Data for multiple riders.
         """
 
         DataSourceCollection.__init__(

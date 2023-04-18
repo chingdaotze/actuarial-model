@@ -1,5 +1,5 @@
 """
-Modeling Framework :ref:`Object Model <object_model>` :ref:`Projection Entities <projection_entities>`.
+Modeling framework :ref:`object model <object_model>` :ref:`Projection Entities <projection_entities>`.
 """
 
 from abc import (
