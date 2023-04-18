@@ -114,7 +114,7 @@ class MultiProcessProjectionProcessor(
                         projection=work_item
                     )
 
-                except Exception as expr:
+                except Exception:
 
                     Logger().print(
                         message=format_exc(),

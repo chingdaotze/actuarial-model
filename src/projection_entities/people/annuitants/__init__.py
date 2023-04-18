@@ -1,3 +1,7 @@
+"""
+One or more annuitants.
+"""
+
 from typing import List
 
 from src.system.projection_entity import ProjectionEntity
@@ -15,31 +19,39 @@ class Annuitants(
 ):
 
     """
-    Projection entity that represents one or more annuitants.
+    One or more annuitants.
     """
 
     data_sources: AnnuityDataSources
 
-    annuitants: List[Annuitant]
+    annuitants: List[Annuitant]             #: List of annuitants
 
-    t_q_x: ProjectionValue
-    t_q_y: ProjectionValue
-    base_lapse_rate: ProjectionValue
-    lapse_multiplier: ProjectionValue
-    lapse_rate: ProjectionValue
-    annuitization_rate: ProjectionValue
-    l_xy: ProjectionValue
-    l_x: ProjectionValue
-    l_y: ProjectionValue
-    d_xy: ProjectionValue
-    d_lapse: ProjectionValue
-    d_annuitization: ProjectionValue
+    t_q_x: ProjectionValue                  #: Probability of death for the primary annuitant.
+    t_q_y: ProjectionValue                  #: Probability of death for the secondary annuitant.
+    base_lapse_rate: ProjectionValue        #: Base lapse rate.
+    lapse_multiplier: ProjectionValue       #: Base lapse rate multiplier.
+    lapse_rate: ProjectionValue             #: Final lapse rate.
+    annuitization_rate: ProjectionValue     #: Annuitization rate.
+    l_xy: ProjectionValue                   #: Policy count - both alive.
+    l_x: ProjectionValue                    #: Policy count - only primary annuitant alive.
+    l_y: ProjectionValue                    #: Policy count - only secondary annuitant alive.
+    d_xy: ProjectionValue                   #: Policy count - both dead.
+    d_lapse: ProjectionValue                #: Policy count - lapses.
+    d_annuitization: ProjectionValue        #: Policy count - annuitizations.
 
     def __init__(
         self,
         time_steps: TimeSteps,
         data_sources: AnnuityDataSources
     ):
+
+        """
+        Constructor method. Initializes a list of annuitants from the
+        :class:`annuitants data source <src.data_sources.annuity.model_points.ModelPoints>`.
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Annuity data sources.
+        """
 
         ProjectionEntity.__init__(
             self=self,
@@ -132,9 +144,15 @@ class Annuitants(
         self
     ) -> Annuitant:
 
+        """
+        Returns the primary annuitant. Primary annuitant is the youngest annuitant.
+
+        :return: Primary annuitant.
+        """
+
         return min(
             self.annuitants,
-            key=lambda annuitant: annuitant.date_of_birth
+            key=lambda annuitant_: annuitant_.date_of_birth
         )
 
     @property
@@ -142,11 +160,18 @@ class Annuitants(
         self
     ) -> Annuitant | None:
 
+        """
+        Returns the secondary annuitant. Secondary annuitant is the oldest annuitant. Returns ``None`` if
+        there is no secondary annuitant.
+
+        :return: Secondary annuitant.
+        """
+
         if len(self.annuitants) > 1:
 
             return max(
                 self.annuitants,
-                key=lambda annuitant: annuitant.date_of_birth
+                key=lambda annuitant_: annuitant_.date_of_birth
             )
 
         else:
@@ -228,6 +253,16 @@ class Annuitants(
     def update_decrements(
         self
     ) -> None:
+
+        """
+        Projects annuitants forward by one time step. Applies decrements in order of:
+
+        #. Mortality
+        #. Lapse
+        #. Annuitization
+
+        :return: Nothing.
+        """
 
         if self.time_steps.prev_t != self.time_steps.t:
 

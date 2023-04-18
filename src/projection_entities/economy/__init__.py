@@ -1,3 +1,7 @@
+"""
+Economy, represented as a collection of indices.
+"""
+
 from typing import List
 
 from src.system.projection_entity import ProjectionEntity
@@ -11,15 +15,27 @@ class Economy(
     ProjectionEntity
 ):
 
+    """
+    Economy, represented as a collection of indices.
+    """
+
     data_sources: AnnuityDataSources
 
-    indexes: List[Index]
+    indexes: List[Index]    #: List of indices.
 
     def __init__(
         self,
         time_steps: TimeSteps,
         data_sources: AnnuityDataSources
     ):
+
+        """
+        Constructor method. Initializes a list of indices from
+        :class:`economic scenarios data source <src.data_sources.economic_scenarios.EconomicScenarios>`.
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Annuity data sources.
+        """
 
         ProjectionEntity.__init__(
             self=self,
@@ -43,7 +59,14 @@ class Economy(
 
     def age_economy(
         self
-    ):
+    ) -> None:
+
+        """
+        Projects the Economy forward one time step by calling each index's
+        :meth:`~src.projection_entities.economy.index.Index.age_index` method.
+
+        :return: Nothing.
+        """
 
         for economic_index in self.indexes:
 

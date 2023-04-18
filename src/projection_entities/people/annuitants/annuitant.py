@@ -1,3 +1,7 @@
+"""
+Single annuitant.
+"""
+
 from datetime import date
 
 from src.system.projection_entity import ProjectionEntity
@@ -16,21 +20,22 @@ from src.system.enums import Gender
 class Annuitant(
     ProjectionEntity
 ):
+
     """
-    Projection entity that represents an annuitant.
+    Single annuitant.
     """
 
     data_sources: AnnuityDataSources
 
-    id: str
-    gender: Gender
-    date_of_birth: date
+    id: str                                             #: Annuitant ID.
+    gender: Gender                                      #: Gender.
+    date_of_birth: date                                 #: Date of birth.
 
-    attained_age: ProjectionValue
-    base_mortality_rate: ProjectionValue
-    mortality_improvement_rate: ProjectionValue
-    mortality_improvement_factor: ProjectionValue
-    mortality_rate: ProjectionValue
+    attained_age: ProjectionValue                       #: Attained age.
+    base_mortality_rate: ProjectionValue                #: Base morality rate.
+    mortality_improvement_rate: ProjectionValue         #: Mortality improvement rate.
+    mortality_improvement_factor: ProjectionValue       #: Mortality improvement factor.
+    mortality_rate: ProjectionValue                     #: Final mortality rate.
 
     def __init__(
         self,
@@ -38,6 +43,15 @@ class Annuitant(
         data_sources: AnnuityDataSources,
         annuitant_data_source: AnnuitantDataSource
     ):
+
+        """
+        Constructor method. Initializes an annuitant from a
+        :class:`annuitant data source <src.data_sources.annuity.model_points.model_point.annuitants.annuitant.Annuitant>`.
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Annuity data sources.
+        :param annuitant_data_source: Annuitant data source.
+        """
 
         ProjectionEntity.__init__(
             self=self,
@@ -86,6 +100,12 @@ class Annuitant(
     def update_mortality(
         self
     ) -> None:
+
+        """
+        Projects annuitant forward by one time step.
+
+        :return: None
+        """
 
         # Set attained age
         self.attained_age[self.time_steps.t] = calc_whole_years(

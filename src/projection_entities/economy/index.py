@@ -1,3 +1,8 @@
+"""
+Economic index, like `S&P 500 <https://g.co/finance/.INX:INDEXSP>`_,
+`Big Mac <https://www.economist.com/big-mac-index>`_, or `Inverse Cramer <https://g.co/finance/SJIM:BATS>`_.
+"""
+
 from datetime import date
 
 from src.system.projection_entity import ProjectionEntity
@@ -13,16 +18,17 @@ class Index(
 ):
 
     """
-    Projection entity that represents an economic index, like S&P 500, Big Mac, or Inverse Cramer.
+    Economic index, like `S&P 500 <https://g.co/finance/.INX:INDEXSP>`_,
+    `Big Mac <https://www.economist.com/big-mac-index>_`, or `Inverse Cramer <https://g.co/finance/SJIM:BATS>`_.
     """
 
     data_sources: AnnuityDataSources
 
-    economic_scenario: EconomicScenario
-    index_name: str
+    economic_scenario: EconomicScenario     #: The current economic scenario.
+    index_name: str                         #: Index name.
 
-    index_value: ProjectionValue
-    pct_change: ProjectionValue
+    index_value: ProjectionValue            #: Index value.
+    pct_change: ProjectionValue             #: Index percent change, from one period to the next.
 
     def __init__(
         self,
@@ -30,6 +36,14 @@ class Index(
         data_sources: AnnuityDataSources,
         index_name: str
     ):
+
+        """
+        Constructor method.
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Annuity data sources.
+        :param index_name: Name of this index.
+        """
 
         ProjectionEntity.__init__(
             self=self,
@@ -65,12 +79,18 @@ class Index(
         t2: date
     ) -> float:
 
-        """
-        Calculates the percentage growth in the index between two points in time.
+        r"""
+        Calculates the percentage growth in the index between two points in time:
 
-        :param t1:
-        :param t2:
-        :return:
+        .. math::
+            percent\, change = \frac{rate_{t1}}{rate_{t2}} - 1
+
+        .. warning::
+            This algorithm does not handle division-by-zero.
+
+        :param t1: Start date.
+        :param t2: End date.
+        :return: Percent change.
         """
 
         curr_rate = self.economic_scenario.get_rate(
@@ -92,12 +112,12 @@ class Index(
     ) -> None:
 
         """
-        Calculates:
+        Projects the index forward one time step by:
 
-        1. The percent change in the index from one period to the next.
-        2. The index value itself.
+        #. Updating the index value.
+        #. Calculating the percent change in the index from the previous time step to the current time step.
 
-        :return:
+        :return: Nothing.
         """
 
         self.pct_change[self.time_steps.t] = self.calc_pct_change(
