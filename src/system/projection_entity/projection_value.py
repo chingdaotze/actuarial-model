@@ -8,6 +8,7 @@ from typing import (
     Callable
 )
 from datetime import date
+from functools import wraps
 
 from pandas import DataFrame
 
@@ -761,6 +762,7 @@ def use_latest_value(
     :return: A wrapped function.
     """
 
+    @wraps(function)
     def wrapper(
         *args,
         **kwargs

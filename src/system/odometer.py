@@ -6,6 +6,7 @@ from typing import (
     Callable,
     Any
 )
+from functools import wraps
 from datetime import datetime
 from uuid import uuid4
 
@@ -24,6 +25,7 @@ def odometer(
     :return: A wrapped function.
     """
 
+    @wraps(function)
     def wrapper(
         *args,
         **kwargs
