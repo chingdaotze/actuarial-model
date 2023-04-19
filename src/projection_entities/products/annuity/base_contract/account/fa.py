@@ -1,3 +1,7 @@
+"""
+Fixed interest account.
+"""
+
 from src.projection_entities.products.annuity.base_contract.account import Account
 
 from src.system.projection.time_steps import TimeSteps
@@ -10,6 +14,10 @@ from src.data_sources.annuity.model_points.model_point.accounts.account import A
 class FixedAccount(
     Account
 ):
+
+    """
+    Fixed interest account.
+    """
 
     def __init__(
         self,
@@ -28,6 +36,18 @@ class FixedAccount(
     def credit_interest(
         self
     ) -> None:
+
+        r"""
+        Credits interest to the sub\-account, where the fixed crediting rate is from
+        :meth:`~src.data_sources.annuity.product.base.crediting_rate.fixed.FixedCreditingRate.crediting_rate`.
+
+        .. math::
+            interest \, credited = account \, value \times crediting \, rate \times years \, elapsed
+
+        :math:`years \, elapsed` is calculated using :func:`~src.system.date.calc_partial_years`.
+
+        :return: Nothing
+        """
 
         crediting_rate = self.data_sources.product.base_product.crediting_rate.fixed.crediting_rate(
             account_name=self.account_data_source.account_name

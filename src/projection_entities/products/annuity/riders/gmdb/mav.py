@@ -1,3 +1,7 @@
+"""
+GMDB Ratchet rider.
+"""
+
 from typing import TYPE_CHECKING
 
 from src.projection_entities.products.annuity.riders.gmdb.base import GmdbBase
@@ -15,6 +19,10 @@ if TYPE_CHECKING:
 class GmdbMav(
     GmdbBase
 ):
+
+    """
+    GMDB Ratchet rider.
+    """
 
     def __init__(
         self,
@@ -34,6 +42,16 @@ class GmdbMav(
         self,
         base_contract: 'BaseContract'
     ) -> None:
+
+        r"""
+        On every policy anniversary, sets the benefit base to:
+
+        .. math::
+            benefit\, base_{t} = max(benefit\, base_{t-1}, account\, value_{t})
+
+        :param base_contract: Base contract.
+        :return: Nothing.
+        """
 
         if base_contract.anniversaries:
 

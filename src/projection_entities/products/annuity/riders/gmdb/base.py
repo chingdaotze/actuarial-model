@@ -1,3 +1,7 @@
+"""
+Abstract base class for Guaranteed Minimum Death Benefit rider.
+"""
+
 from typing import TYPE_CHECKING
 from abc import (
     ABC,
@@ -20,14 +24,18 @@ class GmdbBase(
     ABC
 ):
 
+    """
+    Abstract base class for Guaranteed Minimum Death Benefit rider.
+    """
+
     data_sources: AnnuityDataSources
 
     rider_name: str
 
-    benefit_base: ProjectionValue
-    charge_rate: ProjectionValue
-    charge_amount: ProjectionValue
-    net_amount_at_risk: ProjectionValue
+    benefit_base: ProjectionValue           #: Benefit base, used to calculate death benefit payout.
+    charge_rate: ProjectionValue            #: Charge rate, used to calculate the charge amount.
+    charge_amount: ProjectionValue          #: Charge amount, assessed against the account value.
+    net_amount_at_risk: ProjectionValue     #: Net Amount At Risk (NAAR).
 
     def __init__(
         self,
@@ -35,6 +43,14 @@ class GmdbBase(
         data_sources: AnnuityDataSources,
         gmdb_data_source: GmdbDataSource
     ):
+
+        """
+        Constructor method.
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Annuity data sources.
+        :param gmdb_data_source: GMDB rider data source.
+        """
 
         ProjectionEntity.__init__(
             self=self,
@@ -75,6 +91,13 @@ class GmdbBase(
         base_contract: 'BaseContract'
     ) -> None:
 
+        """
+        Adds premiums paid from the base contract into the :attr:`benefit base <benefit_base>`.
+
+        :param base_contract: Base contract.
+        :return: Nothing.
+        """
+
         self.benefit_base[self.time_steps.t] = \
             self.benefit_base + base_contract.premium_new[self.time_steps.t]
 
@@ -82,6 +105,23 @@ class GmdbBase(
         self,
         base_contract: 'BaseContract'
     ) -> None:
+
+        r"""
+        Every month, charges the base contract for the GMDB fee.
+
+        .. math::
+            GMDB \, charge = account \, value \times \frac{GMDB \, charge \, rate}{12}
+
+        :math:`GMDB \, charge \, rate` is read from
+        :meth:`~src.data_sources.annuity.product.gmdb.charge.GmdbCharge.charge_rate`.
+
+        Applies charge to the base contract using
+        :meth:`~src.projection_entities.products.annuity.base_contract.BaseContract.assess_charge`.
+
+        :param base_contract: Base contract.
+        :return: Nothing.
+        """
+
         self.charge_amount[self.time_steps.t] = 0.0
 
         for _ in base_contract.monthiversaries:
@@ -104,6 +144,13 @@ class GmdbBase(
         base_contract: 'BaseContract'
     ) -> None:
 
+        """
+        Abstract method to update the benefit base.
+
+        :param base_contract: Base contract.
+        :return: Nothin.
+        """
+
         ...
 
     def update_net_amount_at_risk(
@@ -111,14 +158,17 @@ class GmdbBase(
         base_contract: 'BaseContract'
     ) -> None:
 
+        r"""
+        Calculates and updates the Net Amount At Risk (NAAR):
+
+        .. math::
+            NAAR = max(benefit\, base - account\, value, 0)
+
+        :param base_contract:
+        :return:
+        """
+
         self.net_amount_at_risk[self.time_steps.t] = max(
             self.benefit_base - base_contract.account_value,
             0.0
         )
-
-    def process_death_benefit(
-        self,
-        base_contract: 'BaseContract'
-    ) -> None:
-
-        pass

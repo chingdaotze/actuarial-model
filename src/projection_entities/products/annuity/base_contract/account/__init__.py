@@ -1,3 +1,7 @@
+r"""
+Sub\-accounts within a policy.
+"""
+
 from abc import (
     ABC,
     abstractmethod
@@ -22,20 +26,23 @@ class Account(
     ABC
 ):
 
+    r"""
+    Abstract base class for a sub\-account within a policy.
+    """
+
     data_sources: AnnuityDataSources
     account_data_source: AccountDataSource
 
-    premiums: List[Premium]
+    premiums: List[Premium]                 #: List of premium payments.
 
-    premium_new: ProjectionValue
-    premium_cumulative: ProjectionValue
-    account_value: ProjectionValue
-    interest_credited: ProjectionValue
-    gmdb_charge: ProjectionValue
-    gmwb_charge: ProjectionValue
-    withdrawal: ProjectionValue
-    account_value: ProjectionValue
-    surrender_charge: ProjectionValue
+    premium_new: ProjectionValue            #: New premiums received.
+    premium_cumulative: ProjectionValue     #: Cumulative premiums received.
+    account_value: ProjectionValue          #: Sub-account value.
+    interest_credited: ProjectionValue      #: Interest credited.
+    gmdb_charge: ProjectionValue            #: GMDB rider charge assessed against sub\-account.
+    gmwb_charge: ProjectionValue            #: GMWB rider charge assessed against sub\-account.
+    withdrawal: ProjectionValue             #: Withdrawal amount apportioned to sub\-account.
+    surrender_charge: ProjectionValue       #: Surrender charge.
 
     def __init__(
         self,
@@ -43,6 +50,14 @@ class Account(
         data_sources: AnnuityDataSources,
         account_data_source: AccountDataSource
     ):
+
+        r"""
+        Constructor method. Creates a new sub\-account.
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Annuity data sources.
+        :param account_data_source: Account data source to initialize this sub\-account.
+        """
 
         ProjectionEntity.__init__(
             self=self,
@@ -163,6 +178,19 @@ class Account(
         self
     ) -> None:
 
+        r"""
+        #. Processes premiums paid for a single time step by looping through each premium and calling the
+           premium's
+           :meth:`~src.projection_entities.products.annuity.base_contract.account.premium.Premium.update_premium`
+           method.
+
+        #. Instantiates new premium payments, adding them to :attr:`premiums`.
+
+        #. Updates :attr:`premium_new`, :attr:`premium_cumulative`, and :attr:`account_value` for new premiums.
+
+        :return: Nothing.
+        """
+
         if self.time_steps.t != self.init_t:
 
             # Age existing premiums
@@ -197,7 +225,7 @@ class Account(
         Abstract method that represents an interest crediting mechanism. Inherit and override to implement
         a custom crediting algorithm (e.g. RILA, separate account crediting, or indexed crediting).
 
-        :return:
+        :return: Nothing.
         """
 
         ...
@@ -207,6 +235,17 @@ class Account(
         charge_amount: float,
         charge_account_name: str
     ) -> None:
+
+        """
+        Applies a charge to a specific charge account and reduces the :attr:`account value <account_value>`.
+
+        .. warning:
+            This algorithm does not check if the charge amount is greater than the account value.
+
+        :param charge_amount: Withdrawal amount.
+        :param charge_account_name: Charge account name.
+        :return: Nothing.
+        """
 
         charge_account = self.__dict__[charge_account_name]
         charge_account[self.time_steps.t] = charge_amount
@@ -218,11 +257,28 @@ class Account(
         withdrawal_amount: float
     ) -> None:
 
+        """
+        Reduces :attr:`account value <account_value>` by a withdrawal amount
+        and records the :attr:`withdrawal amount <withdrawal>`.
+
+        .. warning:
+            This algorithm does not check if the withdrawal amount is greater than the account value.
+
+        :param withdrawal_amount: Withdrawal amount.
+        :return: Nothing.
+        """
+
         self.withdrawal[self.time_steps.t] = withdrawal_amount
         self.account_value[self.time_steps.t] = self.account_value - self.withdrawal
 
     def update_surrender_charge(
         self
     ) -> None:
+
+        r"""
+        Updates the :attr:`surrender charge <surrender_charge>` for this sub\-account.
+
+        :return: Nothing.
+        """
 
         self.surrender_charge[self.time_steps.t] = self._calc_surrender_charge()

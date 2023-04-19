@@ -1,3 +1,7 @@
+"""
+Base contract for an annuity product.
+"""
+
 from typing import List
 from datetime import date
 
@@ -31,30 +35,45 @@ class BaseContract(
     ProjectionEntity
 ):
 
+    """
+    Base contract for an annuity product.
+    """
+
     data_sources: AnnuityDataSources
 
-    annuitants: Annuitants
-    accounts: List[Account]
-    riders: List[Gmwb | GmdbRop | GmdbRav | GmdbMav]
+    annuitants: Annuitants                                  #: List of annuitants under the base contract.
+    accounts: List[Account]                                 #: List of accounts opened under the base contract.
+    riders: List[Gmwb | GmdbRop | GmdbRav | GmdbMav]        #: List of riders attached to the base contract.
 
-    quarterversaries: ProjectionValue
-    monthiversaries: ProjectionValue
-    anniversaries: ProjectionValue
-    premium_new: ProjectionValue
-    premium_cumulative: ProjectionValue
-    interest_credited: ProjectionValue
-    gmdb_charge: ProjectionValue
-    gmwb_charge: ProjectionValue
-    withdrawal: ProjectionValue
-    account_value: ProjectionValue
-    surrender_charge: ProjectionValue
-    cash_surrender_value: ProjectionValue
+    quarterversaries: ProjectionValue                       #: List of quarterversaries within one time step.
+    monthiversaries: ProjectionValue                        #: List of monthiversaries within one time step.
+    anniversaries: ProjectionValue                          #: List of anniversaries within one time step.
+    premium_new: ProjectionValue                            #: New premiums received.
+    premium_cumulative: ProjectionValue                     #: Cumulative premiums received.
+    interest_credited: ProjectionValue                      #: Interest credited.
+    gmdb_charge: ProjectionValue                            #: GMDB rider charge.
+    gmwb_charge: ProjectionValue                            #: GMWB rider charge.
+    withdrawal: ProjectionValue                             #: Withdrawals taken.
+    account_value: ProjectionValue                          #: Account value.
+    surrender_charge: ProjectionValue                       #: Point-in-time surrender charge.
+    cash_surrender_value: ProjectionValue                   #: Point-in-time cash surrender value.
 
     def __init__(
         self,
         time_steps: TimeSteps,
         data_sources: AnnuityDataSources
     ):
+
+        """
+        Constructor method. Creates an annuity contract, along with sibling Projection Entities:
+
+        - Riders
+        - Annuitants
+        - Sub-accounts
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Annuity data sources.
+        """
 
         ProjectionEntity.__init__(
             self=self,
@@ -295,11 +314,25 @@ class BaseContract(
         self
     ) -> Annuitant:
 
+        """
+        Convenience property to get the primary annuitant.
+        Links to :attr:`~src.projection_entities.people.annuitants.Annuitants.primary_annuitant`.
+
+        :return: Primary annuitant.
+        """
+
         return self.annuitants.primary_annuitant
 
     def age_contract(
         self
     ) -> None:
+
+        """
+        Scans current time step for :attr:`monthiversaries`, :attr:`quarterversaries`, and :attr:`anniversaries` using
+        :func:`~src.system.projection.scripts.get_xversaries.get_xversaries`.
+
+        :return: Nothing.
+        """
 
         # Update upcoming anniversaries
         self.monthiversaries[self.time_steps.t] = [get_xversaries(
@@ -326,6 +359,20 @@ class BaseContract(
     def process_premiums(
         self
     ) -> None:
+
+        r"""
+        #. Processes premiums paid for a single time step by looping through each sub\-account and calling the
+           sub-\account's
+           :meth:`~src.projection_entities.products.annuity.base_contract.account.Account.process_premiums` method.
+
+        #. Instantiates new sub\-accounts, adding them to :attr:`accounts`.
+
+        #. Updates :attr:`premium_new`, :attr:`premium_cumulative`, and :attr:`account_value` for new premiums.
+
+        #. Calls :meth:`update_cash_surrender_value` to recalculate cash surrender value.
+
+        :return: Nothing.
+        """
 
         if self.time_steps.t != self.init_t:
 
@@ -365,6 +412,19 @@ class BaseContract(
         self
     ) -> None:
 
+        r"""
+        #. Projects interest credited for a single time step by looping through each sub\-account and calling the
+           sub-\account's
+           :meth:`~src.projection_entities.products.annuity.base_contract.account.Account.credit_interest` method.
+
+        #. Updates :attr:`account_value` and :attr:`interest_credited` to reflect interest earned and credited to the
+           account value.
+
+        #. Calls :meth:`update_cash_surrender_value` to recalculate cash surrender value.
+
+        :return: Nothing.
+        """
+
         # Credit interest for each account
         interest_credited = 0.0
 
@@ -385,6 +445,19 @@ class BaseContract(
         charge_amount: ProjectionValue,
         charge_account_name: str
     ) -> None:
+
+        r"""
+        #. Applies a charge to a specific charge account, pro\-rata across all sub\-accounts, using
+           :meth:`~src.projection_entities.products.annuity.base_contract.account.Account.process_charge`.
+
+        #. Updates :attr:`account_value` to reflect charge.
+
+        #. Calls :meth:`update_cash_surrender_value` to recalculate cash surrender value.
+
+        :param charge_amount: Dollar amount of charge.
+        :param charge_account_name: Charge account name.
+        :return: Nothing.
+        """
 
         # Apply charge pro rata across accounts
         for sub_account in self.accounts:
@@ -415,6 +488,15 @@ class BaseContract(
         self
     ) -> None:
 
+        """
+        Loops through each rider and calls the rider's ``process_charge`` method. Depending on the rider, this could be:
+
+        - GMWB :meth:`~src.projection_entities.products.annuity.riders.gmwb.Gmwb.process_charge`
+        - GMDB :meth:`~src.projection_entities.products.annuity.riders.gmdb.base.GmdbBase.process_charge`
+
+        :return: Nothing.
+        """
+
         # Assess rider charges
         for rider in self.riders:
 
@@ -426,6 +508,18 @@ class BaseContract(
         self,
         withdrawal_amount: ProjectionValue
     ) -> None:
+
+        r"""
+        #. Applies a withdrawal pro\-rata across all sub\-accounts, using
+           :meth:`~src.projection_entities.products.annuity.base_contract.account.Account.process_withdrawal`.
+
+        #. Updates :attr:`account_value` to reflect withdrawal.
+
+        #. Calls :meth:`update_cash_surrender_value` to recalculate cash surrender value.
+
+        :param withdrawal_amount: Withdrawal amount.
+        :return: Nothing.
+        """
 
         # Apply withdrawal pro rata across accounts
         for sub_account in self.accounts:
@@ -453,6 +547,13 @@ class BaseContract(
         self
     ) -> None:
 
+        """
+        Processes GMWB withdrawals by calling each GMWB rider's
+        :meth:`~src.projection_entities.products.annuity.riders.gmwb.Gmwb.process_withdrawal` method.
+
+        :return: Nothing.
+        """
+
         for rider in self.riders:
 
             if isinstance(rider, Gmwb):
@@ -465,6 +566,13 @@ class BaseContract(
         self
     ) -> None:
 
+        """
+        Updates GMDB Net Amount At Risk (NAAR) by calling each GMDB rider's
+        :meth:`~src.projection_entities.products.annuity.riders.gmdb.base.update_net_amount_at_risk` method.
+
+        :return: Nothing.
+        """
+
         for rider in self.riders:
 
             if issubclass(type(rider), GmdbBase):
@@ -476,6 +584,16 @@ class BaseContract(
     def update_cash_surrender_value(
         self
     ) -> None:
+
+        r"""
+        Updates the surrender charge for each sub\-account, using
+        :meth:`~src.projection_entities.products.annuity.base_contract.account.Account.update_surrender_charge`.
+
+        Once surrender charges are updated, calculates the aggregate :attr:`surrender charge <surrender_charge>` and
+        :attr:`cash surrender value <cash_surrender_value>`.
+
+        :return: Nothing.
+        """
 
         for sub_account in self.accounts:
 

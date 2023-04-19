@@ -1,3 +1,7 @@
+"""
+GMDB Return of Premium rider.
+"""
+
 from typing import TYPE_CHECKING
 
 from src.projection_entities.products.annuity.riders.gmdb.base import GmdbBase
@@ -14,6 +18,10 @@ if TYPE_CHECKING:
 class GmdbRop(
     GmdbBase
 ):
+
+    """
+    GMDB Return of Premium rider.
+    """
 
     def __init__(
         self,
@@ -33,5 +41,13 @@ class GmdbRop(
         self,
         base_contract: 'BaseContract'
     ) -> None:
+
+        """
+        Sets benefit base to
+        :attr:`cumulative premium <src.projection_entities.products.annuity.base_contract.BaseContract.premium_cumulative>`.
+
+        :param base_contract: Base contract.
+        :return: Nothing.
+        """
 
         self.benefit_base[self.time_steps.t] = base_contract.premium_cumulative

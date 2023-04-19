@@ -1,3 +1,7 @@
+"""
+Guaranteed Minimum Withdrawal Benefit (GMWB) rider.
+"""
+
 from typing import TYPE_CHECKING
 
 from src.system.projection_entity import ProjectionEntity
@@ -16,17 +20,21 @@ class Gmwb(
     ProjectionEntity
 ):
 
+    """
+    Guaranteed Minimum Withdrawal Benefit (GMWB) rider.
+    """
+
     data_sources: AnnuityDataSources
     _gmwb_data_source: GmwbDataSource
 
-    benefit_base: ProjectionValue
-    charge_rate: ProjectionValue
-    charge_amount: ProjectionValue
-    withdrawal_program_active: ProjectionValue
-    av_active_withdrawal_rate: ProjectionValue
-    av_exhaust_withdrawal_rate: ProjectionValue
-    withdrawal: ProjectionValue
-    claim: ProjectionValue
+    benefit_base: ProjectionValue                   #: Benefit base, used as a basis for withdrawals.
+    charge_rate: ProjectionValue                    #: Charge rate, used to calculate the charge amount.
+    charge_amount: ProjectionValue                  #: Charge amount, assessed against the account value.
+    withdrawal_program_active: ProjectionValue      #: Indicator to determine if the rider's withdrawal program has started.
+    av_active_withdrawal_rate: ProjectionValue      #: Withdrawal rate when account value is positive.
+    av_exhaust_withdrawal_rate: ProjectionValue     #: Withdrawal rate when account value is zero.
+    withdrawal: ProjectionValue                     #: Withdrawal amount.
+    claim: ProjectionValue                          #: Claim amount (withdrawals once account value is zero).
 
     def __init__(
         self,
@@ -34,6 +42,14 @@ class Gmwb(
         data_sources: AnnuityDataSources,
         gmwb_data_source: GmwbDataSource
     ):
+
+        """
+        Constructor method.
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Annuity data sources.
+        :param gmwb_data_source: GMWB rider data source.
+        """
 
         ProjectionEntity.__init__(
             self=self,
@@ -94,6 +110,13 @@ class Gmwb(
         base_contract: 'BaseContract'
     ) -> None:
 
+        """
+        Adds premiums paid from the base contract into the :attr:`benefit base <benefit_base>`.
+
+        :param base_contract: Base contract.
+        :return: Nothing.
+        """
+
         self.benefit_base[self.time_steps.t] = \
             self.benefit_base + base_contract.premium_new
 
@@ -101,6 +124,22 @@ class Gmwb(
         self,
         base_contract: 'BaseContract'
     ) -> None:
+
+        r"""
+        Every quarter, charges the base contract for the GMWB charge.
+
+        .. math::
+            GMWB \, charge = benefit \, base \times \frac{GMDB \, charge \, rate}{4}
+
+        :math:`GMWB \, charge \, rate` is read from
+        :meth:`~src.data_sources.annuity.product.gmwb.charge.GmwbCharge.charge_rate`.
+
+        Applies charge to the base contract using
+        :meth:`~src.projection_entities.products.annuity.base_contract.BaseContract.assess_charge`.
+
+        :param base_contract: Base contract.
+        :return: Nothing.
+        """
 
         self.charge_rate[self.time_steps.t] = 0.0
         self.charge_amount[self.time_steps.t] = 0.0
@@ -178,6 +217,22 @@ class Gmwb(
         self,
         base_contract: 'BaseContract'
     ) -> None:
+
+        r"""
+        Calculates withdrawal amount:
+
+        .. math::
+            withdrawal\, amount = withdrawal \, rate \times benefit \, base
+
+        :math:`withdrawal \, rate` is read from
+        :class:`~src.data_sources.annuity.product.gmwb.benefit.GmwbBenefit`.
+
+        Applies withdrawal to the base contract using
+        :meth:`~src.projection_entities.products.annuity.base_contract.BaseContract.process_withdrawal`.
+
+        :param base_contract:
+        :return:
+        """
 
         self._set_withdrawal_program(
             base_contract=base_contract

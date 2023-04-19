@@ -1,3 +1,7 @@
+r"""
+Premium payment within a sub\-account.
+"""
+
 from dateutil.relativedelta import relativedelta
 
 from src.system.projection_entity import ProjectionEntity
@@ -17,15 +21,19 @@ class Premium(
     ProjectionEntity
 ):
 
+    """
+    Premium payment.
+    """
+
     data_sources: AnnuityDataSources
 
     _product_name: str
     _account_id: str
 
-    premium_amount: ProjectionValue
-    premium_age: ProjectionValue
-    surrender_charge_rate: ProjectionValue
-    surrender_charge: ProjectionValue
+    premium_amount: ProjectionValue             #: Premium amount.
+    premium_age: ProjectionValue                #: Time elapsed since premium was paid.
+    surrender_charge_rate: ProjectionValue      #: Point-in-time surrender charge rate.
+    surrender_charge: ProjectionValue           #: Point-in-time surrender charge amount.
 
     def __init__(
         self,
@@ -34,6 +42,15 @@ class Premium(
         account_id: str,
         premium_data_source: PremiumDataSource
     ):
+
+        """
+        Constructor method.
+
+        :param time_steps: Projection-wide timekeeping object.
+        :param data_sources: Annuity data sources.
+        :param account_id: Parent account.
+        :param premium_data_source: Premium data source to initialize this premium payment.
+        """
 
         ProjectionEntity.__init__(
             self=self,
@@ -76,6 +93,12 @@ class Premium(
         self
     ) -> int:
 
+        """
+        Calculates the premium age in years, using :func:`~src.system.date.calc_whole_years`.
+
+        :return: Premium age in years.
+        """
+
         return calc_whole_years(
             dt1=self.time_steps.t,
             dt2=self.init_t
@@ -99,6 +122,13 @@ class Premium(
     def update_premium(
         self
     ) -> None:
+
+        """
+        Projects the premium forwards by one time step by updating :attr:`premium_age`, :attr:`surrender_charge_rate`,
+        and :attr:`surrender_charge`.
+
+        :return:
+        """
 
         self.premium_age[self.time_steps.t] = relativedelta(
             dt1=self.time_steps.t,

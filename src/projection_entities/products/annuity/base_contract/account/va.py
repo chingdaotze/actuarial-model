@@ -1,3 +1,7 @@
+"""
+Separate account.
+"""
+
 from src.projection_entities.products.annuity.base_contract.account import Account
 
 from src.system.projection.time_steps import TimeSteps
@@ -9,6 +13,10 @@ from src.data_sources.annuity.model_points.model_point.accounts.account import A
 class SeparateAccount(
     Account
 ):
+
+    """
+    Separate account.
+    """
 
     def __init__(
         self,
@@ -27,6 +35,19 @@ class SeparateAccount(
     def credit_interest(
         self
     ) -> None:
+
+        r"""
+        Credits interest to the sub\-account, using this formula:
+
+        .. math::
+            index \, growth = \frac{index_{t}}{index_{t-1}} - 1
+
+            interest \, credited = account \, value \times index \, growth
+
+        The :math:`index` is determined by :meth:`~src.data_sources.annuity.model_points.model_point.accounts.account.Account.account_name`.
+
+        :return: Nothing.
+        """
 
         start_index = self.data_sources.economic_scenario.get_rate(
             name=self.account_data_source.account_name,

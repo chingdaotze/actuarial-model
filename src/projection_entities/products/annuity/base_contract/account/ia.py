@@ -1,3 +1,7 @@
+"""
+Index strategy account.
+"""
+
 from src.projection_entities.products.annuity.base_contract.account import Account
 
 from src.system.projection.time_steps import TimeSteps
@@ -12,8 +16,12 @@ class IndexedAccount(
     Account
 ):
 
-    crediting_term_months: int
-    term_start_date: ProjectionValue
+    """
+    Index strategy account.
+    """
+
+    crediting_term_months: int              #: Crediting :meth:`term <src.data_sources.annuity.product.base.crediting_rate.indexed.IndexedCreditingRate.term>` duration in months.
+    term_start_date: ProjectionValue        #: Crediting term start date.
 
     def __init__(
         self,
@@ -56,6 +64,35 @@ class IndexedAccount(
     def credit_interest(
         self
     ) -> None:
+
+        r"""
+        Credits interest to the sub\-account, using this formula:
+
+        .. math::
+            index \, growth = \frac{index_{t}}{index_{t-1}} - 1
+
+            interest \, credited = account \, value \times \biggl( max(par \times (min(index \, growth, cap) - spread), floor)  \biggr)
+
+        Where:
+
+        - :math:`index_{t}` is the
+          :meth:`index <src.data_sources.annuity.product.base.crediting_rate.indexed.IndexedCreditingRate.index>`
+          at time :math:`t`.
+
+        - :math:`cap` is read in from
+          :meth:`~src.data_sources.annuity.product.base.crediting_rate.indexed.IndexedCreditingRate.cap`.
+
+        - :math:`spread` is read in from
+          :meth:`~src.data_sources.annuity.product.base.crediting_rate.indexed.IndexedCreditingRate.spread`.
+
+        - :math:`par` is read in from
+          :meth:`~src.data_sources.annuity.product.base.crediting_rate.indexed.IndexedCreditingRate.participation_rate`.
+
+        - :math:`floor` is read in from
+          :meth:`~src.data_sources.annuity.product.base.crediting_rate.indexed.IndexedCreditingRate.floor`.
+
+        :return: Nothing.
+        """
 
         self.interest_credited[self.time_steps.t] = 0.0
 
