@@ -26,18 +26,18 @@ class Annuitants(
 
     annuitants: List[Annuitant]             #: List of annuitants
 
-    t_q_x: ProjectionValue                  #: Probability of death for the primary annuitant.
-    t_q_y: ProjectionValue                  #: Probability of death for the secondary annuitant.
+    t_q_x: ProjectionValue                  #: :math:`{_t}q_x` - Probability of death for the primary annuitant.
+    t_q_y: ProjectionValue                  #: :math:`{_t}q_y` - Probability of death for the secondary annuitant.
     base_lapse_rate: ProjectionValue        #: Base lapse rate.
     lapse_multiplier: ProjectionValue       #: Base lapse rate multiplier.
-    lapse_rate: ProjectionValue             #: Final lapse rate.
-    annuitization_rate: ProjectionValue     #: Annuitization rate.
-    l_xy: ProjectionValue                   #: Policy count - both alive.
-    l_x: ProjectionValue                    #: Policy count - only primary annuitant alive.
-    l_y: ProjectionValue                    #: Policy count - only secondary annuitant alive.
-    d_xy: ProjectionValue                   #: Policy count - both dead.
-    d_lapse: ProjectionValue                #: Policy count - lapses.
-    d_annuitization: ProjectionValue        #: Policy count - annuitizations.
+    t_q_lapse: ProjectionValue              #: :math:`{_t}q_{lapse}` - Final lapse rate.
+    t_q_annuitization: ProjectionValue      #: :math:`{_t}q_{annuitization}` - Annuitization rate.
+    l_xy: ProjectionValue                   #: :math:`l_{xy}` - Policy count - both alive.
+    l_x_d_y: ProjectionValue                #: :math:`l_{x}d_{y}` - Policy count - only primary annuitant alive.
+    l_y_d_x: ProjectionValue                #: :math:`l_{y}d_{x}` - Policy count - only secondary annuitant alive.
+    d_xy: ProjectionValue                   #: :math:`d_{xy}` - Policy count - both dead.
+    d_lapse: ProjectionValue                #: :math:`d_{lapse}` - Policy count - lapsed.
+    d_annuitization: ProjectionValue        #: :math:`d_{annuitization}` - Policy count - annuitized.
 
     def __init__(
         self,
@@ -93,12 +93,12 @@ class Annuitants(
             init_value=0.0
         )
 
-        self.lapse_rate = ProjectionValue(
+        self.t_q_lapse = ProjectionValue(
             init_t=self.init_t,
             init_value=0.0
         )
 
-        self.annuitization_rate = ProjectionValue(
+        self.t_q_annuitization = ProjectionValue(
             init_t=self.init_t,
             init_value=0.0
         )
@@ -108,12 +108,12 @@ class Annuitants(
             init_value=1.0 if self.secondary_annuitant else 0.0
         )
 
-        self.l_x = ProjectionValue(
+        self.l_x_d_y = ProjectionValue(
             init_t=self.init_t,
             init_value=1.0 if not self.secondary_annuitant else 0.0
         )
 
-        self.l_y = ProjectionValue(
+        self.l_y_d_x = ProjectionValue(
             init_t=self.init_t,
             init_value=0.0
         )
@@ -233,7 +233,7 @@ class Annuitants(
             )
 
         # Calculate lapse rate
-        self.lapse_rate[self.time_steps.t] = convert_decrement_rate(
+        self.t_q_lapse[self.time_steps.t] = convert_decrement_rate(
             q_x=self.base_lapse_rate * self.lapse_multiplier,
             interval=self.time_steps.time_step
         )
@@ -243,7 +243,7 @@ class Annuitants(
     ) -> None:
 
         # Get annuitization rate
-        self.annuitization_rate[self.time_steps.t] = convert_decrement_rate(
+        self.t_q_annuitization[self.time_steps.t] = convert_decrement_rate(
             q_x=self.data_sources.policyholder_behaviors.annuitization.annuitization_rate(
                 attained_age=self.primary_annuitant.attained_age
             ),
@@ -254,12 +254,49 @@ class Annuitants(
         self
     ) -> None:
 
-        """
-        Projects annuitants forward by one time step. Applies decrements in order of:
+        r"""
+        Projects annuitants forward by one time step. Decrements are applied in the order of:
 
-        #. Mortality
-        #. Lapse
-        #. Annuitization
+        #. **Annuitization**
+
+           .. math::
+
+            d_{annuitization_t} = d_{annuitization_{t - 1}} + \biggl(l_{xy_{t-1}} + l_{x}d_{y_{t-1}} + l_{y}d_{x_{t-1}}\biggr) \times {_t}q_{annuitization}
+
+        #. **Lapse**
+
+           .. math::
+
+            d_{lapse_t} = d_{lapse_{t - 1}} + \biggl(l_{xy_{t-1}} + l_{x}d_{y_{t-1}} + l_{y}d_{x_{t-1}}\biggr) \times {_t}q_{lapse}
+                          \times (1 - {_t}q_{annuitization})
+
+        #. **Mortality**
+
+           #. Let policyholder behavior survivorship at time :math:`t` be:
+
+           .. math::
+
+                 p_{pb_t} = (1 - {_t}q_{lapse}) \times (1 - {_t}q_{annuitization})
+
+           #. Then, at time :math:`t`:
+
+           .. math::
+
+            l_{xy_t} = l_{xy_{t-1}} \times (1 - {_t}q_x) \times (1 - {_t}q_y)
+                     \times p_{pb_t}
+
+            l_{x}d_{y_t} = l_{x}d_{y_{t-1}} \times (1 - {_t}q_x) +
+                           \biggl(l_{x}d_{y_{t-1}} \times (1 - {_t}q_x) + l_{xy_{t-1}} \times {_t}q_y \times (1 - {_t}q_x)\biggr)
+                           \times p_{pb_t}
+
+            l_{y}d_{x_t} = l_{y}d_{x_{t-1}} \times (1 - {_t}q_y) +
+                           \biggl(l_{y}d_{x_{t-1}} \times (1 - {_t}q_y) + l_{xy_{t-1}} \times {_t}q_x \times (1 - {_t}q_y)\biggr)
+                           \times p_{pb_t}
+
+            d_{xy_t} = d_{xy_{t-1}} + \biggl(l_{xy_{t-1}} \times {_t}q_x \times {_t}q_y +
+                       l_{x}d_{y_{t-1}} \times {_t}q_x +
+                       l_{y}d_{x_{t-1}} \times {_t}q_y\biggr)
+                       \times p_{pb_t}
 
         :return: Nothing.
         """
@@ -276,43 +313,43 @@ class Annuitants(
                 self.l_xy[self.time_steps.prev_t] *
                 (1.0 - self.t_q_x) *
                 (1.0 - self.t_q_y) *
-                (1.0 - self.lapse_rate) *
-                (1.0 - self.annuitization_rate)
+                (1.0 - self.t_q_lapse) *
+                (1.0 - self.t_q_annuitization)
             )
 
-            self.l_x[self.time_steps.t] = (
-                self.l_x[self.time_steps.prev_t] * (1.0 - self.t_q_x) +
+            self.l_x_d_y[self.time_steps.t] = (
+                self.l_x_d_y[self.time_steps.prev_t] * (1.0 - self.t_q_x) +
                 (
                     self.l_xy[self.time_steps.prev_t] *
                     self.t_q_y *
                     (1.0 - self.t_q_x)
                 )
             ) * (
-                    (1.0 - self.lapse_rate) *
-                    (1.0 - self.annuitization_rate)
+                    (1.0 - self.t_q_lapse) *
+                    (1.0 - self.t_q_annuitization)
                 )
 
-            self.l_y[self.time_steps.t] = (
-                self.l_y[self.time_steps.prev_t] * (1.0 - self.t_q_y) +
+            self.l_y_d_x[self.time_steps.t] = (
+                self.l_y_d_x[self.time_steps.prev_t] * (1.0 - self.t_q_y) +
                 (
                     self.l_xy[self.time_steps.prev_t] *
                     self.t_q_x *
                     (1.0 - self.t_q_y)
                 )
             ) * (
-                    (1.0 - self.lapse_rate) *
-                    (1.0 - self.annuitization_rate)
+                    (1.0 - self.t_q_lapse) *
+                    (1.0 - self.t_q_annuitization)
                 )
 
             self.d_xy[self.time_steps.t] = (
                 self.d_xy[self.time_steps.prev_t] +
                 (
                     self.l_xy[self.time_steps.prev_t] * self.t_q_x * self.t_q_y +
-                    self.l_x[self.time_steps.prev_t] * self.t_q_x +
-                    self.l_y[self.time_steps.prev_t] * self.t_q_y
+                    self.l_x_d_y[self.time_steps.prev_t] * self.t_q_x +
+                    self.l_y_d_x[self.time_steps.prev_t] * self.t_q_y
                 ) * (
-                    (1.0 - self.lapse_rate) *
-                    (1.0 - self.annuitization_rate)
+                    (1.0 - self.t_q_lapse) *
+                    (1.0 - self.t_q_annuitization)
                 )
             )
 
@@ -320,10 +357,10 @@ class Annuitants(
                 self.d_lapse[self.time_steps.prev_t] +
                 (
                     self.l_xy[self.time_steps.prev_t] +
-                    self.l_x[self.time_steps.prev_t] +
-                    self.l_y[self.time_steps.prev_t]
-                ) * self.lapse_rate * (
-                    (1.0 - self.annuitization_rate)
+                    self.l_x_d_y[self.time_steps.prev_t] +
+                    self.l_y_d_x[self.time_steps.prev_t]
+                ) * self.t_q_lapse * (
+                    (1.0 - self.t_q_annuitization)
                 )
             )
 
@@ -331,7 +368,7 @@ class Annuitants(
                 self.d_annuitization[self.time_steps.prev_t] +
                 (
                     self.l_xy[self.time_steps.prev_t] +
-                    self.l_x[self.time_steps.prev_t] +
-                    self.l_y[self.time_steps.prev_t]
-                ) * self.annuitization_rate
+                    self.l_x_d_y[self.time_steps.prev_t] +
+                    self.l_y_d_x[self.time_steps.prev_t]
+                ) * self.t_q_annuitization
             )
