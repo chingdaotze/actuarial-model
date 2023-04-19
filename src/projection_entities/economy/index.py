@@ -19,7 +19,7 @@ class Index(
 
     """
     Economic index, like `S&P 500 <https://g.co/finance/.INX:INDEXSP>`_,
-    `Big Mac <https://www.economist.com/big-mac-index>_`, or `Inverse Cramer <https://g.co/finance/SJIM:BATS>`_.
+    `Big Mac <https://www.economist.com/big-mac-index>`_, or `Inverse Cramer <https://g.co/finance/SJIM:BATS>`_.
     """
 
     data_sources: AnnuityDataSources

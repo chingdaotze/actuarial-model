@@ -19,12 +19,13 @@ def convert_decrement_rate(
 
     .. math::
 
-        p_interval = (1 - q_x) ^ interval
-        q_interval = 1 - p_interval
+        p_{interval} = (1 - q_x) ^ {interval}
+
+        q_{interval} = 1 - p_{interval}
 
     :param q_x: Annual decrement rate
-    :param interval: Converted rate interval
-    :return: Converted decrement rate, over the interval :math:q_interval
+    :param interval: Target basis
+    :return: :math:`q_{interval}`
     """
 
     t = relativedelta_to_partial_years(

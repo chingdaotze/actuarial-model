@@ -132,7 +132,7 @@ The modeling framework consists of four core building blocks, built using classe
 
 - **(1) Data Sources**
 
-  A :mod:`data source <src.system.data_sources.data_source>` is a definition that provides access external
+  A :mod:`data source <src.system.data_sources.data_source>` is a definition that provides access to external
   model data. For example:
 
   - Model points, contained in a *\*.csv* file.
