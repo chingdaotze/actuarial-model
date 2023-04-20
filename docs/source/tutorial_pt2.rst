@@ -68,7 +68,7 @@ The modeling framework consists of four core building blocks, built using classe
 
     digraph {
         edge [dir="back"];
-        node [fontname="Consolas", shape="Box"];
+        node [fontname="Arial", shape="Box"];
 
         "(4) Projection" -> "(2) Projection Entity";
         "(2) Projection Entity" -> "(1) Data Sources";
@@ -152,12 +152,16 @@ The modeling framework consists of four core building blocks, built using classe
 
   It provides this functionality in two ways:
 
+  .. _data_source_cache:
+
   #. When the model runs, data for each data source is loaded into an internal
      `cache <https://en.wikipedia.org/wiki/Cache_(computing)>`_.
   #. The model developer defines
      `methods <https://en.wikipedia.org/wiki/Method_(computer_programming)>`_ to access data from
      the cache. This allows other objects in the :ref:`object model <object_model>` to access the cache
      without having to navigate the internal structure of the cache.
+
+  .. _data_sources_root:
 
   Passing multiple data sources throughout the model is cumbersome, so the model developer
   aggregates individual data sources into a single
