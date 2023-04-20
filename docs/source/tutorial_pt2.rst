@@ -64,6 +64,17 @@ Object Model
 
 The modeling framework consists of four core building blocks, built using classes:
 
+.. graphviz::
+
+    digraph {
+        edge [dir="back"];
+        node [fontname="Consolas", shape="Box"];
+
+        "(4) Projection" -> "(2) Projection Entity";
+        "(2) Projection Entity" -> "(1) Data Sources";
+        "(2) Projection Entity" -> "(3) Projection Values";
+    }
+
 .. _classes_note:
 
 .. collapse:: About classes...

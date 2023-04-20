@@ -33,7 +33,9 @@ release = '0.1'
 extensions = [
 	'sphinx.ext.autodoc',
 	'sphinx.ext.autosummary',
-	'sphinx_toolbox.collapse'
+	'sphinx_toolbox.collapse',
+	'sphinx.ext.graphviz',
+	'sphinx.ext.inheritance_diagram'
 ]
 autosummary_generate = True
 templates_path = ['_templates']

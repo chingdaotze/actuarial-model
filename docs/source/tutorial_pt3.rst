@@ -89,6 +89,9 @@ Walk through code base.
 Data Sources
 ^^^^^^^^^^^^
 
+.. inheritance-diagram:: src.data_sources.annuity.AnnuityDataSources
+   :parts: 1
+
 #. Create Root Data Sources.
 
 #. Decide on input format.
