@@ -1,0 +1,4 @@
+account_name,index,term,cap,spread,participation_rate,floor
+1-Year-Point-To-Point-Spread,SPX,1,NULL,0.05,1,0
+1-Year-Point-To-Point-Participation,SPX,1,NULL,NULL,0.8,0
+2-Year-Point-To-Point-Cap,SJIM,2,0.09,NULL,1,0
