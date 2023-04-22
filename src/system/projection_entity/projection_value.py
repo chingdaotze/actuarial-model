@@ -21,20 +21,20 @@ class ProjectionValue:
     Stores values for a :class:`~src.system.projection_entity.ProjectionEntity`.
 
     It can best be understood as a standard Python `data type <https://docs.python.org/3/library/stdtypes.html>`_
-    with a *value history*.
+    combined with a *value history*.
 
-    For example, imagine an `integer <https://docs.python.org/3/library/functions.html#int>`_ that keeps a history
-    of its past values.
+    For example, imagine an `integer <https://docs.python.org/3/library/functions.html#int>`_ that keeps track
+    of its past values:
 
     - Like an integer, projection values support all standard
       `numeric operators <https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types>`_
-      (e.g., +, -, /, \\*, etc...)
+      (e.g., +, -, /, \\*, etc...).
 
       The value used in these operations is the
       :attr:`latest value <src.system.projection_entity.projection_value.ProjectionValue.latest_value>`
       from the value history.
 
-    - Unlike an integer, a value history can be read or written via the
+    - However, unlike an integer, a value history can be read or written via the
       `[] operator <https://docs.python.org/3/reference/datamodel.html#object.__getitem__>`_ (like a
       `dictionary <https://docs.python.org/3/tutorial/datastructures.html#dictionaries>`_).
 

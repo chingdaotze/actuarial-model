@@ -6,7 +6,7 @@ Tutorial, Part 2
 Directory Structure
 -------------------
 
-The modeling framework is (mostly) self-contained and (almost) everything it needs can be found
+The modeling framework is self-contained and (once setup is complete) everything it needs can be found
 within its own directory structure.
 
 - **\\.idea**
@@ -22,7 +22,7 @@ within its own directory structure.
 
 - **\\docs**
 
-  Contains source files, images, and other resources used to generate :ref:`this documentation <home>`.
+  Contains source files, images, and other resources used to compile :ref:`this documentation <home>`.
 
 - **\\install**
 
@@ -71,7 +71,8 @@ The modeling framework consists of four core building blocks, built using classe
         node [fontname="Arial", shape="Box"];
 
         "(4) Projection" -> "(2) Projection Entity";
-        "(2) Projection Entity" -> "(1) Data Sources";
+        "(3) Projection Values" -> "(1) Data Sources" [style=dashed];
+        "(2) Projection Entity" -> "(1) Data Sources" [style=dashed];
         "(2) Projection Entity" -> "(3) Projection Values";
     }
 
@@ -178,12 +179,19 @@ The modeling framework consists of four core building blocks, built using classe
     `Bloomberg <https://www.bloomberg.com/professional/product/market-data/>`_ or
     `Treasury.gov <https://home.treasury.gov/treasury-daily-interest-rate-xml-feed>`_.
 
+  Data sources are typically used:
+
+  #. To set initial values for :ref:`projection values <projection_values>` within
+     :ref:`projection entities <projection_entities>`.
+  #. To provide data for :ref:`projection entities <projection_entities>` while a
+     :ref:`projection <projections>` is running.
+
 .. _projection_entities:
 
 - **(2) Projection Entities**
 
-  A :class:`projection <src.system.projection.Projection>` is anything that can be projected
-  forwards in time. For example:
+  A :class:`projection entity <src.system.projection_entity.ProjectionEntity>`
+  is anything that can be projected forwards in time. For example:
 
   - An insurance contract.
   - A person.
@@ -228,7 +236,8 @@ The modeling framework consists of four core building blocks, built using classe
 
 - **(4) Projections**
 
-  A *projection* is composed of :ref:`projection entities <projection_entities>`. For example,
+  A :class:`projection <src.system.projection.Projection>` is composed of
+  :ref:`projection entities <projection_entities>`. For example,
   a life insurance projection might consist of:
 
   - A life insurance contract.

@@ -25,9 +25,12 @@ class DataSourceCollection(
 ):
 
     """
-    Abstract container class that holds a dynamic collection of
-    :mod:`data sources <src.system.data_sources.data_source>`. This class provides a dictionary-like
-    storage interface, as well as an iterator across collection elements. This class may be used to represent
+    Abstract container class that holds a **dynamic** collection of
+    :mod:`data sources <src.system.data_sources.data_source>`. This class provides a
+    `dictionary <https://docs.python.org/3/tutorial/datastructures.html#dictionaries>`_-like
+    storage interface via the
+    `[] operator <https://docs.python.org/3/reference/datamodel.html#object.__getitem__>`_,
+    as well as an iterator across collection elements. This class may be used to represent
     data sources that contain other data sources, such as a model point file which contains multiple model points.
 
     Inherit this class to implement a custom data source collection.

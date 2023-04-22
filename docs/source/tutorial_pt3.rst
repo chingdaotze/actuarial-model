@@ -113,7 +113,7 @@ Data Sources
 #. **Annuity Data Sources Attributes**
 
    By itself, a :class:`~src.system.data_sources.DataSourcesRoot` object doesn't contain anything and isn't
-   particularly useful. To make it useful, we have to connect it to external data. There are three types
+   particularly useful. To make it useful, we have to add external data connections. There are three types
    of objects that help us manage this:
 
    #. A :mod:`~src.system.data_sources.data_source` object, which is a Pythonic representation of external data. This
@@ -125,7 +125,7 @@ Data Sources
       #. Other :class:`~src.system.data_sources.namespace.DataSourceNamespace` objects.
       #. :class:`~src.system.data_sources.collection.DataSourceCollection` objects.
 
-      These objects are declared **before** the model starts running, ahead of runtime.
+      These objects are declared as instance attributes **before** the model starts running, ahead of runtime.
 
       .. note::
         You might have noticed in the inheritance diagram above that :class:`~src.system.data_sources.DataSourcesRoot`
@@ -137,10 +137,10 @@ Data Sources
       :class:`~src.system.data_sources.namespace.DataSourceNamespace`, except child objects are created on-the-fly
       **while** the model is running (during runtime), and are not known ahead of time.
 
-   To add one of these objects, we declare it as an attribute in
-   :class:`~src.data_sources.annuity.AnnuityDataSources`. For example, including this code in the
+   To add one of these objects to our :class:`~src.data_sources.annuity.AnnuityDataSources` object,
+   we declare it as an attribute. For example, including this code in the
    :meth:`constructor <src.data_sources.annuity.AnnuityDataSources.__init__>` adds a
-   :class:`~src.data_sources.annuity.model_points.ModelPoints` object to our
+   :class:`~src.data_sources.annuity.model_points.ModelPoints` object named ``model_points`` to our
    :class:`~src.data_sources.annuity.AnnuityDataSources` object:
 
    .. code-block:: python
@@ -203,7 +203,7 @@ Data Sources
    passing in :class:`~src.data_sources.annuity.model_points.model_point.ModelPoint` as the ``model_point_type``
    parameter.
 
-   In the constructor for :class:`~src.data_sources.model_points.ModelPointsBase`:
+   Then in the constructor for :class:`~src.data_sources.model_points.ModelPointsBase`:
 
    .. code-block:: python
         :linenos:
@@ -233,10 +233,10 @@ Data Sources
       :parts: 1
 
    From the inheritance diagram, we see that :class:`~src.data_sources.annuity.model_points.model_point.ModelPoint`
-   inherits from :class:`src.data_sources.model_points.model_point.ModelPointBase`.
+   inherits from :class:`~src.data_sources.model_points.model_point.ModelPointBase`.
 
-   Inside :class:`src.data_sources.model_points.model_point.ModelPointBase`, we see an
-   :attr:`src.data_sources.model_points.model_point.ModelPointBase.id` property:
+   Inside :class:`~src.data_sources.model_points.model_point.ModelPointBase`, we see an
+   :attr:`~src.data_sources.model_points.model_point.ModelPointBase.id` property:
 
    .. code-block:: python
         :linenos:
@@ -260,22 +260,27 @@ Data Sources
 
    Note that this property returns a value from the cache. **This is how data makes its way into the model.** When the
    data source is initialized, it loads raw data into a cache. Then the model developer defines an attribute
-   that returns data from the cache.
+   that reads the cache and returns data.
 
    .. note::
-        Why so complicated? Why not read data directly from the file and just use a raw data feed in the model? We
+        Why so complicated? Why not read data directly from the file and just use raw data in the model? We
         do this because:
 
         #. **Write once, use everywhere**. Once we've written this logic, we can use it everywhere in the model with
            zero duplicate code.
 
-        #. **Abstraction**. Other model developers do not need to know the details. They can take
-           a data source for granted and just use it. This also lends itself to parallel development, where
-           one model developer implements data sources while another implements model logic.
+        #. **Abstraction**. Other model developers do not need to know:
+
+           #. How the cache is loaded (From a CSV file? A database? An XML file from a REST API?).
+           #. How the cache is structured (What columns represent what data? What do the row indexes mean?).
+
+           They can simply take a data source for granted and just use it. This also lends itself to
+           parallel development, where one model developer can implement data sources while another
+           implements model logic.
 
 #. **Zooming Out**
 
-   Now we've seen the end-to-end process for one unit of data, here's the model input package in its entirety:
+   Now we've seen the end-to-end process for one unit of data (in pink), here's the model inputs package in its entirety:
 
    .. graphviz::
 
@@ -292,7 +297,7 @@ Data Sources
 
         ModelPoints [shape="folder"];
         ModelPoint [shape="cylinder"];
-        id_mp [label="id" shape="ellipse"];
+        id_mp [label="id" shape="ellipse" fillcolor="darksalmon" style="filled"];
         product_type [shape="ellipse"];
         product_name [shape="ellipse"];
         issue_date [shape="ellipse"];
