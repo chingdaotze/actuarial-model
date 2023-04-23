@@ -88,6 +88,7 @@ The modeling framework consists of four core building blocks, built using classe
     Here's a simple class that models a bank account:
 
     .. code-block:: python
+        :linenos:
 
         class Account:
 
@@ -108,8 +109,8 @@ The modeling framework consists of four core building blocks, built using classe
 
     The *Account* class consists of two **attributes**:
 
-    #. ``_balance`` - An account balance.
-    #. ``deposit`` - A function (or **method**) called ``deposit`` that increases the ``_balance``
+    #. Line 9, ``_balance`` - An account balance.
+    #. Line 11, ``deposit`` - A function (or **method**) called ``deposit`` that increases the ``_balance``
        by a given ``amount``.
 
     Note that the class is a *blueprint* for an object. To use the class, we have to create an
@@ -134,6 +135,20 @@ The modeling framework consists of four core building blocks, built using classe
         chase_account.deposit(
             amount=500.0
         )
+
+    Lastly, some additional notes on classes:
+
+    .. _constructor_note:
+
+    #. The
+       `__init__ <https://docs.python.org/3/tutorial/classes.html#class-objects>`_ method in line 5 is a
+       type of special method called a
+       `constructor <https://en.wikipedia.org/wiki/Constructor_(object-oriented_programming)>`_. It is
+       *automatically* called whenever a new instance is created. This special method is often used to
+       set initial values for any `instance attributes <https://en.wikipedia.org/wiki/Instance_variable>`_.
+
+    #. The ``self`` keyword denotes that an attribute is unique for each *instance* of a class, or operates on
+       attributes that are unique for each instance of a class.
 
     Classes are an invaluable tool for developers and we've only covered the basics here. There are `many,
     many more class mechanics and nuances <https://docs.python.org/3/tutorial/classes.html>`_

@@ -30,7 +30,7 @@ class Economy(
     ):
 
         """
-        Constructor method. Initializes a list of indices from
+        Constructor method. Initializes a list of indices from the
         :class:`economic scenarios data source <src.data_sources.economic_scenarios.EconomicScenarios>`.
 
         :param time_steps: Projection-wide timekeeping object.

@@ -457,7 +457,326 @@ Data Sources
 Projection Entities
 ^^^^^^^^^^^^^^^^^^^
 
+#. **Model Overview**
 
+   .. graphviz::
+
+    digraph {
+        edge [dir="back"];
+        node [fontname="Arial", shape="Box"];
+
+        Riders [shape="tab"];
+        Accounts [shape="tab"];
+        Fixed [shape="tab"];
+        Indexed [shape="tab"];
+        Separate [shape="tab"];
+        Premiums [shape="tab"];
+        Annuitants [shape="tab"];
+
+        "Economy";
+
+        "Base Contract" -> Annuitants;
+        Annuitants -> "Annuitant";
+
+        "Base Contract" -> Riders;
+        Riders -> "GMWB";
+        Riders -> "GMDB MAV";
+        Riders -> "GMDB RAV";
+        Riders -> "GMDB ROP";
+
+        "Base Contract" -> Accounts;
+        Accounts -> Fixed -> Premiums;
+        Accounts -> Indexed -> Premiums;
+        Accounts -> Separate -> Premiums;
+        Premiums -> Premium;
+    }
+
+   The annuity model consists of two top-level :class:`~src.system.projection_entity.ProjectionEntity` objects:
+
+   - :class:`~src.projection_entities.economy.Economy` - the economic environment for this projection.
+
+   - :class:`~src.projection_entities.products.annuity.base_contract.BaseContract` - the annuity contract in this
+     projection.
+
+   The :class:`~src.projection_entities.products.annuity.base_contract.BaseContract`
+   contains several nested
+   :class:`~src.system.projection_entity.ProjectionEntity` objects:
+
+   - :class:`~src.projection_entities.people.annuitants.Annuitants` - the annuitant(s) in this projection.
+
+     - :class:`~src.projection_entities.people.annuitants.annuitant.Annuitant` - a single annuitant in this projection.
+
+   - A `list <https://docs.python.org/3/tutorial/datastructures.html#more-on-lists>`_ of elected riders:
+
+     - :class:`~src.projection_entities.products.annuity.riders.gmwb.Gmwb` - Guaranteed Minimum Withdrawal Benefit
+       (GMWB) rider.
+     - :class:`~src.projection_entities.products.annuity.riders.gmdb.mav.GmdbMav` - Guaranteed Minimum Death Benefit
+       (GMDB) rider, with ratchet option.
+     - :class:`~src.projection_entities.products.annuity.riders.gmdb.rav.GmdbRav` -
+       GMDB rider, with return of account value option.
+     - :class:`~src.projection_entities.products.annuity.riders.gmdb.rop.GmdbRop` -
+       GMDB rider, with return of premium option.
+
+     .. note::
+        Riders are optional. It is possible to have a
+        :class:`~src.projection_entities.products.annuity.base_contract.BaseContract` with *no* riders.
+
+   - A `list <https://docs.python.org/3/tutorial/datastructures.html#more-on-lists>`_ of accounts:
+
+     - :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount` - Fixed interest
+       crediting account. Typically used for Fixed Annuity contracts, but available for all contracts.
+     - :class:`~src.projection_entities.products.annuity.base_contract.account.ia.IndexedAccount` - Indexed
+       strategy crediting account, typically used for Fixed Indexed Annuity contracts.
+     - :class:`~src.projection_entities.products.annuity.base_contract.account.va.SeparateAccount` - Separate
+       crediting account, typically used for Variable Annuity contracts.
+
+     Each account also maintains a `list <https://docs.python.org/3/tutorial/datastructures.html#more-on-lists>`_
+     of :class:`~src.projection_entities.products.annuity.base_contract.account.premium.Premium` 's.
+
+     .. note::
+        - A policy must have *at least* one account.
+        - It is possible for a policy to have multiple accounts of the same type. For example,
+          a policy could have two Fixed accounts that credit interest at different rates.
+
+#. **Fixed Account Deep Dive**
+
+   #. *Navigating to the Account Class*
+
+      To see how a :class:`~src.system.projection_entity.ProjectionEntity` works, let's take a look at the
+      :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount`:
+
+      .. code-block:: python
+        :linenos:
+        :lineno-start: 14
+        :emphasize-lines: 2
+
+        class FixedAccount(
+            Account
+        ):
+
+      From the inheritance diagram:
+
+      .. inheritance-diagram:: src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount
+         :parts: 1
+
+      We see that a :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount` inherits
+      from an :class:`~src.projection_entities.products.annuity.base_contract.account.Account`.
+
+   #. *Account Super Classes*
+
+      Let's take a close look at the :class:`~src.projection_entities.products.annuity.base_contract.account.Account`
+      object. Starting with the class definition:
+
+      .. code-block:: python
+        :linenos:
+        :lineno-start: 14
+        :emphasize-lines: 2, 3
+
+        class Account(
+            ProjectionEntity,
+            ABC
+        ):
+
+      There are two super classes:
+
+      .. inheritance-diagram:: src.projection_entities.products.annuity.base_contract.account.Account
+         :parts: 1
+
+      - Line 15 states that an :class:`~src.projection_entities.products.annuity.base_contract.account.Account`
+        inherits from :class:`~src.system.projection_entity.ProjectionEntity`, so an ``Account`` is a
+        type of ``ProjectionEntity``.
+      - Line 16 states that an :class:`~src.projection_entities.products.annuity.base_contract.account.Account`
+        *also* inherits from `ABC <https://docs.python.org/3/library/abc.html#abc.ABC>`_, which means that this
+        class is an
+        `ABstract Class <https://en.wikipedia.org/wiki/Abstract_type>`_. Abstract classes *cannot* be used
+        to create instances, and are typically used to represent an *abstract* object (in this case, an *abstract*
+        account). Since this class is an abstract class, it can only be used through inheritance.
+
+   #. *Premium Tracking Within an Account*
+
+      Moving down into the :ref:`constructor <constructor_note>`, we declare a
+      :attr:`list of premiums <src.projection_entities.products.annuity.base_contract.account.Account.premiums>`:
+
+      .. code-block:: python
+        :linenos:
+        :lineno-start: 69
+
+        self.premiums = self._get_new_premiums(
+            t1=self.init_t
+        )
+
+      Where ``_get_new_premiums`` returns a list of premiums paid at
+      :attr:`~src.system.projection_entity.ProjectionEntity.init_t`. This attribute stores all premiums
+      that are (and will be) paid into the account,
+      and will grow as this projection entity is projected into the future.
+
+   #. *Declaring Projection Values*
+
+      Further down the constructor, we declare :class:`~src.system.projection_entity.projection_value.ProjectionValue`
+      objects. For example:
+
+      .. code-block:: python
+        :linenos:
+        :lineno-start: 80
+
+        self.premium_cumulative = ProjectionValue(
+            init_t=self.init_t,
+            init_value=self._calc_total_premium()
+        )
+
+        self.interest_credited = ProjectionValue(
+            init_t=self.init_t,
+            init_value=0.0
+        )
+
+      These two attributes (along with other :class:`~src.system.projection_entity.projection_value.ProjectionValue`
+      objects) represent *key values* that we're interested in tracking. In the code above:
+
+      #. :attr:`~src.projection_entities.products.annuity.base_contract.account.Account.premium_cumulative` tracks
+         the cumulative premiums paid into the ``Account``. Its initial value is provided by the
+         ``_calc_total_premium`` method, and is set at time
+         :attr:`~src.system.projection_entity.ProjectionEntity.init_t`.
+      #. :attr:`~src.projection_entities.products.annuity.base_contract.account.Account.interest_credited` tracks
+         the point-in-time interest paid into the ``Account``. Its initial value is set to ``0.0`` at time
+         :attr:`~src.system.projection_entity.ProjectionEntity.init_t`.
+
+   #. *Declaring Methods*
+
+      :class:`~src.system.projection_entity.ProjectionEntity` objects typically declare methods that calculate
+      and update :class:`~src.system.projection_entity.projection_value.ProjectionValue` objects.
+
+      For example:
+
+      .. code-block:: python
+        :linenos:
+        :lineno-start: 80
+
+        def process_withdrawal(
+            self,
+            withdrawal_amount: float
+        ) -> None:
+
+            """
+            Reduces :attr:`account value <account_value>` by a withdrawal amount
+            and records the :attr:`withdrawal amount <withdrawal>`.
+
+            .. warning:
+                This algorithm does not check if the withdrawal amount is greater than the account value.
+
+            :param withdrawal_amount: Withdrawal amount.
+            :return: Nothing.
+            """
+
+            self.withdrawal[self.time_steps.t] = withdrawal_amount
+            self.account_value[self.time_steps.t] = self.account_value - self.withdrawal
+
+      This method:
+
+      #. Sets the :attr:`withdrawal_amount <src.projection_entities.products.annuity.base_contract.account.Account.withdrawal>`
+         :class:`~src.system.projection_entity.projection_value.ProjectionValue` at time
+         :attr:`t <src.system.projection.time_steps.TimeSteps.t>`.
+
+         .. note::
+                The withdrawal amount is calculated somewhere outside the method and passed in as a method
+                `argument <https://en.wikipedia.org/wiki/Parameter_(computer_programming)>`_.
+
+      #. Sets the :attr:`withdrawal_amount <src.projection_entities.products.annuity.base_contract.account.Account.account_value>`
+         :class:`~src.system.projection_entity.projection_value.ProjectionValue` at time
+         :attr:`t <src.system.projection.time_steps.TimeSteps.t>`, by subtracting two
+         :class:`~src.system.projection_entity.projection_value.ProjectionValue` 's with each other.
+
+   #. *Overriding Methods*
+
+      In the previous section we've seen how to declare a method that interacts with class attributes.
+      The :class:`~src.projection_entities.products.annuity.base_contract.account.Account` class also contains a
+      :meth:`src.projection_entities.products.annuity.base_contract.account.Account.credit_interest`
+      **abstract method**:
+
+      .. code-block:: python
+        :linenos:
+        :lineno-start: 219
+
+            @abstractmethod
+            def credit_interest(
+                self
+            ) -> None:
+
+                """
+                Abstract method that represents an interest crediting mechanism. Inherit and override to implement
+                a custom crediting algorithm (e.g. RILA, separate account crediting, or indexed crediting).
+
+                :return: Nothing.
+                """
+
+                ...
+
+      An abstract method declares that a method *should* exist, and what arguments the method should take,
+      but doesn't provide an *implementation* for the method. Note:
+
+      #. There is an `abstractmethod <https://docs.python.org/3/library/abc.html#abc.abstractmethod>`_ decorator over
+         method name.
+      #. The function body is empty and only contains
+         `ellipsis <https://docs.python.org/3/library/constants.html#Ellipsis>`_.
+
+      You can think of an abstract method as a "placeholder" within an abstract class, where the implementation
+      is provided by a derived class.
+
+      In this case, recall that the :class:`~src.projection_entities.products.annuity.base_contract.account.Account`
+      class is an `abstract class <https://en.wikipedia.org/wiki/Abstract_type>`_, and is inherited by
+      :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount`:
+
+      .. inheritance-diagram:: src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount
+         :parts: 1
+
+      If we go back up to :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount`, we
+      see :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount` 's implementation
+      of the :meth:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount.credit_interest`:
+
+      .. code-block:: python
+        :linenos:
+        :lineno-start: 36
+
+            def credit_interest(
+                self
+            ) -> None:
+
+                r"""
+                Credits interest to the sub\-account, where the fixed crediting rate is from
+                :meth:`~src.data_sources.annuity.product.base.crediting_rate.fixed.FixedCreditingRate.crediting_rate`.
+
+                .. math::
+                    interest \, credited = account \, value \times crediting \, rate \times years \, elapsed
+
+                :math:`years \, elapsed` is calculated using :func:`~src.system.date.calc_partial_years`.
+
+                :return: Nothing
+                """
+
+                crediting_rate = self.data_sources.product.base_product.crediting_rate.fixed.crediting_rate(
+                    account_name=self.account_data_source.account_name
+                )
+
+                partial_years = calc_partial_years(
+                    dt1=self.time_steps.t,
+                    dt2=self.time_steps.prev_t
+                )
+
+                crediting_rate *= partial_years
+
+                self.interest_credited[self.time_steps.t] = self.account_value * crediting_rate
+
+                self.account_value[self.time_steps.t] = self.account_value + self.interest_credited
+
+      .. note::
+        **Why do we do this?**
+
+        There is *a lot* of common logic between the various account types. For example, each account
+        processes premiums and takes withdrawals in the exact same way. This allows us to put all the
+        common account logic in one generic account, then inherit and override to create "specialized"
+        types of accounts.
+
+        We can extend this generalize / specialize construct to many objects within an actuarial model,
+        and programming in general.
 
 Projection
 ^^^^^^^^^^
