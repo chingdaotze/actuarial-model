@@ -65,7 +65,8 @@ class Projection(
     ) -> None:
 
         """
-        Abstract method that is called every time step. It calls methods from various
+        Abstract method that is called every time step. Its purpose is to define a calculation order within
+        a single time step by calling methods from various
         :class:`projection entities <src.system.projection_entity.ProjectionEntity>`.
         :ref:`Override <inheritance_override>` this method to define what occurs within a single time step.
 
@@ -142,8 +143,8 @@ class Projection(
     ) -> None:
 
         """
-        Abstract method that sets up the projection's output directory. Method is called serially for each projection
-        before the projection starts running.
+        Abstract method that sets up the projection's output structure. Method is called serially for each projection
+        before the projection starts running to avoid race conditions in parallel projection run setups.
 
         :return: None
         """

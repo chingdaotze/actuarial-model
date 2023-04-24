@@ -1,3 +1,7 @@
+"""
+Sample annuity economic liability projection.
+"""
+
 from os.path import (
     exists,
     join
@@ -18,13 +22,13 @@ class EconomicLiabilityProjection(
 ):
 
     """
-    Sample economic liability projection.
+    Sample annuity economic liability projection.
     """
 
-    data_sources: AnnuityDataSources
+    data_sources: AnnuityDataSources    #: Annuity data sources.
 
-    economy: Economy
-    base_contract: BaseContract
+    economy: Economy                    #: Economy projection entity.
+    base_contract: BaseContract         #: Base contract projection entity.
 
     def __init__(
         self,
@@ -58,6 +62,17 @@ class EconomicLiabilityProjection(
         self
     ) -> None:
 
+        r"""
+        Creates a nested output directory structure with the following form:
+
+        .. code-block:: text
+
+            \ Model point ID
+                \ Economic scenario number
+
+        :return: Nothing.
+        """
+
         model_point_dir_path = join(
             self.projection_parameters.output_dir_path,
             self.data_sources.model_point.id
@@ -84,6 +99,12 @@ class EconomicLiabilityProjection(
     def project_time_step(
         self
     ) -> None:
+
+        """
+        Annuity Economic Liability Projection transaction order and method calls within a single time step.
+
+        :return: Nothing.
+        """
 
         self.economy.age_economy()
 

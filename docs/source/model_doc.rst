@@ -1,3 +1,5 @@
+.. _model_documentation:
+
 Model Documentation
 ===================
 

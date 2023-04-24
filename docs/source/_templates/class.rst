@@ -7,11 +7,25 @@
 
 .. autoclass:: {{ objname }}
    :members:
-   :show-inheritance:
    :inherited-members:
 
    {% block methods %}
-   .. automethod:: __init__
+
+   .. rubric:: {{ _('Inheritance Diagram') }}
+
+   .. inheritance-diagram:: {{ objname }}
+      :parts: 1
+
+   {% block attributes %}
+   {% if attributes %}
+   .. rubric:: {{ _('Variables & Properties') }}
+
+   .. autosummary::
+   {% for item in attributes %}
+      ~{{ name }}.{{ item }}
+   {%- endfor %}
+   {% endif %}
+   {% endblock %}
 
    {% if methods %}
    .. rubric:: {{ _('Methods') }}
@@ -23,13 +37,10 @@
    {% endif %}
    {% endblock %}
 
-   {% block attributes %}
-   {% if attributes %}
-   .. rubric:: {{ _('Attributes') }}
+   {% block details %}
 
-   .. autosummary::
-   {% for item in attributes %}
-      ~{{ name }}.{{ item }}
-   {%- endfor %}
-   {% endif %}
+   .. rubric:: {{ _('Details') }}
+
+   .. automethod:: __init__
+
    {% endblock %}

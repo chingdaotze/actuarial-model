@@ -86,6 +86,8 @@ Annuity Model Design and Construction
 
 Let's take what we've learned so far and see how that can be used to build our annuity model.
 
+.. _data_sources_annuity_model:
+
 Data Sources
 ^^^^^^^^^^^^
 
@@ -454,6 +456,20 @@ Data Sources
         GmwbCharge -> charge_rate_gmwb;
     }
 
+.. note::
+  **To-Do's**
+
+  - There may be a way to combine :class:`~src.system.data_sources.namespace.DataSourceNamespace` and
+    :class:`~src.system.data_sources.collection.DataSourceCollection` into a single class that
+    supports *both* static and dynamic child objects.
+  - Currently, the modeling framework only supports file-based or Python-based
+    :class:`~src.system.data_sources.data_source.base.DataSourceBase` objects, listed in the
+    :mod:`~src.system.data_sources.data_source` module. In the future, we can add
+    support for more data formats (like databases or data feeds), leveraging the Python community's
+    vast libraries of open-source code.
+
+.. _projection_entities_annuity_model:
+
 Projection Entities
 ^^^^^^^^^^^^^^^^^^^
 
@@ -467,9 +483,6 @@ Projection Entities
 
         Riders [shape="tab"];
         Accounts [shape="tab"];
-        Fixed [shape="tab"];
-        Indexed [shape="tab"];
-        Separate [shape="tab"];
         Premiums [shape="tab"];
         Annuitants [shape="tab"];
 
@@ -689,7 +702,7 @@ Projection Entities
 
       In the previous section we've seen how to declare a method that interacts with class attributes.
       The :class:`~src.projection_entities.products.annuity.base_contract.account.Account` class also contains a
-      :meth:`src.projection_entities.products.annuity.base_contract.account.Account.credit_interest`
+      :meth:`~src.projection_entities.products.annuity.base_contract.account.Account.credit_interest`
       **abstract method**:
 
       .. code-block:: python
@@ -767,18 +780,129 @@ Projection Entities
 
                 self.account_value[self.time_steps.t] = self.account_value + self.interest_credited
 
-      .. note::
+.. note::
         **Why do we do this?**
 
         There is *a lot* of common logic between the various account types. For example, each account
         processes premiums and takes withdrawals in the exact same way. This allows us to put all the
-        common account logic in one generic account, then inherit and override to create "specialized"
+        common account logic in one "generic" account, then inherit and override to create "specialized"
         types of accounts.
 
-        We can extend this generalize / specialize construct to many objects within an actuarial model,
+        We can use this generalize / specialize mechanism for many objects within an actuarial model,
         and programming in general.
+
+.. note::
+  **To-Do's**
+
+  - The underlying model output storage format is a
+    `Pandas Dataframe <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html>`_ and the model generates
+    its output \*.csv files using the
+    `DataFrame.to_csv <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html>`_ method. However,
+    there are *many* more output formats that can be implemented by leveraging the power of DataFrames,
+    including:
+
+    - `Excel files <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_excel.html>`_
+    - `Graphs and charts <https://pandas.pydata.org/pandas-docs/version/0.13.1/visualization.html>`_
+    - `Other data formats, like parquet
+       <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_parquet.html>`_
 
 Projection
 ^^^^^^^^^^
 
+#. The Annuity Economic Liability Projection
 
+   We've defined :ref:`inputs for our projection <data_sources_annuity_model>`
+   and we've defined :ref:`objects for our projection <projection_entities_annuity_model>`. The last
+   thing to do is link everything together in a :class:`~src.system.projection.Projection`.
+
+   To see how that works, let's take a look at the
+   :class:`~src.projections.annuity.base.economic_liability.EconomicLiabilityProjection` class. Starting from the top:
+
+   .. code-block:: python
+      :linenos:
+      :lineno-start: 16
+      :emphasize-lines: 2
+
+        class EconomicLiabilityProjection(
+            Projection
+        ):
+
+   We can see :class:`~src.projections.annuity.base.economic_liability.EconomicLiabilityProjection` is a type of
+   :class:`~src.system.projection.Projection`, since it inherits from :class:`~src.system.projection.Projection`:
+
+   .. inheritance-diagram:: src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount
+      :parts: 1
+
+   Moving down into the :ref:`constructor <constructor_note>`, we declare our
+   :ref:`top-level <projection_entities_annuity_model>`
+   :class:`~src.system.projection_entity.ProjectionEntity` objects:
+
+   .. code-block:: python
+      :linenos:
+      :lineno-start: 41
+
+        self.economy = Economy(
+            time_steps=self.time_steps,
+            data_sources=self.data_sources
+        )
+
+        self.base_contract = BaseContract(
+            time_steps=self.time_steps,
+            data_sources=self.data_sources
+        )
+
+#. Defining the Order of Operations
+
+   Now that our :class:`~src.system.projection_entity.ProjectionEntity` objects have been declared in our
+   projection, we can define our projection's order of operations (within a time step) by overriding the
+   :meth:`src.system.projection.Projection.project_time_step` method. Here's the
+   :meth:`overriden method <src.projections.annuity.base.economic_liability.EconomicLiabilityProjection.project_time_step>`:
+
+   .. code-block:: python
+      :linenos:
+      :lineno-start: 99
+
+            def project_time_step(
+                self
+            ) -> None:
+
+                """
+                Annuity Economic Liability Projection transaction order and method calls within a single time step.
+
+                :return: Nothing.
+                """
+
+                self.economy.age_economy()
+
+                self.base_contract.age_contract()
+
+                self.base_contract.process_premiums()
+
+                self.base_contract.credit_interest()
+
+                self.base_contract.assess_charges()
+
+                self.base_contract.process_withdrawals()
+
+                self.base_contract.update_gmdb_naar()
+
+                self.base_contract.update_cash_surrender_value()
+
+                self.base_contract.annuitants.update_decrements()
+
+   The :meth:`~src.projections.annuity.base.economic_liability.EconomicLiabilityProjection.project_time_step` method
+   calls other methods within the top-level projection entities. This defines the order of operations within a single
+   time step.
+
+What's Next?
+------------
+
+These tutorials aim to provide a high-level understanding of the modeling framework, but don't cover every
+detail or bit of functionality. For a complete reference, please consult the
+:ref:`Model Documentation <model_documentation>` for documentation on the annuity sample model, or
+:ref:`System Documentation <system_documentation>` for documentation on the modeling framework.
+
+Thanks for reading!
+
+.. image:: images/dfa.png
+    :width: 600
