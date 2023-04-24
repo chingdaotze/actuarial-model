@@ -809,7 +809,7 @@ Projection Entities
 Projection
 ^^^^^^^^^^
 
-#. The Annuity Economic Liability Projection
+#. **The Annuity Economic Liability Projection**
 
    We've defined :ref:`inputs for our projection <data_sources_annuity_model>`
    and we've defined :ref:`objects for our projection <projection_entities_annuity_model>`. The last
@@ -851,7 +851,7 @@ Projection
             data_sources=self.data_sources
         )
 
-#. Defining the Order of Operations
+#. **Defining the Order of Operations**
 
    Now that our :class:`~src.system.projection_entity.ProjectionEntity` objects have been declared in our
    projection, we can define our projection's order of operations (within a time step) by overriding the
