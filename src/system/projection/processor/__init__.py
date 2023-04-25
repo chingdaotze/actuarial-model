@@ -90,7 +90,7 @@ class ProjectionProcessor(
 
         Parses a string and returns a class definition that represents a projection object.
 
-        :return:
+        :return: Class definition.
         """
 
         module_path, class_name = splitext(
@@ -114,7 +114,7 @@ class ProjectionProcessor(
         Runs a single projection and writes output.
 
         :param projection: Projection to run.
-        :return: None
+        :return: Nothing.
         """
 
         # Run projection
@@ -131,7 +131,7 @@ class ProjectionProcessor(
         Calls :meth:`~src.system.projection.Projection.setup_output` for each projection in
         :attr:`~src.system.projection.processor.ProjectionProcessor.projections`.
 
-        :return: None
+        :return: Nothing.
         """
 
         Logger().print(
@@ -151,7 +151,7 @@ class ProjectionProcessor(
         Abstract method to run all projections in
         :attr:`~src.system.projection.processor.ProjectionProcessor.projections`.
 
-        :return: None
+        :return: Nothing.
         """
 
         ...

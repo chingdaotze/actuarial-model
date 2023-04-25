@@ -70,7 +70,7 @@ class Projection(
         :class:`projection entities <src.system.projection_entity.ProjectionEntity>`.
         :ref:`Override <inheritance_override>` this method to define what occurs within a single time step.
 
-        :return: None
+        :return: Nothing.
         """
 
         ...
@@ -101,7 +101,7 @@ class Projection(
         Runs the main projection loop, projecting forward one time step at a time.
         :ref:`Override <inheritance_override>` this method to create a custom projection loop.
 
-        :return: None
+        :return: Nothing.
         """
 
         for _ in self.time_steps:
@@ -121,7 +121,7 @@ class Projection(
         :class:`projection entity <src.system.projection_entity.ProjectionEntity>` members.
         Note that this function behaves recursively, and will write output for nested projection entity members as well.
 
-        :return: None
+        :return: Nothing.
         """
 
         for attribute in self.__dict__.values():
@@ -146,7 +146,7 @@ class Projection(
         Abstract method that sets up the projection's output structure. Method is called serially for each projection
         before the projection starts running to avoid race conditions in parallel projection run setups.
 
-        :return: None
+        :return: Nothing.
         """
 
         ...

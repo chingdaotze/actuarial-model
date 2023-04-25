@@ -17,14 +17,12 @@ def main() -> None:
     r"""
     Sample function that:
 
-    1. Constructs a projection parameters object.
-    2. Uses the projection parameters object to construct a data sources object, which represents holds inputs
-       for the model.
-    3. Uses the projection parameters and data sources objects to construct a projection object.
-    4. Runs the projection using the projection object.
-    5. Writes projection output using the projection object, to project's the \output directory.
+    #. Constructs a :class:`~src.system.projection.parameters.ProjectionParameters` object.
+    #. Constructs a :class:`~src.system.projection.processor.ProjectionProcessor` object.
+    #. Uses the :class:`~src.system.projection.processor.ProjectionProcessor` to run the projections
+       specified in :class:`~src.system.projection.parameters.ProjectionParameters`.
 
-    :return:
+    :return: Nothing.
     """
 
     # Read command-line arguments

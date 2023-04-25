@@ -62,7 +62,7 @@ class MultiProcessProjectionProcessor(
         :param out_queue: Progress bar monitoring target.
         :param projection_count: Number of expected projections.
         :param cpus: Number of parallel processes.
-        :return: None
+        :return: Nothing.
         """
 
         progress_bar = tqdm(total=projection_count, desc=r'Progress: ', unit=r' projection(s) ')
@@ -99,7 +99,7 @@ class MultiProcessProjectionProcessor(
 
         :param in_queue: Work input queue.
         :param out_queue: Work output queue.
-        :return: None
+        :return: Nothing.
         """
 
         while True:
@@ -152,7 +152,7 @@ class MultiProcessProjectionProcessor(
             this would be the physical core count - 1.
 
         :param cpus: Number of processes to run in parallel.
-        :return: None
+        :return: Nothing.
         """
 
         Logger().print(

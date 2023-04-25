@@ -104,7 +104,7 @@ class Annuitant(
         """
         Projects annuitant forward by one time step.
 
-        :return: None
+        :return: Nothing.
         """
 
         # Set attained age

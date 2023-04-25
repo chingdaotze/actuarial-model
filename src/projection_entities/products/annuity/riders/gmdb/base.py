@@ -148,7 +148,7 @@ class GmdbBase(
         Abstract method to update the benefit base.
 
         :param base_contract: Base contract.
-        :return: Nothin.
+        :return: Nothing.
         """
 
         ...
@@ -164,8 +164,8 @@ class GmdbBase(
         .. math::
             NAAR = max(benefit\, base - account\, value, 0)
 
-        :param base_contract:
-        :return:
+        :param base_contract: Base contract.
+        :return: Nothing.
         """
 
         self.net_amount_at_risk[self.time_steps.t] = max(

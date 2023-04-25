@@ -36,7 +36,7 @@ class SingleProcessProjectionProcessor(
         Loops through and runs :class:`projections <src.system.projection.Projection>`, until
         all projections are calculated.
 
-        :return: None
+        :return: Nothing.
         """
 
         Logger().print(

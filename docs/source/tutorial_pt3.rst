@@ -914,7 +914,7 @@ Projection
                 Runs the main projection loop, projecting forward one time step at a time.
                 :ref:`Override <inheritance_override>` this method to create a custom projection loop.
 
-                :return: None
+                :return: Nothing.
                 """
 
                 for _ in self.time_steps:

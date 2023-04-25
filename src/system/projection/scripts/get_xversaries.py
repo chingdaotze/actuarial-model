@@ -24,7 +24,7 @@ def get_xversaries(
     :param start_date: Search start date.
     :param end_date: Search end date.
     :param frequency: Months between X-iversaries.
-    :return:
+    :return: List of X-iversaries between two dates.
     """
 
     start_date_range = relativedelta(
