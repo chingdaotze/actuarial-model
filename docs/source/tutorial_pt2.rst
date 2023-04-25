@@ -170,6 +170,22 @@ The modeling framework consists of four core building blocks, built using classe
 
   .. _data_source_cache:
 
+  .. graphviz::
+
+     digraph {
+        node [fontname="Arial"];
+        rankdir="LR";
+
+        ExternalData [label="External Data" shape="folder"];
+        Cache [shape="cylinder"];
+        my_access_cache_method [shape="none" fontname="consolas"];
+        my_other_access_cache_method [shape="none" fontname="consolas"];
+
+        ExternalData -> Cache;
+        Cache -> my_access_cache_method;
+        Cache -> my_other_access_cache_method;
+     }
+
   #. When the model runs, data for each data source is loaded into an internal
      `cache <https://en.wikipedia.org/wiki/Cache_(computing)>`_.
   #. The model developer defines
@@ -182,7 +198,23 @@ The modeling framework consists of four core building blocks, built using classe
   Passing multiple data sources throughout the model is cumbersome, so the model developer
   aggregates individual data sources into a single
   :class:`data sources root <src.system.data_sources.DataSourcesRoot>` object, which is then passed
-  around the model.
+  around the model:
+
+  .. graphviz::
+
+     digraph {
+        node [fontname="Arial"];
+        rankdir="LR";
+
+        DataSourcesRoot [shape="folder"];
+        DataSource1 [shape="cylinder"];
+        DataSource2 [shape="cylinder"];
+        DataSource3 [shape="cylinder"];
+
+        DataSource1 -> DataSourcesRoot;
+        DataSource2 -> DataSourcesRoot;
+        DataSource3 -> DataSourcesRoot;
+     }
 
   Data sources can also be `nested <https://en.wikipedia.org/wiki/Nesting_(computing)>`_ using
   :class:`namespaces <src.system.data_sources.namespace.DataSourceNamespace>` and

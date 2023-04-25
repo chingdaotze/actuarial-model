@@ -732,18 +732,18 @@ Projection Entities
          `ellipsis <https://docs.python.org/3/library/constants.html#Ellipsis>`_.
 
       You can think of an abstract method as a "placeholder" within an abstract class, where the implementation
-      is provided by a derived class.
+      is provided by one or more derived classes.
 
-      In this case, recall that the :class:`~src.projection_entities.products.annuity.base_contract.account.Account`
-      class is an `abstract class <https://en.wikipedia.org/wiki/Abstract_type>`_, and is inherited by
-      :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount`:
+      In this case, :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount`
+      is a derived class that inherits from
+      :class:`~src.projection_entities.products.annuity.base_contract.account.Account`:
 
       .. inheritance-diagram:: src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount
          :parts: 1
 
-      If we go back up to :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount`, we
+      If we go to :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount`, we
       see :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount` 's implementation
-      of the :meth:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount.credit_interest`:
+      of :meth:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount.credit_interest`:
 
       .. code-block:: python
         :linenos:
@@ -780,15 +780,22 @@ Projection Entities
 
                 self.account_value[self.time_steps.t] = self.account_value + self.interest_credited
 
+      When the :meth:`~src.projection_entities.products.annuity.base_contract.account.Account.credit_interest` method
+      is called, it will use different implementations, depending on the derived class. We just looked at
+      :class:`~src.projection_entities.products.annuity.base_contract.account.fa.FixedAccount` 's implementation, but
+      other implementations exist for
+      :class:`~src.projection_entities.products.annuity.base_contract.account.va.SeparateAccount` and
+      :class:`~src.projection_entities.products.annuity.base_contract.account.ia.IndexedAccount` as well.
+
 .. note::
         **Why do we do this?**
 
         There is *a lot* of common logic between the various account types. For example, each account
-        processes premiums and takes withdrawals in the exact same way. This allows us to put all the
-        common account logic in one "generic" account, then inherit and override to create "specialized"
-        types of accounts.
+        processes premiums, assesses charges, and takes withdrawals in the exact same way.
+        This allows us to put all the common account logic in one "generic" account, then inherit
+        and override to create "specialized" types of accounts.
 
-        We can use this generalize / specialize mechanism for many objects within an actuarial model,
+        We can use this generalize / specialize technique for many objects within an actuarial model,
         and programming in general.
 
 .. note::
@@ -803,8 +810,7 @@ Projection Entities
 
     - `Excel files <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_excel.html>`_
     - `Graphs and charts <https://pandas.pydata.org/pandas-docs/version/0.13.1/visualization.html>`_
-    - `Other data formats, like parquet
-       <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_parquet.html>`_
+    - `Other data formats, like parquet <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_parquet.html>`_
 
 Projection
 ^^^^^^^^^^
@@ -855,7 +861,7 @@ Projection
 
    Now that our :class:`~src.system.projection_entity.ProjectionEntity` objects have been declared in our
    projection, we can define our projection's order of operations (within a time step) by overriding the
-   :meth:`src.system.projection.Projection.project_time_step` method. Here's the
+   :meth:`~src.system.projection.Projection.project_time_step` method. Here's the
    :meth:`overriden method <src.projections.annuity.base.economic_liability.EconomicLiabilityProjection.project_time_step>`:
 
    .. code-block:: python
@@ -892,7 +898,50 @@ Projection
 
    The :meth:`~src.projections.annuity.base.economic_liability.EconomicLiabilityProjection.project_time_step` method
    calls other methods within the top-level projection entities. This defines the order of operations within a single
-   time step.
+   time step. Then the :meth:`~src.system.projection.Projection.run_projection` method calls the
+   :meth:`~src.projections.annuity.base.economic_liability.EconomicLiabilityProjection.project_time_step` at each time
+   step:
+
+   .. code-block:: python
+      :linenos:
+      :lineno-start: 96
+
+            def run_projection(
+                self
+            ) -> None:
+
+                """
+                Runs the main projection loop, projecting forward one time step at a time.
+                :ref:`Override <inheritance_override>` this method to create a custom projection loop.
+
+                :return: None
+                """
+
+                for _ in self.time_steps:
+
+                    self.project_time_step()
+
+                    if self.halt_projection():
+
+                        break
+
+   Which pushes the projection forward in time.
+
+.. note::
+  **To-Do's**
+
+  - Projections can currently only be run in:
+
+    - *Single-process mode*, where all projections are run on a single CPU core, or
+    - *Multi-process mode*, where projections are split across multiple CPU cores.
+
+    In the future, we can think of leveraging other processing technologies like:
+
+    - `Dask <https://www.dask.org/>`_, where projections are distributed across multiple CPU cores
+      on multiple machines in a `grid <https://en.wikipedia.org/wiki/Grid_computing>`_, or
+    - `Codon <https://exaloop.io/>`_
+      , where projections are compiled with `LLVM <https://en.wikipedia.org/wiki/LLVM>`_ and distributed across
+      `multiple GPU cores <https://en.wikipedia.org/wiki/General-purpose_computing_on_graphics_processing_units>`_.
 
 What's Next?
 ------------
